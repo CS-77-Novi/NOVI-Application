@@ -27,7 +27,21 @@ const StreamProvider = ({ children }: { children: ReactNode }) => {
             },
             tokenProvider,
         });
+        setVideoClient(client);
+        return () => {
+            client.disconnectUser();
+            setVideoClient(undefined);
+        };
 
-    },[])
+    },[user,isLoaded])
 
+    if (!videoClient) 
+        return <Loading />;
+
+        return <StreamVideo client={videoClient}>
+                    {children}
+                </StreamVideo>;
+    
 }
+
+export default StreamProvider;
