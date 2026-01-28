@@ -2,6 +2,7 @@
 
 import Alert from "@/components/Alert";
 import Loading from "@/components/Loading";
+import MeetingRoom from "@/components/MeetingRoom";
 import MeetingSetup from "@/components/MeetingSetup";
 import { useGetCallById } from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
@@ -37,7 +38,7 @@ const MeetingPage = () => {
                 {!isSetupComplete ? (
                     <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
                 ) : (
-                    <MeetingRoom />
+                    <MeetingRoom/>
                 )}
                 </StreamTheme>
             </StreamCall>
