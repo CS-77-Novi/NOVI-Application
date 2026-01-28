@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css"; /* Remove this if participants does show in the meeting */
+@import "tw-animate-css"; /* Remove this if participants doesn't show in the meeting */
 
 @custom-variant dark (&:is(.dark *));
 
