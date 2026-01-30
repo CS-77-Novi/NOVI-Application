@@ -5,7 +5,7 @@ import Image from "next/image"
 const RegisterPage = () => {
     return (
         // Main container for the page
-        <main className="flex flex-col items-center p-5 gap-10 animate-fade-in">
+       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-black p-6 gap-8">
 
              {/* Section: logo + heading */}
             <section className="flex flex-col items-center">
