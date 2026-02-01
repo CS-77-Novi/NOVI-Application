@@ -5,7 +5,7 @@ interface Member {
   name: string;
   avatar?: string;
   isHost?: boolean;
-
+}
 
 interface MembersProps {
   members: Member[];
