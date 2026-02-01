@@ -50,7 +50,7 @@ export const useGetCalls = () => {
 
 // upcomingCalls: Calls that start in the future.
 const upcomingCalls = calls?.filter(
-  ({ state: { startsAt } }: Call) => {
+  ({ state: { startsAt } }: Calls) => {
     return startsAt && new Date(startsAt) > now;
   }
 );
