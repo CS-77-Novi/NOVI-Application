@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
 
   images : 
-    remotePatterns: [
+    remotePatterns : [
       { 
          protocol : 'https',
          hostname: 'img.cleark.com'
@@ -13,9 +13,9 @@ const nextConfig: NextConfig = {
       { 
         protocol : 'https',
          hostname: 'img.cleark.dev'
-         
+
       }
-    }
+    
 
 
   ]

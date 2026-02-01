@@ -5,8 +5,10 @@ const CallList = ({type} :{type : "ended" | "upcoming" | "recordings"}) =>
  
 { 
 
-    const {endedcall, upcomingcalls, callrecordings, isLoading} = useGetCalls() 
-    const[recordings,setrecordings ] = useState<callrecordings[]>([]);
+    const { endedCalls, upcomingCalls, callRecordings, isLoading } = useGetCalls();
+
+    const [recordings, setRecordings] = useState<CallRecording[]>([]);
+
    
     const getCalls = () =>{
         switch (type){
