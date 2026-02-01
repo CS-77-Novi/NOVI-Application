@@ -11,7 +11,7 @@ const CallList = ({type} :{type : "ended" | "upcoming" | "recordings"}) =>
     const getCalls = () =>{
         switch (type){
             case 'ended':
-                return endedCalls;
+                return ended;
             case 'recordings':  
               
                 return recordings ;  
