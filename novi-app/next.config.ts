@@ -3,22 +3,18 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
 
-  images : 
+  images : {
     remotePatterns : [
       { 
          protocol : 'https',
-         hostname: 'img.cleark.com'
-
-      } 
+         hostname: 'img.clerk.com'
+      }, 
       { 
         protocol : 'https',
-         hostname: 'img.cleark.dev'
-
+         hostname: 'imgages.clerk.dev'
       }
-    
-
-
-  ]
+    ]
+  }
 };
 
 export default nextConfig;

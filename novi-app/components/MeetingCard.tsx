@@ -1,54 +1,90 @@
-import React from "react";
-import Link from "next/link";
-import { Calendar, Clock, Video } from "lucide-react"; // example icons
+"use client";
+
+import { Call } from "@stream-io/video-react-sdk";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import Members from "./Members";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 interface MeetingCardProps {
-  id: string;
-  title: string;
-  date?: string;
-  type: "ended" | "upcoming" | "recordings";
-  icon: string;
+  title: string; // Meeting title
+  date: string;
+  icon: string; // Icon representing the meeting
+  isPreviousMeeting?: boolean; // Flag to check if it's a past meeting
+  buttonIcon1?: string; // Optional button icon
+  buttonText?: string; // Optional button text
+  call: Call; // Call object from Stream SDK
+  type: string; // Meeting type (e.g., 'ended' or 'active')
+  handleClick: () => void; // Function triggered on button click
   link: string;
 }
 
-const MeetingCard: React.FC<MeetingCardProps> = ({
-  id,
+const MeetingCard = ({
+  icon,
   title,
   date,
-  type,
-  icon,
+  isPreviousMeeting,
+  buttonIcon1,
+  handleClick,
   link,
-}) => {
+  type,
+  call,
+  buttonText,
+}: MeetingCardProps) => {
+
   return (
-    <Link href={link}>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition duration-200 cursor-pointer">
-        <div className="flex items-center space-x-3">
-          <img src={icon} alt={${type} icon} className="w-8 h-8" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {title || "Untitled Meeting"}
-          </h3>
+    // Main container for the card with styling
+    <section className="flex min-h-[258px] w-full flex-col justify-between rounded-3xl bg-blue-200 px-5 py-8 xl:max-w-[568px] text-black scale-90 shadow-2xl">
+      <article className="flex flex-col gap-5">
+        {/* Display meeting icon */}
+        <Image src={icon} alt="upcoming" width={28} height={28} />
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-2">
+            {/* Meeting title and date */}
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <p className="text-base font-normal">{date}</p>
+          </div>
         </div>
-
-        {date && (
-          <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center mt-2">
-            <Clock className="mr-1 w-4 h-4" />
-            {new Date(date).toLocaleString()}
-          </p>
+      </article>
+      
+      {/* Section for meeting members and action buttons */}
+      <article className={cn("flex justify-center relative flex-col gap-3", {})}>
+        <div>
+          {/* Show meeting members only if the meeting has ended */}
+          {type === 'ended' && <Members call={call}/>} 
+        </div>
+        
+        {/* Show action buttons only if it's an active meeting */}
+        {!isPreviousMeeting && (
+          <div className="flex gap-5">
+            {/* Button to join or start a meeting */}
+            <Button onClick={handleClick} className="rounded bg-blue-700 p-4 hover:bg-blue-400 px-6">
+              {buttonIcon1 && (
+                <Image src={buttonIcon1} alt="feature" width={20} height={20} />
+              )}
+              &nbsp; {buttonText}
+            </Button>
+            
+            {/* Button to copy meeting link */}
+            <Button
+              className="bg-gray-700"
+              onClick={() => {
+                navigator.clipboard.writeText(link); // Copy link to clipboard
+                toast("Link Copied",{
+                  duration: 3000,
+                  className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center'
+                });
+              }}
+            >
+              {/* Copy icon */}
+              <Image src="/assets/copy.svg" alt="copy" width={20} height={20} />
+              &nbsp; Copy Link
+            </Button>
+          </div>
         )}
-
-        <div className="flex items-center justify-between mt-3">
-          <span className="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
-            {type}
-          </span>
-
-          {type === "ended" && (
-            <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
-              Replay
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
+      </article>
+    </section>
   );
 };
 
