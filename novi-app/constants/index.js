@@ -21,8 +21,13 @@ export const navLinks = [
       label: 'Recordings',
     },
     {
-      imgURL: '/assets/my-room.svg',
-      route: '/my-room',
-      label: 'My Room',
+      imgURL: '/assets/reports.svg',
+      route: '/reports',
+      label: 'Reports',
+    },
+    {
+      imgURL: '/assets/ind-learn.svg',
+      route: '/ind-learn',
+      label: 'Individual learning',
     },
   ];

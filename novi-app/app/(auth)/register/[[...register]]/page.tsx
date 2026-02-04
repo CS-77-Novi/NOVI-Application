@@ -10,7 +10,7 @@ const RegisterPage = () => {
              {/* Section: logo + heading */}
             <section className="flex flex-col items-center">
                 <Image
-                    src='/assets/logo.svg' // Path to logo image
+                    src='/assets/Novi_logo-NoBackground.png' // Path to logo image
                     width={100}     // Image width (px)
                     height={100}    // Image height (px)
                     alt="Logo"      // Alternative text for accessibility

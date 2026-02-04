@@ -17,7 +17,7 @@ const NavBar = () => {
               {/* Logo */}
               <Link href="/" className="flex items-center gap-1 hover:scale-150 duration-500 ">
                 <Image
-                  src="/assets/logo.svg"
+                  src="/assets/Novi_logo-NoBackground.png"
                   width={60}
                   height={60}
                   alt="Let's talk"

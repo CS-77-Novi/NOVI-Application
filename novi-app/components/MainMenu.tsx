@@ -247,6 +247,15 @@ const MainMenu = () => {
         hoverColor= 'hover:bg-blue-800'
         handleClick={() => router.push('/recordings')}
       />
+
+      {/* For reports */}
+      <MenuItemCard
+          img="/assets/reports2.svg"
+          title="Reports"
+          bgColor="bg-blue-600"
+          hoverColor= 'hover:bg-blue-800'
+          handleClick={() => router.push('/reports')}
+      />
     </section>
   )
 }
