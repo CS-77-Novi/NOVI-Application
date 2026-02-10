@@ -6,6 +6,8 @@ import { useState } from "react";
 
 const IndLearnPage = () => {
     const [currentView, setCurrentView] = useState<'start' | 'setup' | 'room'>('start');
+    const [isVideoEnabled, setIsVideoEnabled] = useState(false);
+    const [isAudioEnabled, setIsAudioEnabled] = useState(false);
     
     const handleStart = () => {
         setCurrentView('setup');
@@ -16,11 +18,17 @@ const IndLearnPage = () => {
     };
 
     if (currentView === 'room') {
-        return <IndRoom />;
+        return <IndRoom initialVideoEnabled={isVideoEnabled} initialAudioEnabled={isAudioEnabled} />;
     }
 
     if (currentView === 'setup') {
-        return <IndSetUp onJoinRoom={handleJoinRoom} />;
+        return <IndSetUp
+            onJoinRoom={handleJoinRoom}
+            isVideoEnabled={isVideoEnabled}
+            setIsVideoEnabled={setIsVideoEnabled}
+            isAudioEnabled={isAudioEnabled}
+            setIsAudioEnabled={setIsAudioEnabled}
+        />;
     }
     return (
         <section className="flex size-full flex-col items-center justify-center gap-8 text-white animate-fade-in min-h-screen">
