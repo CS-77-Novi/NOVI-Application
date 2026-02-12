@@ -13,8 +13,8 @@ const RIGHT_IRIS = [473, 474, 475, 476, 477];
 
 function lmPx(lm, i, w, h) {
   return { 
-    x: landmarks[idx].x * w,
-    y: landmarks[idx].y * h 
+    x: lm[i].x * w,
+    y: lm[i].y * h 
   };
 }
 
@@ -77,10 +77,10 @@ export function updateGaze(landmarks, w, h) {
      (rightIris.y - rightEyeCenterY)) / 2 / h;
 
   let gaze = "CENTER";
-  if (hRatio < 0.42) gaze = "RIGHT";
-  else if (hRatio > 0.7) gaze = "LEFT";
-  else if (vRatio < -0.0075) gaze = "UP";
-  else if (vRatio > 0.0) gaze = "DOWN";
+  if (horizontalRatio < 0.42) gaze = "RIGHT";
+  else if (horizontalRatio > 0.7) gaze = "LEFT";
+  else if (verticalRatio < -0.0075) gaze = "UP";
+  else if (verticalRatio > 0.0) gaze = "DOWN";
 
   return {
     gaze,
