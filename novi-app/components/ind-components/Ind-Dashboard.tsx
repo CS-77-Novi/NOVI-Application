@@ -1,12 +1,17 @@
 'use client'
 
+import Speedometer from './Ind-Speedometer';
 type Props = {
   stats: any;
   isVideoEnabled: boolean;
+  focusedCount: number;
+  totalCount: number;
   onClose: () => void;
 };
 
-export default function Dashboard({ stats, isVideoEnabled, onClose }: Props) {
+export default function Dashboard({ stats, isVideoEnabled, focusedCount, totalCount, onClose }: Props) {
+  // Calculate focus percentage
+  const focusPercentage = totalCount > 0 ? (focusedCount / totalCount) * 100 : 0;
   return (
     <div className="absolute right-6 bottom-24 w-80 bg-gray-900 border border-gray-700 rounded-xl p-4 shadow-xl z-50">
       <div className="flex justify-between items-center mb-3">
@@ -17,6 +22,13 @@ export default function Dashboard({ stats, isVideoEnabled, onClose }: Props) {
           ✕
         </button>
       </div>
+      {/* Speedometer */}
+      <Speedometer percentage={focusPercentage} />
+
+      {/* Divider */}
+      <div className="border-t border-gray-700 my-3"></div>
+
+      {/* Current Status */}
 
       {!isVideoEnabled ? (
         <p className="text-gray-400 text-sm">Camera turned off</p>
