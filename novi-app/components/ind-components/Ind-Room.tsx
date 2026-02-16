@@ -185,7 +185,7 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
     }, [isDistractionInitialized, isVideoEnabled]);
 
     return (
-        <div className="relative flex flex-col h-screen w-full bg-gray-900">
+        <div className="fixed inset-0 flex flex-col w-full bg-gray-900 z-[60]">
                 {/* Main Content Area - Video and Dashboard */}
                 <div className="flex-1 flex items-center justify-center p-4 pb-30 gap-4">
                 {/* Video Container */}

@@ -78,7 +78,7 @@ export function updateGaze(landmarks, w, h) {
 
   let gaze = "CENTER";
   if (horizontalRatio < 0.42) gaze = "RIGHT";
-  else if (horizontalRatio > 0.7) gaze = "LEFT";
+  else if (horizontalRatio > 0.6) gaze = "LEFT";
   else if (verticalRatio < -0.0075) gaze = "UP";
   else if (verticalRatio > 0.0) gaze = "DOWN";
 
