@@ -256,6 +256,15 @@ const MainMenu = () => {
           hoverColor= 'hover:bg-blue-800'
           handleClick={() => router.push('/reports')}
       />
+
+      {/* For Pop-Quizzes */}
+      <MenuItemCard
+          img="/assets/Pop-Quizzes.svg"
+          title="Pop-Quizzes"
+          bgColor="bg-blue-600"
+          hoverColor= 'hover:bg-blue-800'
+          handleClick={() => router.push('/pop-quizzes')}
+      />
     </section>
   )
 }
