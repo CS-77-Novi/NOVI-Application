@@ -9,14 +9,15 @@ const GroupSpeedometer = dynamic(() => import('./grp-Speedometer'), { ssr: false
 
 type Props = {
   meetingId: string
+  hostUserId?: string
   isOpen: boolean
   onClose: () => void
 }
 
 const DISTRACTION_THRESHOLD = 75 // percent
 
-export default function GroupDashboard({ meetingId, isOpen, onClose }: Props) {
-  const { distractedCount, totalCount, participants } = useGroupDistraction(meetingId)
+export default function GroupDashboard({ meetingId, hostUserId, isOpen, onClose }: Props) {
+  const { distractedCount, totalCount, participants } = useGroupDistraction(meetingId, hostUserId)
 
   if (!isOpen) return null
 
@@ -28,7 +29,7 @@ export default function GroupDashboard({ meetingId, isOpen, onClose }: Props) {
   return (
     <div
       className="
-        flex flex-col
+        flex flex-col h-full
         w-72 flex-shrink-0
         bg-gray-900/95 backdrop-blur-md
         rounded-2xl
