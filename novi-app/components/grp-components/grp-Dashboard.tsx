@@ -2,7 +2,7 @@
 
 import { XMarkIcon, ChartBarIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import dynamic from 'next/dynamic'
-import useGroupDistraction from '@/hooks/ useGroupDistraction'
+import useGroupDistraction from '@/hooks/useGroupDistraction'
 
 // Dynamically import to avoid SSR issues with react-d3-speedometer
 const GroupSpeedometer = dynamic(() => import('./grp-Speedometer'), { ssr: false })
