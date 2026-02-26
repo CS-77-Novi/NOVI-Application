@@ -1,40 +1,59 @@
 'use client';
 
+// React hooks for state and lifecycle management
 import { useState, useEffect, useRef } from 'react';
+// UI icons from Heroicons
 import { VideoCameraIcon, VideoCameraSlashIcon, MicrophoneIcon, ChartBarIcon } from '@heroicons/react/24/solid';
+// Import the unified distraction detection functions
 import { initDistraction, detectDistraction } from '@/ml-calculations/combined';
+// Dashboard component for displaying stats
 import Dashboard from './Ind-Dashboard';
+// Button component for ending the individual session
 import IndEndCallButton from './Ind-EndCallButton';
 
+
+// Define the properties expected by the IndRoom component
 interface IndRoomProps {
     initialVideoEnabled?: boolean;
     initialAudioEnabled?: boolean;
 }
 
+// Main component for the individual tracking room
 const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndRoomProps = {}) => {
+    // Reference to the main video element
     const videoRef = useRef<HTMLVideoElement>(null);
+    // State to hold the active media stream (audio/video)
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+    // State to track if the camera is currently forced on or off by the user
     const [isVideoEnabled, setIsVideoEnabled] = useState(initialVideoEnabled);
+    // State to track if the microphone is currently unmuted or muted
     const [isAudioEnabled, setIsAudioEnabled] = useState(initialAudioEnabled);
 
-   // Distraction detection state
+    // Distraction detection state
+    // Holds the latest distraction analysis results
     const [distractionData, setDistractionData] = useState<any>(null);
+    // Tracks if the ML models have finished loading
     const [isDistractionInitialized, setIsDistractionInitialized] = useState(false);
+    // Controls the visibility of the statistics dashboard panel
     const [showDashboard, setShowDashboard] = useState(false);
+    // Reference to the current animation frame used for the detection loop
     const animationFrameRef = useRef<number | null>(null);
 
-     // Focus tracking state
+    // Focus tracking state
+    // Counter for how many frames the user was evaluated as "FOCUSED"
     const [focusedCount, setFocusedCount] = useState(0);
+    // Counter for total number of valid tracking frames processed
     const [totalCount, setTotalCount] = useState(0);
 
-    // Initialize media stream
+    // Function to initialize and request user media (camera and mic)
     const startMediaStream = async (enableVideo: boolean, enableAudio: boolean) => {
         try {
-            // Stop existing stream first
+            // Stop any pre-existing stream tracks to release hardware
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
             }
 
+            // Define the requested capabilities for the stream
             const constraints: MediaStreamConstraints = {
                 video: enableVideo ? {
                     width: { ideal: 1280 },
@@ -47,10 +66,11 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                 } : false
             };
 
+            // Request permission and acquire the stream from the browser
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             setMediaStream(stream);
 
-            // Attach video stream to video element
+            // Directly attach the video stream to the visual video element
             if (videoRef.current && enableVideo) {
                 videoRef.current.srcObject = stream;
             }
@@ -59,22 +79,23 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
         }
     };
 
-    // Toggle video
+    // Handler to flip the camera's enabled state
     const toggleVideo = () => {
         const newVideoState = !isVideoEnabled;
         setIsVideoEnabled(newVideoState);
 
-        // Clear distraction data when camera is turned off
+        // Clear distraction data history when the user turns off the camera
         if (!newVideoState) {
             setDistractionData(null);
         }
         
+        // Pause/resume the video track gracefully
         if (mediaStream) {
             const videoTrack = mediaStream.getVideoTracks()[0];
             if (videoTrack) {
                 videoTrack.enabled = newVideoState;
                 
-                // Update video element srcObject when re-enabling
+                // Re-attach the stream when explicitly re-enabling
                 if (newVideoState && videoRef.current) {
                     videoRef.current.srcObject = mediaStream;
                 }
@@ -82,11 +103,12 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
         }
     };
 
-    // Toggle audio
+    // Handler to flip the microphone's enabled state
     const toggleAudio = () => {
         const newAudioState = !isAudioEnabled;
         setIsAudioEnabled(newAudioState);
         
+        // Pause/resume the audio track gracefully
         if (mediaStream) {
             const audioTrack = mediaStream.getAudioTracks()[0];
             if (audioTrack) {
@@ -95,43 +117,46 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
         }
     };
 
-    // Handle end session - cleanup and close
+    // Cleanup logic executed when the user leaves the room
     const handleEndCall = () => {
-        // Stop all media tracks
+        // Disconnect all connected media tracks entirely
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
         }
-        // Cancel distraction detection animation frame
+        // Halt any pending ML evaluation frames
         if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
         }
     };
 
-    // Initialize on mount
+    // On Initial Mount Effect
     useEffect(() => {
+        // Begin capturing audio and video
         startMediaStream(true, true);
 
         return () => {
-            // Cleanup on unmount
+            // Disconnect media devices when this component unmounts
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
             }
         };
     }, []);
 
-    // Update video element when isVideoEnabled changes
+    // Effect to enforce video visibility when state changes
     useEffect(() => {
         if (videoRef.current && mediaStream && isVideoEnabled) {
-            // Set srcObject when video element is mounted and video is enabled
+            // Re-assign the stream object to the video element to ensure playback
             videoRef.current.srcObject = mediaStream;
         }
     }, [isVideoEnabled, mediaStream]);
 
-    // Initialize distraction detection
+    // Initializer effect for the distraction machine learning context
     useEffect(() => {
         const setupDistraction = async () => {
             try {
+                // Initialize both head posture and gaze detection models
                 await initDistraction();
+                // Mark models as ready to begin the continuous loop
                 setIsDistractionInitialized(true);
             } catch (err) {
                 console.error('Error initializing distraction detection:', err);
@@ -141,43 +166,53 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
         setupDistraction();
     }, []);
 
-    // Continuous distraction detection loop
+    // Core continuous looping effect for distraction evaluation
     useEffect(() => {
-            if (!isDistractionInitialized || !videoRef.current || !isVideoEnabled) {
+        // Halt if models aren't ready, the video tag isn't mounted, or the camera is off
+        if (!isDistractionInitialized || !videoRef.current || !isVideoEnabled) {
             return;
         }
 
+        // The recursive assessment loop
         const detectDistract = () => {
+            // Ensure the video is actually available and toggled on
             if (videoRef.current && isVideoEnabled) {
-                 const width = videoRef.current.videoWidth;
+                const width = videoRef.current.videoWidth;
                 const height = videoRef.current.videoHeight;
                 
-                // Only run detection if video dimensions are valid
+                // Ensure dimensions are fully established by the browser engine
                 if (width > 0 && height > 0) {
+                    // Send current frame info for structural and gaze analysis
                     const result = detectDistraction(
                         videoRef.current,
                         width,
                         height,
-                        performance.now()
+                        performance.now() // current timestamp argument
                     );
-                    // Always update state, including error/no face states
+                    
+                    // Directly save the latest findings to component state
                     setDistractionData(result);
                                        
-                    // Track focus samples (count every valid detection)
+                    // When tracking metrics are usable (not errors or NO FACE events)
                     if (result && (result.status === "FOCUSED" || result.status === "DISTRACTED")) {
+                        // Increment base sample count
                         setTotalCount(prev => prev + 1);
+                        // Increment focused count selectively
                         if (result.status === "FOCUSED") {
                             setFocusedCount(prev => prev + 1);
                         }
                     }
                 }
             }
+            // Request the browser to invoke detectDistract on its next animation frame loop
             animationFrameRef.current = requestAnimationFrame(detectDistract);
         };
 
+        // Bootstrap the recursive cycle
         detectDistract();
 
         return () => {
+            // Cut off the recursive request chain when dependencies shift
             if (animationFrameRef.current) {
                 cancelAnimationFrame(animationFrameRef.current);
             }
@@ -276,7 +311,6 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     <IndEndCallButton onEndCall={handleEndCall} />
                 </div>
             </div>
-
            
         </div>
     );

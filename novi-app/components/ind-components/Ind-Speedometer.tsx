@@ -1,24 +1,34 @@
 import ReactSpeedometer from 'react-d3-speedometer';
 
+// Define the expected properties for the Speedometer component
 type SpeedometerProps = {
-  percentage: number; // 0-100
+  percentage: number; // Represents the focus score from 0 to 100
 };
 
 export default function Speedometer({ percentage }: SpeedometerProps) {
-  // Clamp percentage between 0 and 100
+  // Ensure the percentage strictly stays within natural bounds (0 to 100)
   const clampedPercentage = Math.max(0, Math.min(100, percentage));
   
-  // Determine color based on percentage
+  // Helper to resolve the gauge color based on the current score
   const getColor = (pct: number) => {
-    if (pct < 40) return '#ef4444'; // Red
-    if (pct < 70) return '#eab308'; // Yellow
-    return '#22c55e'; // Green
+    // Scores below 40 are colored red to indicate high distraction
+    if (pct < 40) return '#ef4444';
+    // Scores below 70 are colored yellow to indicate moderate distraction
+    if (pct < 70) return '#eab308';
+    // Scores 70 and above indicate good focus
+    return '#22c55e';
   };
 
+  // Determine the color for the current render frame
   const color = getColor(clampedPercentage);
 
   return (
     <div className="flex flex-col items-center mb-4">
+      {/* 
+        Render the third-party speedometer chart.
+        The 'key={color}' prop forces the component to re-mount when color changes,
+        ensuring smooth color transitions on the needle and track.
+      */}
       <ReactSpeedometer
         key={color}
         value={clampedPercentage}
@@ -38,7 +48,7 @@ export default function Speedometer({ percentage }: SpeedometerProps) {
         textColor="transparent"
       />
       
-      {/* Percentage display */}
+      {/* Display the numerical percentage immediately below the gauge */}
       <div className="text-center -mt-6">
         <div className="text-3xl font-bold" style={{ color }}>
           {clampedPercentage.toFixed(0)}%
