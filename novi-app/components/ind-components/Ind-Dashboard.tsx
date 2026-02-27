@@ -91,14 +91,6 @@ export default function Dashboard({ stats, isVideoEnabled, focusedCount, totalCo
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {/* Break out raw orientation telemetry variables */}
                 <div className="bg-gray-800 rounded p-2">
-                  <p className="text-gray-500 text-xs">Horizontal</p>
-                  <p className="text-white font-mono text-xs">{stats.headPosture.yaw?.toFixed(2)}</p>
-                </div>
-                <div className="bg-gray-800 rounded p-2">
-                  <p className="text-gray-500 text-xs">Vertical</p>
-                  <p className="text-white font-mono text-xs">{stats.headPosture.pitch?.toFixed(2)}</p>
-                </div>
-                <div className="bg-gray-800 rounded p-2">
                   <p className="text-gray-500 text-xs">Yaw</p>
                   <p className="text-white font-mono text-xs">{stats.headPosture.yaw?.toFixed(1)}°</p>
                 </div>
@@ -120,16 +112,6 @@ export default function Dashboard({ stats, isVideoEnabled, focusedCount, totalCo
                 }`}>
                   {stats.gaze.gaze}
                 </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                <div className="bg-gray-800 rounded p-2">
-                  <p className="text-gray-500 text-xs">Horizontal</p>
-                  <p className="text-white font-mono text-xs">{stats.gaze.horizontalRatio?.toFixed(2)}</p>
-                </div>
-                <div className="bg-gray-800 rounded p-2">
-                  <p className="text-gray-500 text-xs">Vertical</p>
-                  <p className="text-white font-mono text-xs">{stats.gaze.verticalRatio?.toFixed(4)}</p>
-                </div>
               </div>
             </div>
           )}
