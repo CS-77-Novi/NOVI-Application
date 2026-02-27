@@ -34,37 +34,52 @@ import Dashboard from "./ind-components/Ind-Dashboard";
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
 const MeetingRoom = () => {
+  // State for determining the video grid/speaker layout
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
+  // State to toggle the visibility of the participant list sidebar
   const [showParticipants, setShowParticipants] = useState(false);
+  // State to toggle the visibility of the distraction dashboard sidebar
   const [showDashboard, setShowDashboard] = useState(false);
+  
+  // Next.js router instance for programmatic navigation
   const router = useRouter();
+  // Current URL pathname, used to generate meeting invite links
   const pathname = usePathname();
+  // Clerk hook to get the currently authenticated user's details
   const { user } = useUser();
 
+  // Retrieve the active Stream video call instance
   const call = useCall();
+  // Ensure the component is rendered within a valid Stream Call context
   if (!call)
     throw new Error("useStreamCall must be used within a StreamCall component.");
 
+  // Extract necessary hooks from the Stream Call state
   const { useCallCallingState, useLocalParticipant, useCameraState } =
     useCallStateHooks();
 
+  // Get the current connection state of the call (e.g., JOINING, JOINED)
   const callingState = useCallCallingState();
+  // Get the current user's participant object within the call
   const localParticipant = useLocalParticipant();
+  // Retrieve the local camera's mute status and its raw media stream
   const { isMute: isCameraOff, mediaStream: cameraMediaStream } = useCameraState();
 
   // Host detection — same pattern as EndCallButton.tsx
+  // Check if the current local participant is the original creator of the call
   const isMeetingOwner =
     localParticipant &&
     call.state.createdBy &&
     localParticipant.userId === call.state.createdBy.id;
 
   // Run distraction detection on raw camera stream and push metrics to Supabase
+  // Pass the raw video stream, meeting info, and user details to the detection hook
   const { stats, focusedCount, totalCount } = useDistractionDetection({
-    videoStream: cameraMediaStream,
-    meetingId: call.id,
-    participantId: user?.id ?? "",
-    name: user?.fullName ?? user?.username ?? "Unknown",
-    isCameraOn: !isCameraOff,
+    videoStream: cameraMediaStream,                      // The MediaStream from the user's camera
+    meetingId: call.id,                                  // Unique ID of the current meeting
+    participantId: user?.id ?? "",                       // Clerk user ID, falling back to empty string
+    name: user?.fullName ?? user?.username ?? "Unknown", // Display name for the dashboard
+    isCameraOn: !isCameraOff,                            // Only process frames when camera is active
   });
 
   if (!user) return null;
