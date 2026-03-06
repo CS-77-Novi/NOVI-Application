@@ -201,13 +201,14 @@ const MeetingRoom = () => {
                 : "bg-[#19232d] hover:bg-[#4c535b]"
             )}
           >
-            </div>
-            </button>
             <ChartBarIcon className="w-5 h-5 text-white" />
-                          {/* Mini Game toggle button */}
-                <button onClick={() => setShowMiniGame((prev) => !prev)}>
-                    <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-                        <Gamepad2 size={20} className="text-white" />
+          </div>
+        </button>
+
+        {/* Mini Game toggle button */}
+        <button onClick={() => setShowMiniGame((prev) => !prev)}>
+          <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+            <Gamepad2 size={20} className="text-white" />
           </div>
         </button>
 
