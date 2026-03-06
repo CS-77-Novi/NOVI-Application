@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Let's talk",
+  title: "Novi-E-Learning",
   description: "A video conferencing app",
 };
 
@@ -36,7 +36,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
-          <Toaster/>
+          <Toaster />
 
         </body>
       </html>
