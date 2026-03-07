@@ -25,11 +25,12 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
-import { LayoutList, Users } from "lucide-react";
+import { LayoutList, Users,Gamepad2 } from "lucide-react";
 import EndCallButton from "./EndCallButton";
 import useDistractionDetection from "@/hooks/useDistractionDetection";
 import GroupDashboard from "./grp-components/grp-Dashboard";
 import Dashboard from "./ind-components/Ind-Dashboard";
+import WordJumble from "./WordJumble";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
@@ -40,6 +41,8 @@ const MeetingRoom = () => {
   const [showParticipants, setShowParticipants] = useState(false);
   // State to toggle the visibility of the distraction dashboard sidebar
   const [showDashboard, setShowDashboard] = useState(false);
+    // State to toggle mini game panel
+    const [showMiniGame, setShowMiniGame] = useState(false);
   
   // Next.js router instance for programmatic navigation
   const router = useRouter();
@@ -121,6 +124,10 @@ const MeetingRoom = () => {
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
+                      {/* Mini Game panel */}
+                {!isMeetingOwner && showMiniGame && (
+                    <WordJumble onClose={() => setShowMiniGame(false)} />
+                )}
 
         {/* Dashboard sidebar — host sees Group Dashboard, participants see individual Dashboard */}
         <div
@@ -198,8 +205,18 @@ const MeetingRoom = () => {
           </div>
         </button>
 
+        {/* Mini Game toggle button */}
+        {!isMeetingOwner && (
+          <button onClick={() => setShowMiniGame((prev) => !prev)}>
+            <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+              <Gamepad2 size={20} className="text-white" />
+            </div>
+          </button>
+        )}
+
         <EndCallButton />
       </div>
+      
     </section>
   );
 };
