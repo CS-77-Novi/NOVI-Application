@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { supabase } from '@/lib/supabase'
 
+// app/(main)/(home)/pop-quizzes/[id]/page.tsx
+
+type Props = {
+  params: Promise<{ id: string }>  // ✅ Must be Promise in Next.js 15
+}
+
+export default async function Page({ params }: Props) {
+  const { id } = await params  // ✅ Await the params
+  
+  return <div>Quiz ID: {id}</div>
+}
+
 // GET /api/quiz — list all quizzes for the logged-in host
 export async function GET() {
     const user = await currentUser()
