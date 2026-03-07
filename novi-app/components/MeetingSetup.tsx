@@ -7,6 +7,7 @@ import { DeviceSettings, useCall, useCallStateHooks, VideoPreview } from "@strea
 import Alert from "./Alert";//Custom alert component
 import { useEffect, useState } from "react";//from react hooks
 import { Button } from "./ui/button";
+import { clearWordJumbleState } from "@/lib/wordJumbleStore";
 
 
 const MeetingSetup =({
@@ -89,9 +90,11 @@ const MeetingSetup =({
               className="rounded-3x1 bg-blue-500 p-6 hover:bg-blue-800 hover:scale-125
               transition ease-in-out delay-150 duration-300"
               onClick={() =>{
-            //Join the call    
+                //Mini-game data of a previous meeting will be erased everytime the user joins a new call
+                clearWordJumbleState();
+                //Join the call    
                 call.join();
-            //Update call members(add current user)    
+                //Update call members(add current user)    
                 call.updateCallMembers({
                    update_members: [{user_id:user.id}], 
 
