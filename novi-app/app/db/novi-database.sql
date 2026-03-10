@@ -50,3 +50,17 @@ CREATE TABLE attention_log (
         REFERENCES participant(participant_id)
         ON DELETE CASCADE
 );
+
+--Report table
+CREATE TABLE report (
+    report_id BIGSERIAL PRIMARY KEY,
+    session_id BIGINT NOT NULL,
+    file_name VARCHAR(150) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    generated_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    FOREIGN KEY (session_id)
+        REFERENCES study_session(session_id)
+        ON DELETE CASCADE
+);
