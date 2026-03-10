@@ -12,7 +12,7 @@ import { useUser } from "@clerk/nextjs"
 import Loading from "./Loading"
 import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
-import Selection from './ui/selection';
+import Selection from './ui/report/selection';
 
 const initialValues = {
     dateTime: new Date(), // Default meeting date/time = now
