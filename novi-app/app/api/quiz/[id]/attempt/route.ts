@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { supabase } from '@/lib/supabase'
 
+<<<<<<< Updated upstream
 // GET /api/quiz/[id]/attempt — check if current user already attempted
+=======
+>>>>>>> Stashed changes
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const user = await currentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -21,15 +24,23 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     return NextResponse.json({ attempt: data })
 }
 
+<<<<<<< Updated upstream
 // POST /api/quiz/[id]/attempt — submit answers
+=======
+>>>>>>> Stashed changes
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const user = await currentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { id } = await params
+<<<<<<< Updated upstream
     const { answers } = await req.json() // answers: number[] indexed by question position
 
     // Check if already attempted
+=======
+    const { answers } = await req.json()
+
+>>>>>>> Stashed changes
     const { data: existing } = await supabase
         .from('quiz_attempts')
         .select('id')
@@ -41,7 +52,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: 'You have already attempted this quiz.' }, { status: 409 })
     }
 
+<<<<<<< Updated upstream
     // Fetch quiz questions to compute score
+=======
+>>>>>>> Stashed changes
     const { data: questions, error: qError } = await supabase
         .from('quiz_questions')
         .select('correct_answer')
