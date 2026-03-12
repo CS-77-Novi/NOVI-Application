@@ -23,4 +23,28 @@ export default function PopQuizzesPage() {
 const [quizzes, setQuizzes] = useState<Quiz[]>([])
 const [loading, setLoading] = useState(true)
 const [createOpen, setCreateOpen] = useState(false)
+
+// Fetch quizzes on component mount
+const fetchQuizzes = async () => {
+    setLoading(true)
+    try {
+        const res = await fetch('/api/quiz')
+        if (res.ok) {
+            const data = await res.json()
+            setQuizzes(data.quizzes || [])
+        }
+    } finally {
+        setLoading(false)
+    }
+}   
+
+//Initial data loading with useEffect
+    useEffect(() => {
+        if (isLoaded && user) fetchQuizzes()
+    }, [isLoaded, user])
+
+    //to prevents the page from rendering incomplete or flickering content
+    if (!isLoaded || loading) return <Loading />
+
+
 }
