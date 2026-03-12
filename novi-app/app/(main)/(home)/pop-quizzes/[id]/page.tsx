@@ -26,3 +26,9 @@ export async function GET() {
     return NextResponse.json({ quizzes: data })
 }
 
+export async function POST(req: NextRequest) {
+    const user = await currentUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { title, time_limit, questions } = await req.json()
+    
