@@ -257,7 +257,7 @@ const MainMenu = () => {
         bgColor="bg-blue-600"
         hoverColor='hover:bg-blue-800'
         /* Change: Use handleClick to trigger our new state */
-        handleClick={() => setShowSelection(true)} 
+        handleClick={() => router.push('/reports')}
       />
 
       {/* For Pop-Quizzes */}
@@ -269,9 +269,6 @@ const MainMenu = () => {
           handleClick={() => router.push('/pop-quizzes')}
       />
 
-    {showSelection && (
-  <Selection onClose={() => setShowSelection(false)} />
-)} 
     </section>
   )
 }
