@@ -32,3 +32,26 @@ export async function POST(req: NextRequest) {
 
     const { title, time_limit, questions } = await req.json()
     
+    // Insert quiz
+    const { data: quiz, error: quizError } = await supabase
+        .from('quizzes')
+        .insert({ host_id: user.id, title, time_limit, status: 'draft' })
+        .select()
+        .single()
+    if (quizError) return NextResponse.json({ error: quizError.message }, { status: 500 })
+
+    // Insert questions
+    if (questions && questions.length > 0) {
+        const rows = questions.map((q: any, i: number) => ({
+            quiz_id: quiz.id,
+            question: q.question,
+            options: q.options,
+            correct_answer: q.correct_answer,
+            position: i,
+        }))
+        const { error: qError } = await supabase.from('quiz_questions').insert(rows)
+        if (qError) return NextResponse.json({ error: qError.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ quiz })
+}
