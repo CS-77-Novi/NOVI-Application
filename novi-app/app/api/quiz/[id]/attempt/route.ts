@@ -39,4 +39,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (existing) {
         return NextResponse.json({ error: 'You have already attempted this quiz.' }, { status: 409 })
     }    
+    // Fetch quiz questions to compute score
+    const { data: questions, error: qError } = await supabase
+    .from('quiz_questions')
+    .select('correct_answer')
+    .eq('quiz_id', id)
+    .order('position')
 }
