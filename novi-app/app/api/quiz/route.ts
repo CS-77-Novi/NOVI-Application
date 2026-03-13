@@ -34,4 +34,19 @@ export async function POST(req: NextRequest) {
         .single()
 
     if (quizError) return NextResponse.json({ error: quizError.message }, { status: 500 })
+    
+        // 2. Insert questions
+    if (questions && questions.length > 0) {
+        const rows = questions.map((q: any, i: number) => ({
+            quiz_id: quiz.id,
+            question: q.question,
+            options: q.options,
+            correct_answer: q.correct_answer,
+            position: i,
+        }))
+        const { error: qError } = await supabase.from('quiz_questions').insert(rows)
+        if (qError) return NextResponse.json({ error: qError.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ quiz })
 }
