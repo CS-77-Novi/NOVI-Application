@@ -20,3 +20,9 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
     return NextResponse.json({ attempt: data })
 }
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const user = await currentUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        
+    }
