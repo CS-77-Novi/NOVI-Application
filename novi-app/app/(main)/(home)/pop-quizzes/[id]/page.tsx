@@ -1,3 +1,6 @@
+//a dynamic Next.js page for showing a quiz by id
+//API route handlers for GET and POST quiz operations
+
 import { NextRequest, NextResponse } from 'next/server' 
 import { currentUser } from '@clerk/nextjs/server'
 import { supabase } from '@/lib/supabase'
