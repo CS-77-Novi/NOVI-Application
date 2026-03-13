@@ -32,4 +32,6 @@ export async function POST(req: NextRequest) {
         .insert({ host_id: user.id, title, time_limit, status: 'draft' })
         .select()
         .single()
+
+    if (quizError) return NextResponse.json({ error: quizError.message }, { status: 500 })
 }
