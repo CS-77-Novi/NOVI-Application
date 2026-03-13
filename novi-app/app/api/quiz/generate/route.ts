@@ -21,4 +21,25 @@ export async function POST(req: NextRequest) {
       )
     }
 
+        const prompt = `You are a quiz generator. Based on the following document text, generate exactly ${numQuestions} multiple-choice questions.
+
+Each question must have:
+- A clear question string
+- Exactly 4 answer options (A, B, C, D)
+- The index (0-3) of the correct answer
+
+Return ONLY a valid JSON array in this exact format, no extra text or markdown:
+[
+  {
+    "question": "What is ...?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct_answer": 0
+  }
+]
+
+Document text:
+"""
+${text.slice(0, 6000)}
+"""`
+
 }
