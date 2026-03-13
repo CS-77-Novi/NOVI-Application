@@ -142,3 +142,13 @@ const fetchQuizzes = async () => {
                 )}
             </div>
 
+            {/* Create Dialog */}
+            <QuizCreateDialog
+                open={createOpen}
+                onClose={() => setCreateOpen(false)}
+                onCreated={fetchQuizzes}
+            />
+        </div>
+    )
+}
+
