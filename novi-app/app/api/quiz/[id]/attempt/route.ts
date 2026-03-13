@@ -41,8 +41,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }    
     // Fetch quiz questions to compute score
     const { data: questions, error: qError } = await supabase
-    .from('quiz_questions')
-    .select('correct_answer')
-    .eq('quiz_id', id)
-    .order('position')
-}
+        .from('quiz_questions')
+        .select('correct_answer')
+        .eq('quiz_id', id)
+        .order('position')
+
+    if (qError || !questions) return NextResponse.json({ error: 'Quiz not found' }, { status: 404 })    
+    
+    const score = questions.reduce((acc: number, q: any, i: number) => {
+    return answers[i] === q.correct_answer ? acc + 1 : acc
+    }, 0)    
+    }
