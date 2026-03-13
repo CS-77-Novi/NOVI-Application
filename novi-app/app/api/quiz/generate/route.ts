@@ -41,5 +41,42 @@ Document text:
 """
 ${text.slice(0, 6000)}
 """`
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: prompt }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                }
+            }),
+        })
 
+        if (!response.ok) {
+            const err = await response.json()
+            return NextResponse.json({ error: err.error?.message || 'Gemini request failed' }, { status: 502 })
+        }
+
+        const data = await response.json()
+        const raw = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
+
+        if (!raw) {
+            throw new Error('No content returned from Gemini')
+        }
+
+        // Strip optional markdown code fences
+        const jsonStr = raw.replace(/^```json\n?/, '').replace(/^```\n?/, '').replace(/\n?```$/, '')
+        const questions = JSON.parse(jsonStr)
+
+        if (!Array.isArray(questions)) throw new Error('Invalid response format')
+
+        return NextResponse.json({ questions })
+    } catch (err: any) {
+        console.error('Quiz generate error:', err)
+        return NextResponse.json({ error: err.message || 'Failed to generate quiz' }, { status: 500 })
+    }
 }
