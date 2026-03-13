@@ -51,4 +51,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const score = questions.reduce((acc: number, q: any, i: number) => {
     return answers[i] === q.correct_answer ? acc + 1 : acc
     }, 0)    
-    }
+
+        const { error: insertError } = await supabase.from('quiz_attempts').insert({
+        quiz_id: id,
+        user_id: user.id,
+        answers,
+        score,
+    })
+
+    if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 })
+
+    return NextResponse.json({ score, total: questions.length })
+}
