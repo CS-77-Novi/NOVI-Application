@@ -94,3 +94,27 @@ const fetchQuizzes = async () => {
                         </Button>
                     </div>
                 )}
+
+                {/* Published quizzes */}
+                {published.length > 0 && (
+                    <section className="mb-10">
+                        <h2 className="text-lg font-black text-gray-600 mb-4 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                            Published ({published.length})
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {published.map(quiz => (
+                                <QuizCard
+                                    key={quiz.id}
+                                    id={quiz.id}
+                                    title={quiz.title}
+                                    status={quiz.status}
+                                    timeLimit={quiz.time_limit}
+                                    questionCount={quiz.quiz_questions?.[0]?.count ?? 0}
+                                    onDeleted={fetchQuizzes}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
