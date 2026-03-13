@@ -24,4 +24,12 @@ export async function POST(req: NextRequest) {
     const user = await currentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+        const { title, time_limit, questions } = await req.json()
+
+    // 1. Insert quiz
+    const { data: quiz, error: quizError } = await supabase
+        .from('quizzes')
+        .insert({ host_id: user.id, title, time_limit, status: 'draft' })
+        .select()
+        .single()
 }
