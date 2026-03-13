@@ -24,5 +24,19 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const user = await currentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        
-    }
+    
+    const { id } = await params
+    const { answers } = await req.json() // answers: number[] indexed by question position
+
+    // Check if already attempted
+    const { data: existing } = await supabase
+        .from('quiz_attempts')
+        .select('id')
+        .eq('quiz_id', id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+    if (existing) {
+        return NextResponse.json({ error: 'You have already attempted this quiz.' }, { status: 409 })
+    }    
+}
