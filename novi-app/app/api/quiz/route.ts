@@ -18,3 +18,10 @@ export async function GET() {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ quizzes: data })
 }
+
+// POST /api/quiz — create a new quiz with its questions
+export async function POST(req: NextRequest) {
+    const user = await currentUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+}
