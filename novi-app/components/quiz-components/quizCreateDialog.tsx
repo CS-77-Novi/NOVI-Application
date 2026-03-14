@@ -79,4 +79,18 @@ export default function QuizCreateDialog({ open, onClose, onCreated }: Props) {
         setTitle(file.name.replace(/\.[^/.]+$/, ''))
     }
     reader.readAsBinaryString(file)
+}else {
+    toast('Please upload a .txt or .pdf file', {
+        className: '!bg-red-100 !rounded-2xl'
+    })
+}
+}
+const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+
+    const file = e.dataTransfer.files[0]
+    if (file) readFile(file)
+
+}, [])
 }
