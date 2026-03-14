@@ -114,5 +114,17 @@ const handleDrop = useCallback((e: React.DragEvent) => {
         }
     }
 
+    const updateQuestion = (i: number, field: keyof Question, value: any) => {
+        setQuestions(prev => prev.map((q, idx) => idx === i ? { ...q, [field]: value } : q))
+    }
+
+    const updateOption = (qi: number, oi: number, value: string) => {
+        setQuestions(prev => prev.map((q, idx) => {
+            if (idx !== qi) return q
+            const opts = [...q.options]
+            opts[oi] = value
+            return { ...q, options: opts }
+        }))
+    }
 
 }
