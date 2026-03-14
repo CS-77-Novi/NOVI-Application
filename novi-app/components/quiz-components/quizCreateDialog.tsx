@@ -59,4 +59,24 @@ export default function QuizCreateDialog({ open, onClose, onCreated }: Props) {
             setTitle(file.name.replace(/\.[^/.]+$/, ''))
         }
         reader.readAsText(file)
+    }else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+        const raw = e.target?.result as string
+        const text = raw
+            .replace(/[^\x20-\x7E\n]/g, ' ')
+            .replace(/ {3,}/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim()
+
+        const meaningful = text
+            .split('\n')
+            .filter(l => l.trim().length > 20)
+            .join('\n')
+
+        setDocText(meaningful || text)
+        setFileName(file.name)
+        setTitle(file.name.replace(/\.[^/.]+$/, ''))
     }
+    reader.readAsBinaryString(file)
+}
