@@ -49,3 +49,14 @@ export default function QuizCreateDialog({ open, onClose, onCreated }: Props) {
         reset()
         onClose()
     }
+
+    const readFile = (file: File) => {
+    if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            setDocText(e.target?.result as string)
+            setFileName(file.name)
+            setTitle(file.name.replace(/\.[^/.]+$/, ''))
+        }
+        reader.readAsText(file)
+    }
