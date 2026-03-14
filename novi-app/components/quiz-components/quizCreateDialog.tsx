@@ -93,4 +93,26 @@ const handleDrop = useCallback((e: React.DragEvent) => {
     if (file) readFile(file)
 
 }, [])
+
+    const generate = async () => {
+        if (!docText.trim()) return toast('Please upload a document first')
+        if (!title.trim()) return toast('Please enter a quiz title')
+        setStep('generating')
+        try {
+            const res = await fetch('/api/quiz/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: docText, numQuestions }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error)
+            setQuestions(data.questions)
+            setStep('preview')
+        } catch (err: any) {
+            toast(err.message || 'Generation failed', { className: '!bg-red-100 !rounded-2xl' })
+            setStep('upload')
+        }
+    }
+
+
 }
