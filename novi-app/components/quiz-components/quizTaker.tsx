@@ -157,6 +157,69 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Prop
                 ))}
             </div>
 
+            <div className="flex justify-between items-center pt-2">
+    <Button
+        variant="outline"
+        onClick={prev}
+        disabled={current === 0}
+        className="rounded-2xl px-6 font-semibold cursor-pointer"
+    >
+        ← Previous
+    </Button>
+
+    {current < total - 1 ? (
+        <Button
+            onClick={next}
+            className="rounded-2xl px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer gap-2"
+        >
+            Next <ChevronRight className="w-4 h-4" />
+        </Button>
+    ) : (
+        <Button
+            onClick={() => submit()}
+            disabled={submitting}
+            className="rounded-2xl px-8 py-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black text-base cursor-pointer gap-2"
+        >
+            <CheckCircle2 className="w-5 h-5" />
+            Submit Quiz
+        </Button>
+    )}
+</div>
+
+<div className="lg:w-56 shrink-0">
+    <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 sticky top-24">
+        <p className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wide">Questions</p>
+        <div className="grid grid-cols-5 lg:grid-cols-4 gap-2">
+            {questions.map((_, i) => (
+                <button
+                    key={i}
+                    onClick={() => goTo(i)}
+                    className={`w-9 h-9 rounded-xl text-sm font-bold transition-all cursor-pointer
+                      ${i === current
+                            ? 'bg-blue-500 text-white shadow-md'
+                            : answers[i] !== null
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                >
+                    {i + 1}
+                </button>
+            ))}
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-1.5">
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="w-3 h-3 rounded bg-green-100" /> Answered
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="w-3 h-3 rounded bg-blue-500" /> Current
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="w-3 h-3 rounded bg-gray-100" /> Not answered
+            </div>
+        </div>
+    </div>
+</div>
+
                 )
 
             }
