@@ -142,6 +142,33 @@ const handleDrop = useCallback((e: React.DragEvent) => {
         setQuestions(updated)
     }
 
-    
+        const publish = async () => {
+        if (questions.length === 0) return toast('Add at least one question')
+        setStep('publishing')
+        try {
+            const res = await fetch('/api/quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, time_limit: timeLimit, questions }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error)
+
+            // Publish immediately
+            await fetch(`/api/quiz/${data.quiz.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'published' }),
+            })
+
+            const base = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
+            setShareLink(`${base}/pop-quizzes/${data.quiz.id}`)
+            setStep('done')
+            onCreated()
+        } catch (err: any) {
+            toast(err.message || 'Publish failed', { className: '!bg-red-100 !rounded-2xl' })
+            setStep('preview')
+        }
+    }
 
 }
