@@ -75,4 +75,11 @@ const isLow = timeLeft < 30
 const progress = ((current) / total) * 100
 const q = questions[current]
 
+const chooseAnswer = (oi: number) => {
+    if (submitting) return
+    setSelected(oi)
+    const updated = [...answers]
+    updated[current] = oi
+    setAnswers(updated)
+}
 }
