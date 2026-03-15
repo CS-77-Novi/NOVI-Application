@@ -54,6 +54,7 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Prop
         }
     }, [submitting, answers, quizId, onDone, total])
 
+        //Countdown timer
     useEffect(() => {
     timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
@@ -67,5 +68,11 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Prop
     }, 1000)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
 }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0')
+const secs = (timeLeft % 60).toString().padStart(2, '0')
+const isLow = timeLeft < 30
+const progress = ((current) / total) * 100
+const q = questions[current]
 
 }
