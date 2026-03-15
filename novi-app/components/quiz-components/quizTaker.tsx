@@ -102,29 +102,61 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Prop
         setSelected(answers[i])
     }
     return(
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-3 flex items-center justify-between shadow-sm">
-    <div className="text-sm font-semibold text-gray-500">
-        Question <span className="text-blue-600 font-black">{current + 1}</span> of {total}
-    </div>
+        <div className="flex flex-col h-full min-h-screen bg-gradient-to-br from-slate-50 to-blue-50"></div>
+            <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-3 flex items-center justify-between shadow-sm">
+                <div className="text-sm font-semibold text-gray-500">
+                    Question <span className="text-blue-600 font-black">{current + 1}</span> of {total}
+                </div>
 
-    <div className={`flex items-center gap-2 font-black text-2xl tabular-nums px-5 py-1.5 rounded-2xl transition-all
-      ${isLow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-700'}`}>
-        <Clock className="w-5 h-5" />
-        {mins}:{secs}
-    </div>
+                <div className={`flex items-center gap-2 font-black text-2xl tabular-nums px-5 py-1.5 rounded-2xl transition-all
+                ${isLow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-700'}`}>
+                    <Clock className="w-5 h-5" />
+                    {mins}:{secs}
+                </div>
 
-    <div className="text-sm font-semibold text-gray-400">
-        {answers.filter(a => a !== null).length} answered
-    </div>
-</div>
+                <div className="text-sm font-semibold text-gray-400">
+                    {answers.filter(a => a !== null).length} answered
+                </div>
+            </div>
 
-<div className="w-full h-1.5 bg-gray-100">
-    <div
-        className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300"
-        style={{ width: `${progress}%` }}
-    />
-</div>
+            <div className="w-full h-1.5 bg-gray-100">
+                <div
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                />
+            </div>
 
-    )
+            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+                <div className="flex items-start gap-4">
+                    <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0">
+                        Q{current + 1}
+                    </span>
+                    <p className="text-lg font-semibold text-gray-800 leading-relaxed">{q.question}</p>
+                </div>
+            </div>
 
-}
+            <div className="flex flex-col gap-3">
+                {q.options.map((opt, oi) => (
+                    <button
+                        key={oi}
+                        onClick={() => chooseAnswer(oi)}
+                        disabled={submitting}
+                        className={`w-full rounded-2xl px-6 py-4 text-left flex items-center gap-4 transition-all border-2 cursor-pointer
+                        ${selected === oi
+                                ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-100'
+                                : 'border-transparent bg-white hover:border-blue-200 hover:bg-blue-50/50 shadow-sm'}`}
+                    >
+                        <span className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0 transition-all
+                        ${selected === oi ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                            {OPTION_LABELS[oi]}
+                        </span>
+                        <span className={`font-medium text-base ${selected === oi ? 'text-blue-800' : 'text-gray-700'}`}>
+                            {opt}
+                        </span>
+                    </button>
+                ))}
+            </div>
+
+                )
+
+            }
