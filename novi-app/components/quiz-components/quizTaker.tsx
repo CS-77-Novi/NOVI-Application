@@ -56,49 +56,75 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Prop
 
         //Countdown timer
     useEffect(() => {
-    timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-            if (prev <= 1) {
-                clearInterval(timerRef.current!)
-                submit()
-                return 0
-            }
-            return prev - 1
-        })
-    }, 1000)
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-}, []) // eslint-disable-line react-hooks/exhaustive-deps
+        timerRef.current = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current!)
+                    submit()
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+        return () => { if (timerRef.current) clearInterval(timerRef.current) }
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0')
-const secs = (timeLeft % 60).toString().padStart(2, '0')
-const isLow = timeLeft < 30
-const progress = ((current) / total) * 100
-const q = questions[current]
+    const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0')
+    const secs = (timeLeft % 60).toString().padStart(2, '0')
+    const isLow = timeLeft < 30
+    const progress = ((current) / total) * 100
+    const q = questions[current]
 
-const chooseAnswer = (oi: number) => {
-    if (submitting) return
-    setSelected(oi)
-    const updated = [...answers]
-    updated[current] = oi
-    setAnswers(updated)
-}
-
-const next = () => {
-    if (current < total - 1) {
-        setCurrent(current + 1)
-        setSelected(answers[current + 1])
+    const chooseAnswer = (oi: number) => {
+        if (submitting) return
+        setSelected(oi)
+        const updated = [...answers]
+        updated[current] = oi
+        setAnswers(updated)
     }
-}
 
-const prev = () => {
-    if (current > 0) {
-        setCurrent(current - 1)
-        setSelected(answers[current - 1])
+    const next = () => {
+        if (current < total - 1) {
+            setCurrent(current + 1)
+            setSelected(answers[current + 1])
+        }
     }
-}
 
-const goTo = (i: number) => {
-    setCurrent(i)
-    setSelected(answers[i])
-}
+    const prev = () => {
+        if (current > 0) {
+            setCurrent(current - 1)
+            setSelected(answers[current - 1])
+        }
+    }
+
+    const goTo = (i: number) => {
+        setCurrent(i)
+        setSelected(answers[i])
+    }
+    return(
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-3 flex items-center justify-between shadow-sm">
+    <div className="text-sm font-semibold text-gray-500">
+        Question <span className="text-blue-600 font-black">{current + 1}</span> of {total}
+    </div>
+
+    <div className={`flex items-center gap-2 font-black text-2xl tabular-nums px-5 py-1.5 rounded-2xl transition-all
+      ${isLow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-700'}`}>
+        <Clock className="w-5 h-5" />
+        {mins}:{secs}
+    </div>
+
+    <div className="text-sm font-semibold text-gray-400">
+        {answers.filter(a => a !== null).length} answered
+    </div>
+</div>
+
+<div className="w-full h-1.5 bg-gray-100">
+    <div
+        className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300"
+        style={{ width: `${progress}%` }}
+    />
+</div>
+
+    )
+
 }
