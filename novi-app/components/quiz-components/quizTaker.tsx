@@ -22,5 +22,12 @@ interface Props {
 const OPTION_LABELS = ['A', 'B', 'C', 'D']
 
 export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Props) {
+    const total = questions.length
+    const [current, setCurrent] = useState(0)
+    const [answers, setAnswers] = useState<(number | null)[]>(Array(total).fill(null))
+    const [timeLeft, setTimeLeft] = useState(timeLimit * 60)
+    const [submitting, setSubmitting] = useState(false)
+    const [selected, setSelected] = useState<number | null>(null)
+    const timerRef = useRef<NodeJS.Timeout | null>(null)
 
 }
