@@ -127,4 +127,21 @@ const handleDrop = useCallback((e: React.DragEvent) => {
         }))
     }
 
+        const removeQuestion = (i: number) => setQuestions(prev => prev.filter((_, idx) => idx !== i))
+
+    const addQuestion = () => setQuestions(prev => [
+        ...prev,
+        { question: '', options: ['', '', '', ''], correct_answer: 0 },
+    ])
+
+    const moveQuestion = (i: number, dir: -1 | 1) => {
+        const j = i + dir
+        if (j < 0 || j >= questions.length) return
+        const updated = [...questions]
+            ;[updated[i], updated[j]] = [updated[j], updated[i]]
+        setQuestions(updated)
+    }
+
+    
+
 }
