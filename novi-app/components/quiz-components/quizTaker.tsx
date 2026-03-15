@@ -82,4 +82,23 @@ const chooseAnswer = (oi: number) => {
     updated[current] = oi
     setAnswers(updated)
 }
+
+const next = () => {
+    if (current < total - 1) {
+        setCurrent(current + 1)
+        setSelected(answers[current + 1])
+    }
+}
+
+const prev = () => {
+    if (current > 0) {
+        setCurrent(current - 1)
+        setSelected(answers[current - 1])
+    }
+}
+
+const goTo = (i: number) => {
+    setCurrent(i)
+    setSelected(answers[i])
+}
 }
