@@ -202,7 +202,6 @@ const MeetingRoom = () => {
         <CallStatsButton />
         <button onClick={() => {
           if (!showParticipants) {
-            setShowDashboard(false);
             setShowQuizPanel(false);
           }
           setShowParticipants((prev) => !prev);
@@ -216,7 +215,6 @@ const MeetingRoom = () => {
         <button
            onClick={() => {
             if (!showDashboard) {
-              setShowParticipants(false);
               setShowQuizPanel(false);
             }
             setShowDashboard((prev) => !prev);
