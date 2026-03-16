@@ -158,9 +158,8 @@ const MeetingRoom = () => {
             )
           )}
         </div>
-      </div>
-
-        {/* Quiz Panel Sidebar */}
+        
+        {/* Quiz Panel Sidebar - MOVED INSIDE MAIN CONTAINER */}
         <div
           className={cn("h-[calc(100vh-250px)] hidden ml-2 mr-0", {
             "show-block": showQuizPanel,
@@ -174,6 +173,7 @@ const MeetingRoom = () => {
             onClose={() => setShowQuizPanel(false)}
           />
         </div>
+      </div>
 
       {/* Call controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
@@ -200,10 +200,8 @@ const MeetingRoom = () => {
         </DropdownMenu>
 
         <CallStatsButton />
+        {/* Participants toggle - now independent */}
         <button onClick={() => {
-          if (!showParticipants) {
-            setShowQuizPanel(false);
-          }
           setShowParticipants((prev) => !prev);
         }}>
         <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
@@ -214,9 +212,6 @@ const MeetingRoom = () => {
         {/* Dashboard toggle — available to all participants */}
         <button
            onClick={() => {
-            if (!showDashboard) {
-              setShowQuizPanel(false);
-            }
             setShowDashboard((prev) => !prev);
           }}
           title="Dashboard"
@@ -242,12 +237,13 @@ const MeetingRoom = () => {
           </button>
         
         )}
-        {/* Quiz toggle */}
+        {/* Quiz toggle - stays exclusive (closes others when opened) */}
         <button
            onClick={() => {
             if (!showQuizPanel) {
               setShowParticipants(false);
               setShowDashboard(false);
+              setShowMiniGame(false);
             }
             setShowQuizPanel((prev) => !prev);
           }}
