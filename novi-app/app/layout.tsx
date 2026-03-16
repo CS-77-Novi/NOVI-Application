@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Let's talk",
+  title: "NOVI-E-learning",
   description: "A video conferencing app",
 };
 
