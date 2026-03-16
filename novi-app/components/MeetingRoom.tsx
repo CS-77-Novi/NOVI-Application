@@ -237,14 +237,12 @@ const MeetingRoom = () => {
           </button>
         
         )}
-        {/* Quiz toggle - stays exclusive (closes others when opened) */}
+        {/* Quiz toggle - refined: always closes all other tabs when clicked */}
         <button
            onClick={() => {
-            if (!showQuizPanel) {
-              setShowParticipants(false);
-              setShowDashboard(false);
-              setShowMiniGame(false);
-            }
+            setShowParticipants(false);
+            setShowDashboard(false);
+            setShowMiniGame(false);
             setShowQuizPanel((prev) => !prev);
           }}
           title="Pop Quiz"
