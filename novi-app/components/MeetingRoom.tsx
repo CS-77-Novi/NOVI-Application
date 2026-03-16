@@ -200,16 +200,27 @@ const MeetingRoom = () => {
         </DropdownMenu>
 
         <CallStatsButton />
-
-        <button onClick={() => setShowParticipants((prev) => !prev)}>
-          <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+        <button onClick={() => {
+          if (!showParticipants) {
+            setShowDashboard(false);
+            setShowQuizPanel(false);
+          }
+          setShowParticipants((prev) => !prev);
+        }}>
+        <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
           </div>
         </button>
 
         {/* Dashboard toggle — available to all participants */}
         <button
-          onClick={() => setShowDashboard((prev) => !prev)}
+           onClick={() => {
+            if (!showDashboard) {
+              setShowParticipants(false);
+              setShowQuizPanel(false);
+            }
+            setShowDashboard((prev) => !prev);
+          }}
           title="Dashboard"
         >
           <div
@@ -235,7 +246,13 @@ const MeetingRoom = () => {
         )}
         {/* Quiz toggle */}
         <button
-          onClick={() => setShowQuizPanel((prev) => !prev)}
+           onClick={() => {
+            if (!showQuizPanel) {
+              setShowParticipants(false);
+              setShowDashboard(false);
+            }
+            setShowQuizPanel((prev) => !prev);
+          }}
           title="Pop Quiz"
         >
           <div
