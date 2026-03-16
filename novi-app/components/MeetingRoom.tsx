@@ -122,9 +122,9 @@ const MeetingRoom = () => {
 
         {/* Participants sidebar */}
         <div
-          className={cn("h-[calc(100vh-250px)] hidden ml-2", {
-            "show-block": showParticipants,
-          })}
+          className={cn("h-[calc(100vh-250px)] ml-2", 
+            showParticipants ? "show-block" : "hidden"
+          )}
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
@@ -135,9 +135,9 @@ const MeetingRoom = () => {
 
         {/* Dashboard sidebar — host sees Group Dashboard, participants see individual Dashboard */}
         <div
-          className={cn("h-[calc(100vh-250px)] hidden ml-2 mr-0", {
-            "show-block": showDashboard,
-          })}
+          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+            showDashboard ? "show-block" : "hidden"
+          )}
         >
           {isMeetingOwner ? (
             <GroupDashboard
@@ -161,9 +161,9 @@ const MeetingRoom = () => {
         
         {/* Quiz Panel Sidebar - MOVED INSIDE MAIN CONTAINER */}
         <div
-          className={cn("h-[calc(100vh-250px)] hidden ml-2 mr-0", {
-            "show-block": showQuizPanel,
-          })}
+          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+            showQuizPanel ? "show-block" : "hidden"
+          )}
         >
           <MeetingQuizPanel
             isMeetingOwner={isMeetingOwner}
@@ -203,6 +203,7 @@ const MeetingRoom = () => {
         {/* Participants toggle - now independent */}
         <button onClick={() => {
           setShowParticipants((prev) => !prev);
+          if (!showParticipants) setShowQuizPanel(false);
         }}>
         <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
@@ -213,6 +214,7 @@ const MeetingRoom = () => {
         <button
            onClick={() => {
             setShowDashboard((prev) => !prev);
+            if (!showDashboard) setShowQuizPanel(false);
           }}
           title="Dashboard"
         >
@@ -230,7 +232,10 @@ const MeetingRoom = () => {
 
         {/* Mini Game toggle button */}
         {!isMeetingOwner && (
-          <button onClick={() => setShowMiniGame((prev) => !prev)}>
+          <button onClick={() => {
+            setShowMiniGame((prev) => !prev);
+            if (!showMiniGame) setShowQuizPanel(false);
+          }}>
             <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <Gamepad2 size={20} className="text-white" />
             </div>
