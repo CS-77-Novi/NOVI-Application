@@ -25,11 +25,12 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
-import { LayoutList, Users } from "lucide-react";
+import { LayoutList, Users,Gamepad2 } from "lucide-react";
 import EndCallButton from "./EndCallButton";
 import useDistractionDetection from "@/hooks/useDistractionDetection";
 import GroupDashboard from "./grp-components/grp-Dashboard";
 import Dashboard from "./ind-components/Ind-Dashboard";
+import WordJumble from "./WordJumble";
 import MeetingQuizPanel from "./quiz-components/MeetingQuizPanel";
 import { BookOpen } from "lucide-react";
 
@@ -42,7 +43,9 @@ const MeetingRoom = () => {
   const [showParticipants, setShowParticipants] = useState(false);
   // State to toggle the visibility of the distraction dashboard sidebar
   const [showDashboard, setShowDashboard] = useState(false);
-  // State to toggle the visibility of the quiz panel
+    // State to toggle mini game panel
+    const [showMiniGame, setShowMiniGame] = useState(false);
+    // State to toggle the visibility of the quiz panel
   const [showQuizPanel, setShowQuizPanel] = useState(false);
 
   // Next.js router instance for programmatic navigation
@@ -73,8 +76,8 @@ const MeetingRoom = () => {
   // Check if the current local participant is the original creator of the call
   const isMeetingOwner =
     (localParticipant &&
-      call.state.createdBy &&
-      localParticipant.userId === call.state.createdBy.id) ?? false;
+    call.state.createdBy &&
+    localParticipant.userId === call.state.createdBy.id) ?? false;
 
   // Run distraction detection on raw camera stream and push metrics to Supabase
   // Pass the raw video stream, meeting info, and user details to the detection hook
@@ -125,6 +128,10 @@ const MeetingRoom = () => {
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
+                      {/* Mini Game panel */}
+                {!isMeetingOwner && showMiniGame && (
+                    <WordJumble onClose={() => setShowMiniGame(false)} />
+                )}
 
         {/* Dashboard sidebar — host sees Group Dashboard, participants see individual Dashboard */}
         <div
@@ -151,6 +158,7 @@ const MeetingRoom = () => {
             )
           )}
         </div>
+      </div>
 
         {/* Quiz Panel Sidebar */}
         <div
@@ -166,7 +174,6 @@ const MeetingRoom = () => {
             onClose={() => setShowQuizPanel(false)}
           />
         </div>
-      </div>
 
       {/* Call controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
@@ -194,12 +201,7 @@ const MeetingRoom = () => {
 
         <CallStatsButton />
 
-        <button onClick={() => {
-          if (!showParticipants) {
-            setShowQuizPanel(false);
-          }
-          setShowParticipants((prev) => !prev);
-        }}>
+        <button onClick={() => setShowParticipants((prev) => !prev)}>
           <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
           </div>
@@ -207,12 +209,7 @@ const MeetingRoom = () => {
 
         {/* Dashboard toggle — available to all participants */}
         <button
-          onClick={() => {
-            if (!showDashboard) {
-              setShowQuizPanel(false);
-            }
-            setShowDashboard((prev) => !prev);
-          }}
+          onClick={() => setShowDashboard((prev) => !prev)}
           title="Dashboard"
         >
           <div
@@ -227,15 +224,18 @@ const MeetingRoom = () => {
           </div>
         </button>
 
+        {/* Mini Game toggle button */}
+        {!isMeetingOwner && (
+          <button onClick={() => setShowMiniGame((prev) => !prev)}>
+            <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+              <Gamepad2 size={20} className="text-white" />
+            </div>
+          </button>
+        
+        )}
         {/* Quiz toggle */}
         <button
-          onClick={() => {
-            if (!showQuizPanel) {
-              setShowParticipants(false);
-              setShowDashboard(false);
-            }
-            setShowQuizPanel((prev) => !prev);
-          }}
+          onClick={() => setShowQuizPanel((prev) => !prev)}
           title="Pop Quiz"
         >
           <div
@@ -252,6 +252,7 @@ const MeetingRoom = () => {
 
         <EndCallButton />
       </div>
+      
     </section>
   );
 };
