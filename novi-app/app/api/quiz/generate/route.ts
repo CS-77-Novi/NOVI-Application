@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'OpenAI API key is not configured.' },
+        { error: ' API key is not configured.' },
         { status: 500 }
       )
     }
