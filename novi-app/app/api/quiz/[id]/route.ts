@@ -1,52 +1,60 @@
-//This file is the quiz management API route for authenticated hosts
+// This file provides specific quiz management (GET, PATCH, DELETE) for authenticated hosts and participants.
 import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { supabase } from '@/lib/supabase'
 
-// GET /api/quiz — list all quizzes for the logged-in host
-export async function GET() {
+// GET /api/quiz/[id] — fetch a specific quiz and its questions
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const user = await currentUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data, error } = await supabase
-    .from('quizzes')
-    .select('*, quiz_questions(count)')
-    .eq('host_id', user.id)
-    .order('created_at', { ascending: false })
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ quizzes: data })
-}
-
-// POST /api/quiz — create a new quiz with its questions
-export async function POST(req: NextRequest) {
-  const user = await currentUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const { title, time_limit, questions } = await req.json()
-
-  // 1. Insert quiz
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
-    .insert({ host_id: user.id, title, time_limit, status: 'draft' })
-    .select()
+    .select('*, quiz_questions(*)')
+    .eq('id', id)
     .single()
 
-  if (quizError) return NextResponse.json({ error: quizError.message }, { status: 500 })
+  if (quizError) return NextResponse.json({ error: quizError.message }, { status: 404 })
 
-  // 2. Insert questions
-  if (questions && questions.length > 0) {
-    const rows = questions.map((q: any, i: number) => ({
-      quiz_id: quiz.id,
-      question: q.question,
-      options: q.options,
-      correct_answer: q.correct_answer,
-      position: i,
-    }))
+  // MeetingQuizPanel expects { quiz, questions } 
+  // but supabase join returns quiz with quiz_questions array
+  return NextResponse.json({ 
+    quiz, 
+    questions: quiz.quiz_questions 
+  })
+}
 
-    const { error: qError } = await supabase.from('quiz_questions').insert(rows)
-    if (qError) return NextResponse.json({ error: qError.message }, { status: 500 })
-  }
+// PATCH /api/quiz/[id] — update quiz details (e.g., status)
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const user = await currentUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  return NextResponse.json({ quiz })
+  const body = await req.json()
+  const { data, error } = await supabase
+    .from('quizzes')
+    .update(body)
+    .eq('id', id)
+    .eq('host_id', user.id) // Ensure only owner can update
+    .select()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ quiz: data[0] })
+}
+
+// DELETE /api/quiz/[id] — delete a quiz
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const user = await currentUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { error } = await supabase
+    .from('quizzes')
+    .delete()
+    .eq('id', id)
+    .eq('host_id', user.id)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ success: true })
 }
