@@ -119,7 +119,7 @@ const MainMenu = () => {
               />
           </DialogTrigger>
               
-          <DialogContent className=" bg-gray-200 px-16 py-10 text-gray-900 rounded-3xl" >
+          <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
             <DialogHeader>
               <DialogTitle
                 className='text-3xl font-black leading-relaxed text-center '>
@@ -157,7 +157,7 @@ const MainMenu = () => {
             />
           </DialogTrigger>
 
-          <DialogContent className=" bg-gray-200 px-16 py-10 text-gray-900 rounded-3xl" >
+          <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
         
             <DialogHeader>
               <DialogTitle
