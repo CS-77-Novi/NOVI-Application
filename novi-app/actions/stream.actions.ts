@@ -23,7 +23,13 @@ export const tokenProvider = async () => {
     const client = new StreamClient(streamApiKey, streamSecretKey); // Creates a Stream client using the API key and secret (server-side only)
     const userId: string = user.id; // Extracts the Clerk user ID and explicitly types it as a string
 
-    const token = client.generateUserToken({ user_id: userId });
+    const issuedAt = Math.floor(Date.now() / 1000) - 60;
+
+    const token = client.generateUserToken({ 
+        user_id: userId,
+        validity_in_seconds: 3600, // Optional: set validity
+        iat: issuedAt
+    });
     console.log(`Token generated for user: ${userId}`);
     return token;
     // Returns the generated token as a string
