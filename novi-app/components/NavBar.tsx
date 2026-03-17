@@ -1,15 +1,25 @@
 'use client';
-import { SignedIn,  UserButton } from '@clerk/nextjs'
+import { SignedIn, UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from "next/navigation";
 import { navLinks } from '@/constants';
-import { neobrutalism } from '@clerk/themes'
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 
 const NavBar = () => {
-  const pathname = usePathname();
+    const pathName = usePathname();
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
 
     return (
         <>
@@ -28,7 +38,7 @@ const NavBar = () => {
               <section className="sticky top-0 flex justify-between text-black ">
                 <div className="flex flex-1 max-sm:gap-0 sm:gap-6">
                   {navLinks.map((item) => {
-                    const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`);
+                    const isActive = pathName === item.route || pathName.startsWith(`${item.route}/`);
                     
                     return (
                       <Link
