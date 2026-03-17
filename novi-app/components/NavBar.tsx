@@ -36,7 +36,7 @@ const NavBar = () => {
                         key={item.label}
                         className={
                           cn('flex gap-4 items-center p-3 rounded-xl justify-start hover:scale-105 transition-all duration-300 hover:bg-white/10',
-                            isActive && 'bg-blue-600/10 text-blue-600 border border-blue-600/20'
+                            isActive && 'bg-[#da32f8]/10 text-[#da32f8] border border-[#da32f8]/20'
                           )
                         }
                       >
