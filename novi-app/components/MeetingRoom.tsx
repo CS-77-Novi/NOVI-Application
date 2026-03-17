@@ -11,7 +11,7 @@ import {
   useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
@@ -89,6 +89,19 @@ const MeetingRoom = () => {
     isCameraOn: !isCameraOff,                            // Only process frames when camera is active
   });
 
+  // Calculate focus percentage and show notifications if host
+  const focusPercentage = totalCount > 0 ? Math.round((focusedCount / totalCount) * 100) : 100;
+
+  useEffect(() => {
+    if (isMeetingOwner && focusPercentage < 70 && totalCount > 1) {
+      toast("High Distraction Alert!", {
+        description: `Only ${focusPercentage}% of students are focused.`,
+        duration: 5000,
+        className: "!bg-red-50 !border-red-200 !rounded-2xl !text-red-600 font-bold",
+      });
+    }
+  }, [focusPercentage, isMeetingOwner, totalCount]);
+
   if (!user) return null;
   if (callingState !== CallingState.JOINED) return <Loading />;
 
@@ -119,6 +132,27 @@ const MeetingRoom = () => {
             <SpeakerLayout participantsBarPosition="right" />
           )}
         </div>
+
+        {/* Live Focus Tracking Overlay (Host Only) */}
+        {isMeetingOwner && (
+          <div className="absolute top-5 right-5 z-40 animate-fade-in">
+            <div className="glass-morphism px-4 py-2 rounded-2xl flex items-center gap-3 border-[#da32f8]/30">
+              <div className="relative size-10">
+                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-white/10" strokeWidth="3"></circle>
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-[#da32f8] transition-all duration-1000" strokeWidth="3" strokeDasharray={`${focusPercentage}, 100`} strokeLinecap="round"></circle>
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-[10px] font-bold">{focusPercentage}%</span>
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#da32f8]">Live Focus</span>
+                <span className="text-xs text-white/70">{focusedCount} / {totalCount} Focused</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Participants sidebar */}
         <div
