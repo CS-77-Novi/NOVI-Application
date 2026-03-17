@@ -31,11 +31,11 @@ let landmarker;
 let lastYaw = 0;
 let lastPitch = 0;
 
-// Tracks the timestamp of the last successful face detection
-let lastFaceTime = 0;
-
 // Indicates whether an initial pose has been established
 let hasPose = false;
+
+// Tracks the last processed timestamp to ensure strict increase for Mediapipe
+let lastProcessedTimestamp = -1;
 
 /* ----------------------------------------
    Helpers
@@ -93,6 +93,52 @@ export async function initHeadPosture() {
   });
 }
 
+// Processes facial landmarks to determine posture and distraction
+export function calculatePosture(faceLandmarks, w, h, now) {
+  let yaw, pitch;
+  let faceDetected = false;
+
+  if (faceLandmarks) {
+    // Calculate raw yaw and pitch
+    const raw = calculateYawPitch(faceLandmarks, w, h);
+
+    // Initialize smoothing if this is the first detection
+    if (!hasPose) {
+      yaw = raw.yaw;
+      pitch = raw.pitch;
+      hasPose = true;
+    } else {
+      // Apply EMA smoothing to reduce jitter
+      yaw = SMOOTHING_ALPHA * lastYaw + (1 - SMOOTHING_ALPHA) * raw.yaw;
+      pitch = SMOOTHING_ALPHA * lastPitch + (1 - SMOOTHING_ALPHA) * raw.pitch;
+    }
+
+    // Update state tracking variables
+    lastYaw = yaw;
+    lastPitch = pitch;
+    lastFaceTime = now;
+    faceDetected = true;
+  }
+  // Handle short face loss tracking using the grace period
+  else if (hasPose && now - lastFaceTime <= FACE_LOST_GRACE_MS) {
+    // Re-use the last known positions during the grace period
+    yaw = lastYaw;
+    pitch = lastPitch;
+    faceDetected = true;
+  }
+
+  if (!faceDetected) {
+    return { status: "NO FACE" };
+  }
+
+  const distracted = isLookingAway(yaw, pitch);
+  return {
+    status: distracted ? "DISTRACTED" : "FOCUSED",
+    yaw,
+    pitch
+  };
+}
+
 // Processes a video frame to update the head posture and determine distraction status
 export function updateHeadPosture(video, w, h, now) {
   // Return "NO FACE" if the landmarker hasn't finished initializing
@@ -100,59 +146,27 @@ export function updateHeadPosture(video, w, h, now) {
     return { status: "NO FACE" };
   }
 
+  // Mediapipe VIDEO mode requires strictly increasing timestamps
+  if (now <= lastProcessedTimestamp) {
+    // If timestamp hasn't advanced, return last known state or FOCUSED
+    return { status: lastYaw === 0 && lastPitch === 0 ? "FOCUSED" : (isLookingAway(lastYaw, lastPitch) ? "DISTRACTED" : "FOCUSED"), yaw: lastYaw, pitch: lastPitch };
+  }
+  lastProcessedTimestamp = now;
+
   try {
     // Run detection on the current video frame
     const result = landmarker.detectForVideo(video, now);
+    const landmarks = result.faceLandmarks?.[0] || null;
 
-    let yaw, pitch;
-    let faceDetected = false;
-
-    // Process the first detected face if available
-    if (result.faceLandmarks?.length) {
-      // Calculate raw yaw and pitch
-      const raw = calculateYawPitch(result.faceLandmarks[0], w, h);
-
-      // Initialize smoothing if this is the first detection
-      if (!hasPose) {
-        yaw = raw.yaw;
-        pitch = raw.pitch;
-        hasPose = true;
-      } else {
-        // Apply EMA smoothing to reduce jitter
-        yaw = SMOOTHING_ALPHA * lastYaw + (1 - SMOOTHING_ALPHA) * raw.yaw;
-        pitch = SMOOTHING_ALPHA * lastPitch + (1 - SMOOTHING_ALPHA) * raw.pitch;
-      }
-
-      // Update state tracking variables
-      lastYaw = yaw;
-      lastPitch = pitch;
-      lastFaceTime = now;
-      faceDetected = true;
-    }
-    // Handle short face loss tracking using the grace period
-    else if (hasPose && now - lastFaceTime <= FACE_LOST_GRACE_MS) {
-      // Re-use the last known positions during the grace period
-      yaw = lastYaw;
-      pitch = lastPitch;
-      faceDetected = true;
-    }
-
-    // Determine if we still lack a valid face tracking
-    if (!faceDetected) {
-      return { status: "NO FACE" };
-    }
-
-    // Verify if the current posture translates to looking away
-    const distracted = isLookingAway(yaw, pitch);
-
-    // Return the updated status and current angles
+    const posture = calculatePosture(landmarks, w, h, now);
+    
     return {
-      status: distracted ? "DISTRACTED" : "FOCUSED",
-      yaw,
-      pitch
+      ...posture,
+      landmarks // Return landmarks so they can be reused for gaze detection
     };
   } catch (err) {
     // Silently handle video not ready errors to prevent crashes
+    console.error("[headPosture] detection error:", err);
     return { status: "NO FACE" };
   }
-}
+}
