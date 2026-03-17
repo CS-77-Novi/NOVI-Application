@@ -83,7 +83,7 @@ export default function Dashboard({ type = 'teacher' }: DashboardProps) {
     async function loadData() {
       try {
         setLoading(true);
-        const res = await fetch('/api/meeting/123/study-session', {
+        const res = await fetch('/api/meeting/123/group-session', {
           headers: { 'Accept': 'application/json' }
         }); 
         
@@ -217,10 +217,7 @@ export default function Dashboard({ type = 'teacher' }: DashboardProps) {
                   : 'Processing Session...'}
               </h1>
             </div>
-            <div className="bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Database Synced</span>
-            </div>
+            
           </header>
           
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
