@@ -24,15 +24,7 @@ const MainMenu = () => {
     const router = useRouter(); // Router instance for navigation
     const [values, setValues] = useState(initialValues); // State holding meeting form values
     const [meetingState, setMeetingState] = useState< 'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
-    const [aiStatus, setAiStatus] = useState<'loading' | 'ready' | 'error'>('loading');
     const client = useStreamVideoClient();  // Stream Video client instance
-
-    useEffect(() => {
-      fetch('/api/config/check-keys')
-        .then(res => res.json())
-        .then(data => setAiStatus(data.gemini ? 'ready' : 'error'))
-        .catch(() => setAiStatus('error'));
-    }, []);
 
     // Function to create a new meeting
     const createMeeting = async() => {
@@ -269,10 +261,8 @@ const MainMenu = () => {
       <MenuItemCard
           img="/assets/Pop-Quizzes.svg"
           title="Pop-Quizzes"
-          subtitle="AI-Powered Generation"
-          status={aiStatus}
-          bgColor={aiStatus === 'error' ? 'bg-slate-700' : 'bg-indigo-600'}
-          hoverColor= {aiStatus === 'error' ? 'hover:bg-slate-800' : 'hover:bg-indigo-800'}
+          bgColor="bg-blue-600"
+          hoverColor= 'hover:bg-blue-800'
           handleClick={() => router.push('/pop-quizzes')}
       />
     </section>
