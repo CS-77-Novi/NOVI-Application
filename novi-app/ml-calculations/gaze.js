@@ -36,8 +36,30 @@ function irisCenter(lm, ids, w, h) {
 }
 
 /* ------------------------------
-   Public API
+   Init MediaPipe
 ------------------------------ */
+
+// Initializes the Mediapipe face landmarker instance for tracking gaze
+export async function initGaze() {
+  // Prevent duplicate initialization if landmarker already exists
+  if (landmarker) return landmarker;
+
+  // Load necessary WASM binaries for vision models
+  const fileset = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm"
+  );
+
+  // Initialize the FaceLandmarker with the model asset and video running mode
+  landmarker = await FaceLandmarker.createFromOptions(fileset, {
+    baseOptions: {
+      modelAssetPath: "/assets/ml-models/face_landmarker.task"
+    },
+    runningMode: "VIDEO",
+    numFaces: 1
+  });
+
+  return landmarker;
+}
 
 /* ------------------------------
    Public API
