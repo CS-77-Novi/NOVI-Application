@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import MeetingCard from "./MeetingCard";
 
 // Define CallList component with a prop 'type' that determines the type of calls to display
-const CallList = ({ type, searchQuery = '' }: { type: 'ended' | 'upcoming' | 'recordings', searchQuery?: string }) => {
+const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
     const router = useRouter(); // Initialize router for navigation
     const { endedCalls, upcomingCalls, callRecordings, isLoading } = useGetCalls() // Destructure values from custom hook
     const [recordings, setRecordings] = useState<CallRecording[]>([]); // State to store recordings
@@ -54,18 +54,11 @@ const CallList = ({ type, searchQuery = '' }: { type: 'ended' | 'upcoming' | 're
 
     const calls = getCalls(); // Get relevant calls based on type
 
-    const filteredCalls = calls?.filter((meeting: any) => {
-        const title = (meeting as Call).state?.custom?.description || 
-                      (meeting as CallRecording).filename || 
-                      'No Description';
-        return title.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-
     // Render MeetingCards if calls exist
-    if (filteredCalls && filteredCalls.length > 0) return (
+    if (calls && calls.length > 0) return (
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-3"> {/* Grid layout for calls */}
           {
-            filteredCalls.map((meeting: Call | CallRecording) => { // Map over calls
+            calls.map((meeting: Call | CallRecording) => { // Map over calls
               return (
                 <MeetingCard
                   call={meeting as Call} // Cast meeting as Call

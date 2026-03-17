@@ -1,31 +1,21 @@
 'use client';
-import { SignedIn, UserButton } from '@clerk/nextjs'
+import { SignedIn,  UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from 'next/navigation';
 import { navLinks } from '@/constants';
-import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
-import { Sun, Moon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { neobrutalism } from '@clerk/themes'
+import { cn } from '@/lib/utils';
 
 
 const NavBar = () => {
-    const pathName = usePathname();
-    const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
+  const pathname = usePathname();
 
     return (
         <>
-          <nav className="flex justify-between items-center fixed z-50 w-full h-24 glass-morphism px-10 gap-4 shadow-lg border-b border-white/10">
+          <nav className="flex justify-between items-center fixed z-50 w-full h-28 bg-gray-200 px-10 gap-4 shadow-2xl">
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-1 hover:scale-105 transition-transform duration-300">
+              <Link href="/" className="flex items-center gap-1 hover:scale-150 duration-500 ">
                 <Image
                   src="/assets/Novi_logo-NoBackground.png"
                   width={60}
@@ -38,15 +28,15 @@ const NavBar = () => {
               <section className="sticky top-0 flex justify-between text-black ">
                 <div className="flex flex-1 max-sm:gap-0 sm:gap-6">
                   {navLinks.map((item) => {
-                    const isActive = pathName === item.route || pathName.startsWith(`${item.route}/`);
+                    const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`);
                     
                     return (
                       <Link
                         href={item.route}
                         key={item.label}
                         className={
-                          cn('flex gap-4 items-center p-3 rounded-xl justify-start hover:scale-105 transition-all duration-300 hover:bg-white/10',
-                            isActive && 'bg-[#da32f8]/10 text-[#da32f8] border border-[#da32f8]/20'
+                          cn('flex gap-4 items-center p-4 rounded-lg justify-start hover:scale-150 duration-300 ',
+                            isActive && 'bg-blue-100 rounded-3xl'
                           )
                         }
                       >
@@ -71,7 +61,7 @@ const NavBar = () => {
               </section>
 
               {/* User button */}
-              <div className='hover:scale-105 transition-transform duration-300'>
+              <div className='hover:scale-150 duration-500 '>
                 <SignedIn>
                     {/* Mount the UserButton component */}
                     <UserButton

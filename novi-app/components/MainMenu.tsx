@@ -10,9 +10,8 @@ import { Input } from "./ui/input"
 import DatePicker from "react-datepicker"
 import { useUser } from "@clerk/nextjs"
 import Loading from "./Loading"
-import { useStreamVideoClient, Call } from "@stream-io/video-react-sdk"
+import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
-import { Play } from "lucide-react"
 
 const initialValues = {
     dateTime: new Date(), // Default meeting date/time = now
@@ -26,28 +25,6 @@ const MainMenu = () => {
     const [values, setValues] = useState(initialValues); // State holding meeting form values
     const [meetingState, setMeetingState] = useState< 'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
     const client = useStreamVideoClient();  // Stream Video client instance
-    const [lastMeetingId, setLastMeetingId] = useState<string | null>(null);
-
-    // Fetch last meeting id
-    useEffect(() => {
-        const fetchLastMeeting = async () => {
-            if (!client || !user) return;
-            const { calls } = await client.queryCalls({
-                filter_conditions: {
-                    $or: [
-                        { created_by_user_id: user.id },
-                        { members: { $in: [user.id] } },
-                    ],
-                },
-                sort: [{ field: 'starts_at', direction: -1 }],
-                limit: 1,
-            });
-            if (calls.length > 0) {
-                setLastMeetingId(calls[0].id);
-            }
-        };
-        fetchLastMeeting();
-    }, [client, user]);
 
     // Function to create a new meeting
     const createMeeting = async() => {
@@ -131,19 +108,7 @@ const MainMenu = () => {
     if (!client || !user) return <Loading />;
 
     return (
-      <section className="flex flex-col gap-6">
-        {lastMeetingId && (
-            <div className="w-full animate-fade-in">
-                <Button 
-                    onClick={() => router.push(`/meeting/${lastMeetingId}`)}
-                    className="w-full py-8 bg-gradient-to-r from-[#da32f8] to-[#9d17bd] rounded-3xl text-white font-black text-xl hover:scale-101 transition-all shadow-xl gap-3"
-                >
-                    <Play className="fill-white" />
-                    Join Last Meeting
-                </Button>
-            </div>
-        )}
-      <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
+      <section className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
         <Dialog >
           <DialogTrigger >
             <MenuItemCard
@@ -172,7 +137,7 @@ const MainMenu = () => {
               
                 <Button 
                   className='mt-5 font-extrabold text-lg text-white rounded-xl 
-                  bg-[#da32f8] py-5 px-10 hover:bg-[#9d17bd] hover:scale-110 
+                  bg-blue-700 py-5 px-10 hover:bg-blue-900 hover:scale-110 
                   transition ease-in-out delay-75 duration-700 hover:-translate-y-1 cursor-pointer'
                   onClick={() => setMeetingState('Instant')}>
                   Create Meeting
@@ -209,7 +174,7 @@ const MainMenu = () => {
                 
                 <Button 
                   className='mt-5 font-extrabold text-lg text-white rounded-xl 
-                  bg-[#da32f8] py-5 px-10 hover:bg-[#9d17bd] hover:scale-110 
+                  bg-blue-700 py-5 px-10 hover:bg-blue-900 hover:scale-110 
                   transition ease-in-out delay-75 duration-700 hover:-translate-y-1 cursor-pointer'
                   onClick={() => router.push(values.link)}>
                   Join Meeting
@@ -300,7 +265,6 @@ const MainMenu = () => {
           hoverColor= 'hover:bg-blue-800'
           handleClick={() => router.push('/pop-quizzes')}
       />
-      </div>
     </section>
   )
 }
