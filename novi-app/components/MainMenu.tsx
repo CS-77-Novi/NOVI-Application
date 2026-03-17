@@ -193,7 +193,7 @@ const MainMenu = () => {
               hoverColor= 'hover:bg-blue-800'/>
           </DialogTrigger>
 
-          <DialogContent className=" bg-gray-200 px-16 py-10 text-gray-900 !rounded-3xl" >
+          <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
         
             <DialogHeader>
               <DialogTitle
