@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { toast } from 'sonner'
-import { X, Plus, Trash2, FileText, Loader2, CheckCircle2, ChevronUp, ChevronDown } from 'lucide-react'
+import { X, Plus, Trash2, FileText, Loader2, CheckCircle2, ChevronUp, ChevronDown, Sparkles } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -97,8 +97,20 @@ const handleDrop = useCallback((e: React.DragEvent) => {
     const generate = async () => {
         if (!docText.trim()) return toast('Please upload a document first')
         if (!title.trim()) return toast('Please enter a quiz title')
+        
+        // Initial check for API key
         setStep('generating')
         try {
+            const checkRes = await fetch('/api/config/check-keys')
+            const checkData = await checkRes.json()
+            if (!checkData.gemini) {
+                setStep('upload')
+                return toast.error('AI Configuration Missing: Please set GEMINI_API_KEY in your .env.local file', {
+                    duration: 5000,
+                    className: '!bg-red-100 !rounded-2xl'
+                })
+            }
+
             const res = await fetch('/api/quiz/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -108,6 +120,7 @@ const handleDrop = useCallback((e: React.DragEvent) => {
             if (!res.ok) throw new Error(data.error)
             setQuestions(data.questions)
             setStep('preview')
+            toast.success('AI successfully generated questions!', { className: '!bg-green-100 !rounded-2xl' })
         } catch (err: any) {
             toast(err.message || 'Generation failed', { className: '!bg-red-100 !rounded-2xl' })
             setStep('upload')
@@ -277,9 +290,19 @@ const handleDrop = useCallback((e: React.DragEvent) => {
                     {/* STEP: Generating */}
                     {step === 'generating' && (
                         <div className="flex flex-col items-center justify-center py-16 gap-4">
-                            <Loader2 className="w-16 h-16 text-blue-500 animate-spin" />
-                            <p className="text-xl font-bold text-gray-700">AI is reading your document...</p>
-                            <p className="text-gray-500 text-sm">Generating {numQuestions} questions, this may take a moment.</p>
+                            <div className="relative">
+                                <Loader2 className="w-16 h-16 text-blue-500 animate-spin" />
+                                <Sparkles className="w-6 h-6 text-indigo-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                            </div>
+                            <p className="text-xl font-bold text-gray-700">AI is analyzing your lecture notes...</p>
+                            <p className="text-gray-500 text-sm max-w-xs text-center">
+                                We're extracting key concepts and crafting {numQuestions} interactive questions for your students.
+                            </p>
+                            <div className="flex gap-1 mt-2">
+                                <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce [animation-delay:-0.3s]" />
+                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]" />
+                                <div className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" />
+                            </div>
                         </div>
                     )}
 

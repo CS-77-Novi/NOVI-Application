@@ -43,13 +43,21 @@ const MeetingSetup =({
 
        //Enable/disable mic and camera based on toggle   
        useEffect(() => {
-           if (isMicCamToggled) {
-           call.camera.disable();
-           call.microphone.disable();
-           } else {
-            call.camera.enable();
-            call.microphone.enable();
-           }
+           const toggleDevices = async () => {
+               try {
+                   if (isMicCamToggled) {
+                       await call.camera.disable();
+                       await call.microphone.disable();
+                   } else {
+                       await call.camera.enable();
+                       await call.microphone.enable();
+                   }
+               } catch (err) {
+                   console.warn("[MeetingSetup] Camera/Mic access denied or failed:", err);
+               }
+           };
+           
+           toggleDevices();
        }, [isMicCamToggled, call.camera, call.microphone]);
 
        //If meeting hasn't started yet    

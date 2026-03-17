@@ -31,6 +31,8 @@ import useDistractionDetection from "@/hooks/useDistractionDetection";
 import GroupDashboard from "./grp-components/grp-Dashboard";
 import Dashboard from "./ind-components/Ind-Dashboard";
 import WordJumble from "./WordJumble";
+import MeetingQuizPanel from "./quiz-components/MeetingQuizPanel";
+import { BookOpen } from "lucide-react";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
@@ -43,7 +45,9 @@ const MeetingRoom = () => {
   const [showDashboard, setShowDashboard] = useState(false);
     // State to toggle mini game panel
     const [showMiniGame, setShowMiniGame] = useState(false);
-  
+    // State to toggle the visibility of the quiz panel
+  const [showQuizPanel, setShowQuizPanel] = useState(false);
+
   // Next.js router instance for programmatic navigation
   const router = useRouter();
   // Current URL pathname, used to generate meeting invite links
@@ -71,9 +75,9 @@ const MeetingRoom = () => {
   // Host detection — same pattern as EndCallButton.tsx
   // Check if the current local participant is the original creator of the call
   const isMeetingOwner =
-    localParticipant &&
+    (localParticipant &&
     call.state.createdBy &&
-    localParticipant.userId === call.state.createdBy.id;
+    localParticipant.userId === call.state.createdBy.id) ?? false;
 
   // Run distraction detection on raw camera stream and push metrics to Supabase
   // Pass the raw video stream, meeting info, and user details to the detection hook
@@ -118,9 +122,9 @@ const MeetingRoom = () => {
 
         {/* Participants sidebar */}
         <div
-          className={cn("h-[calc(100vh-250px)] hidden ml-2", {
-            "show-block": showParticipants,
-          })}
+          className={cn("h-[calc(100vh-250px)] ml-2", 
+            showParticipants ? "show-block" : "hidden"
+          )}
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
@@ -131,9 +135,9 @@ const MeetingRoom = () => {
 
         {/* Dashboard sidebar — host sees Group Dashboard, participants see individual Dashboard */}
         <div
-          className={cn("h-[calc(100vh-250px)] hidden ml-2 mr-0", {
-            "show-block": showDashboard,
-          })}
+          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+            showDashboard ? "show-block" : "hidden"
+          )}
         >
           {isMeetingOwner ? (
             <GroupDashboard
@@ -153,6 +157,21 @@ const MeetingRoom = () => {
               />
             )
           )}
+        </div>
+        
+        {/* Quiz Panel Sidebar - MOVED INSIDE MAIN CONTAINER */}
+        <div
+          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+            showQuizPanel ? "show-block" : "hidden"
+          )}
+        >
+          <MeetingQuizPanel
+            isMeetingOwner={isMeetingOwner}
+            call={call}
+            user={user}
+            isOpen={showQuizPanel}
+            onClose={() => setShowQuizPanel(false)}
+          />
         </div>
       </div>
 
@@ -181,16 +200,22 @@ const MeetingRoom = () => {
         </DropdownMenu>
 
         <CallStatsButton />
-
-        <button onClick={() => setShowParticipants((prev) => !prev)}>
-          <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+        {/* Participants toggle - now independent */}
+        <button onClick={() => {
+          setShowParticipants((prev) => !prev);
+          if (!showParticipants) setShowQuizPanel(false);
+        }}>
+        <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
           </div>
         </button>
 
         {/* Dashboard toggle — available to all participants */}
         <button
-          onClick={() => setShowDashboard((prev) => !prev)}
+           onClick={() => {
+            setShowDashboard((prev) => !prev);
+            if (!showDashboard) setShowQuizPanel(false);
+          }}
           title="Dashboard"
         >
           <div
@@ -207,12 +232,38 @@ const MeetingRoom = () => {
 
         {/* Mini Game toggle button */}
         {!isMeetingOwner && (
-          <button onClick={() => setShowMiniGame((prev) => !prev)}>
+          <button onClick={() => {
+            setShowMiniGame((prev) => !prev);
+            if (!showMiniGame) setShowQuizPanel(false);
+          }}>
             <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <Gamepad2 size={20} className="text-white" />
             </div>
           </button>
+        
         )}
+        
+        {/* Quiz toggle - refined: always closes all other tabs when clicked */}
+        <button
+           onClick={() => {
+            setShowParticipants(false);
+            setShowDashboard(false);
+            setShowMiniGame(false);
+            setShowQuizPanel((prev) => !prev);
+          }}
+          title="Pop Quiz"
+        >
+          <div
+            className={cn(
+              "cursor-pointer rounded-2xl px-4 py-2 transition-colors",
+              showQuizPanel
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-[#19232d] hover:bg-[#4c535b]"
+            )}
+          >
+            <BookOpen className="w-5 h-5 text-white" />
+          </div>
+        </button>
 
         <EndCallButton />
       </div>

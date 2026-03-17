@@ -23,7 +23,7 @@ const MenuItemCard = ({ bgColor, hoverColor ,img, title, handleClick}:
             
             <div className="">
                 <h1 className="text-xl text-white font-black">{title}</h1>
-                </div>
+            </div>
         </section>
     );
 
