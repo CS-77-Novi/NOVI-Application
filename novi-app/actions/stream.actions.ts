@@ -23,14 +23,21 @@ export const tokenProvider = async () => {
     const client = new StreamClient(streamApiKey, streamSecretKey); // Creates a Stream client using the API key and secret (server-side only)
     const userId: string = user.id; // Extracts the Clerk user ID and explicitly types it as a string
 
-    const issuedAt = Math.floor(Date.now() / 1000) - 60;
+    //token is valid for an hour
+    const validity = 60 * 60;
+    
+    // Set issued_at to 60 seconds in the past to handle clock skew
+    // This prevents "AuthErrorTokenUsedBeforeIssuedAt" errors
+    const iat = Math.floor(Date.now() / 1000) - 60;
+    
+    const token = client.generateUserToken(
+        { 
+          user_id: userId, // The Stream user ID (must match the client-side user ID)
+          validity_in_seconds: validity, // Sets how long the token will remain valid
+          iat: iat // Issued at time (adjusted for clock skew)
+        }
+    );
 
-    const token = client.generateUserToken({ 
-        user_id: userId,
-        validity_in_seconds: 3600, // Optional: set validity
-        iat: issuedAt
-    });
-    console.log(`Token generated for user: ${userId}`);
-    return token;
+    return token as string;
     // Returns the generated token as a string
 }
