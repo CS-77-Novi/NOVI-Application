@@ -26,11 +26,11 @@ const RecentActivity = () => {
                     <Icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                    <h4 className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">{title}</h4>
+                    <h4 className="font-semibold text-gray-800 group-hover:text-[#da32f8] transition-colors">{title}</h4>
                     <p className="text-xs text-gray-400">{subtitle}</p>
                 </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-all group-hover:translate-x-1" />
+            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#da32f8] transition-all group-hover:translate-x-1" />
         </Link>
     )
 
@@ -38,7 +38,7 @@ const RecentActivity = () => {
         <div className="glass-morphism p-8 rounded-[2.5rem] w-full max-w-md animate-fade-in backdrop-blur-2xl border-white/20 shadow-2xl">
             <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-black text-gray-900 tracking-tight">Recent Activity</h2>
-                <div className="px-3 py-1 bg-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-wider rounded-full">Live Feed</div>
+                <div className="px-3 py-1 bg-[#da32f8]/10 text-[#da32f8] text-[10px] font-bold uppercase tracking-wider rounded-full">Live Feed</div>
             </div>
 
             <div className="space-y-6">
@@ -58,7 +58,7 @@ const RecentActivity = () => {
                                     title={call.state?.custom?.description || 'Untitled Meeting'}
                                     subtitle={new Date(call.state?.startsAt).toLocaleDateString()}
                                     href={`/recordings`}
-                                    colorClass="bg-indigo-500"
+                                    colorClass="bg-[#da32f8]"
                                 />
                             ))
                         ) : (
@@ -102,7 +102,7 @@ const RecentActivity = () => {
                 </div>
             </div>
 
-            <button className="w-full mt-8 py-4 rounded-2xl bg-gray-900 text-white font-bold text-sm hover:bg-black transition-all hover:shadow-lg active:scale-[0.98]">
+            <button className="w-full mt-8 py-4 rounded-2xl bg-gray-900 text-white font-bold text-sm hover:bg-[#da32f8] transition-all hover:shadow-lg active:scale-[0.98]">
                 View All Activity
             </button>
         </div>
