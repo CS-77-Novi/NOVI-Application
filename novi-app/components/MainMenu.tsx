@@ -12,7 +12,6 @@ import { useUser } from "@clerk/nextjs"
 import Loading from "./Loading"
 import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
-import QuizCreateDialog from "./quiz-components/quizCreateDialog"
 
 const initialValues = {
     dateTime: new Date(), // Default meeting date/time = now
@@ -26,7 +25,6 @@ const MainMenu = () => {
     const [values, setValues] = useState(initialValues); // State holding meeting form values
     const [meetingState, setMeetingState] = useState< 'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
     const [aiStatus, setAiStatus] = useState<'loading' | 'ready' | 'error'>('loading');
-    const [quizCreateOpen, setQuizCreateOpen] = useState(false);
     const client = useStreamVideoClient();  // Stream Video client instance
 
     useEffect(() => {
@@ -275,16 +273,7 @@ const MainMenu = () => {
           status={aiStatus}
           bgColor={aiStatus === 'error' ? 'bg-slate-700' : 'bg-indigo-600'}
           hoverColor= {aiStatus === 'error' ? 'hover:bg-slate-800' : 'hover:bg-indigo-800'}
-          handleClick={() => setQuizCreateOpen(true)}
-      />
-
-      <QuizCreateDialog 
-          open={quizCreateOpen}
-          onClose={() => setQuizCreateOpen(false)}
-          onCreated={() => {
-              setQuizCreateOpen(false);
-              router.push('/pop-quizzes');
-          }}
+          handleClick={() => router.push('/pop-quizzes')}
       />
     </section>
   )
