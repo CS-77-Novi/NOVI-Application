@@ -13,9 +13,9 @@ const NavBar = () => {
 
     return (
         <>
-          <nav className="flex justify-between items-center fixed z-50 w-full h-28 bg-gray-200 px-10 gap-4 shadow-2xl">
+          <nav className="flex justify-between items-center fixed z-50 w-full h-24 glass-morphism px-10 gap-4 shadow-lg border-b border-white/10">
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-1 hover:scale-150 duration-500 ">
+              <Link href="/" className="flex items-center gap-1 hover:scale-105 transition-transform duration-300">
                 <Image
                   src="/assets/Novi_logo-NoBackground.png"
                   width={60}
@@ -35,8 +35,8 @@ const NavBar = () => {
                         href={item.route}
                         key={item.label}
                         className={
-                          cn('flex gap-4 items-center p-4 rounded-lg justify-start hover:scale-150 duration-300 ',
-                            isActive && 'bg-blue-100 rounded-3xl'
+                          cn('flex gap-4 items-center p-3 rounded-xl justify-start hover:scale-105 transition-all duration-300 hover:bg-white/10',
+                            isActive && 'bg-blue-600/10 text-blue-600 border border-blue-600/20'
                           )
                         }
                       >
@@ -61,7 +61,7 @@ const NavBar = () => {
               </section>
 
               {/* User button */}
-              <div className='hover:scale-150 duration-500 '>
+              <div className='hover:scale-105 transition-transform duration-300'>
                 <SignedIn>
                     {/* Mount the UserButton component */}
                     <UserButton
