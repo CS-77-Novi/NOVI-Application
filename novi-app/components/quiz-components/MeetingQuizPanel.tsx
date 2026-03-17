@@ -97,9 +97,9 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
     if (!isOpen) return null
 
     return (
-        <div className="flex flex-col h-full w-full max-w-md bg-white border-l border-gray-100 shadow-xl overflow-hidden relative">
+        <div className="flex flex-col h-full w-full max-w-md bg-white border border-gray-100 shadow-2xl overflow-hidden relative rounded-[2rem] m-2">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-[#da32f8] to-[#9d17bd]">
                 <div className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-white" />
                     <span className="text-white font-bold text-lg">Pop Quiz</span>
@@ -120,10 +120,10 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
                             </div>
                             <h3 className="text-2xl font-black text-gray-800 mb-2">Quiz Completed!</h3>
                             <p className="text-gray-500 mb-6">You scored</p>
-                            <div className="text-5xl font-black text-blue-600 mb-2">
+                            <div className="text-5xl font-black text-[#da32f8] mb-2">
                                 {score?.score} <span className="text-2xl text-gray-400">/ {score?.total}</span>
                             </div>
-                            <Button className="mt-8 rounded-2xl px-8" onClick={() => setActiveQuizId(null)} variant="outline">
+                            <Button className="mt-8 rounded-2xl px-8 border-[#da32f8] text-[#da32f8] hover:bg-[#da32f8]/10" onClick={() => setActiveQuizId(null)} variant="outline">
                                 View Dashboard
                             </Button>
                         </div>
@@ -140,7 +140,7 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
                     )
                 ) : loadingActive ? (
                     <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-                        <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+                        <Loader2 className="w-10 h-10 text-[#da32f8] animate-spin mb-4" />
                         <p className="text-gray-500 font-medium">Loading active quiz...</p>
                     </div>
                 ) : (
@@ -172,7 +172,7 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
                                                 </div>
                                                 <Button 
                                                     onClick={() => handleReleaseQuiz(quiz.id)}
-                                                    className="w-full rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 font-bold border-0 shadow-none gap-2">
+                                                    className="w-full rounded-xl bg-[#da32f8]/10 text-[#da32f8] hover:bg-[#da32f8]/20 hover:text-[#9d17bd] font-bold border-0 shadow-none gap-2">
                                                     <PlayCircle className="w-4 h-4" /> Release to participants
                                                 </Button>
                                             </div>
