@@ -128,26 +128,19 @@ const useDistractionDetection = ({
     }
     const el = videoElRef.current
 
-    if (videoStream && videoStream.getTracks().length > 0) {
-      try {
-        // Clone the stream so the external UI provider keeps its original reference undisturbed
-        const cloned = videoStream.clone()
-        el.srcObject = cloned
-        
-        // Start hidden playback silently
-        el.play().catch((err) => {
-          if (err.name !== 'AbortError') {
-            console.warn('[DistractionDetection] Video play failed:', err)
-          }
-        })
+    if (videoStream) {
+      // Clone the stream so the external UI provider (e.g. Stream.io) keeps 
+      // its own original reference undisturbed. 
+      const cloned = videoStream.clone()
+      el.srcObject = cloned
+      
+      // Start hidden playback silently
+      el.play().catch(() => {})
 
-        // Teardown the cloned stream on unmount or source change
-        return () => {
-          cloned.getTracks().forEach((t) => t.stop())
-          el.srcObject = null
-        }
-      } catch (err) {
-        console.warn('[DistractionDetection] Failed to clone or play video stream:', err)
+      // Teardown the cloned stream on unmount or stream source change
+      return () => {
+        cloned.getTracks().forEach((t) => t.stop())
+        el.srcObject = null
       }
     } else {
       // Clear out the element if no stream is currently provided
