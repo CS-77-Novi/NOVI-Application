@@ -1,5 +1,5 @@
 'use client'
-
+//The necessary imports related to the functioning in the main menu
 import { useRouter } from "next/navigation"
 import MenuItemCard from "./MenuItemCard"
 import { Button } from "./ui/button"
@@ -14,256 +14,256 @@ import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
 
 const initialValues = {
-    dateTime: new Date(), // Default meeting date/time = now
-    description: '', // Meeting description
-    link: '', // Meeting link for joining
-  };
+  dateTime: new Date(), // Default meeting date/time = now
+  description: '', // Meeting description
+  link: '', // Meeting link for joining
+};
 
 const MainMenu = () => {
-  const {user} = useUser() // Gets the currently logged-in user
-    const router = useRouter(); // Router instance for navigation
-    const [values, setValues] = useState(initialValues); // State holding meeting form values
-    const [meetingState, setMeetingState] = useState< 'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
-    const client = useStreamVideoClient();  // Stream Video client instance
+  const { user } = useUser() // Gets the currently logged-in user
+  const router = useRouter(); // Router instance for navigation
+  const [values, setValues] = useState(initialValues); // State holding meeting form values
+  const [meetingState, setMeetingState] = useState<'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
+  const client = useStreamVideoClient();  // Stream Video client instance
 
-    // Function to create a new meeting
-    const createMeeting = async() => {
-        if(!user) return router.push('/login')
-        if(!client) return router.push('/')
-    
-        try {
-            // Validate date/time input
-            if (!values.dateTime) {
-              toast('Please select a date and time',{
-              duration: 3000,
-              className: 'bg-gray-300 rounded-3xl py-8 px-5 justify-center'
-              });
-              return;
-            }
+  // Function to create a new meeting
+  const createMeeting = async () => {
+    if (!user) return router.push('/login')
+    if (!client) return router.push('/')
 
-            const id = crypto.randomUUID(); // Generate a unique meeting ID
-            const call = client.call('default', id); // Create a Stream call object
-            if (!call) throw new Error('Failed to create meeting');
+    try {
+      // Validate date/time input
+      if (!values.dateTime) {
+        toast('Please select a date and time', {
+          duration: 3000,
+          className: 'bg-gray-300 rounded-3xl py-8 px-5 justify-center'
+        });
+        return;
+      }
 
-            const startsAt =
-            values.dateTime.toISOString() || new Date(Date.now()).toISOString();  // Meeting start time (ISO format)
-            const description = values.description || 'No Description'; // Fallback description
-            
-            await call.getOrCreate({
-              // Create or fetch the call from Stream
-              data: {
-                starts_at: startsAt,
-                // Scheduled start time
-                  custom: {
-                      description,
-                      // Custom metadata for the call
-                  },
-              },
-            });
+      const id = crypto.randomUUID(); // Generate a unique meeting ID
+      const call = client.call('default', id); // Create a Stream call object
+      if (!call) throw new Error('Failed to create meeting');
 
-            await call.updateCallMembers({
-              // Add the current user to the call
-              update_members: [{ user_id: user.id }],
-            })
+      const startsAt =
+        values.dateTime.toISOString() || new Date(Date.now()).toISOString();  // Meeting start time (ISO format)
+      const description = values.description || 'No Description'; // Fallback description
 
-            if (meetingState === 'Instant') {
-              // Instant meeting flow
+      await call.getOrCreate({
+        // Create or fetch the call from Stream
+        data: {
+          starts_at: startsAt,
+          // Scheduled start time
+          custom: {
+            description,
+            // Custom metadata for the call
+          },
+        },
+      });
 
-                router.push(`/meeting/${call.id}`); // Navigate to meeting room
-                toast('Setting up your meeting',{
-                    duration: 3000,
-                    className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
-                });
-            }
-            
-            if (meetingState === 'Schedule') {
-              // Scheduled meeting flow
+      await call.updateCallMembers({
+        // Add the current user to the call
+        update_members: [{ user_id: user.id }],
+      })
 
-                router.push('/upcoming'); // Navigate to upcoming meetings page
-                toast(`Your meeting is scheduled at ${values.dateTime}`,{
-                    duration: 5000,
-                    className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
-                });
-            }
+      if (meetingState === 'Instant') {
+        // Instant meeting flow
 
-        } catch(error:any) {
-          // Error handling
+        router.push(`/meeting/${call.id}`); // Navigate to meeting room
+        toast('Setting up your meeting', {
+          duration: 3000,
+          className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
+        });
+      }
 
-            toast(`Failed to create Meeting ${error.message}`,{
-                duration: 3000,
-                className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
-            })
-        }
+      if (meetingState === 'Schedule') {
+        // Scheduled meeting flow
 
+        router.push('/upcoming'); // Navigate to upcoming meetings page
+        toast(`Your meeting is scheduled at ${values.dateTime}`, {
+          duration: 5000,
+          className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
+        });
+      }
+
+    } catch (error: any) {
+      // Error handling
+
+      toast(`Failed to create Meeting ${error.message}`, {
+        duration: 3000,
+        className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
+      })
     }
 
-    useEffect(() => {
-      // Runs whenever meetingState changes
+  }
 
-      if (meetingState) {
-        createMeeting(); // Automatically create meeting once state is set
-      }
-    }, [meetingState]);
+  useEffect(() => {
+    // Runs whenever meetingState changes
 
-    if (!client || !user) return <Loading />;
+    if (meetingState) {
+      createMeeting(); // Automatically create meeting once state is set
+    }
+  }, [meetingState]);
 
-    return (
-      <section className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-        <Dialog >
-          <DialogTrigger >
-            <MenuItemCard
-              img="/assets/new-meeting.svg"
-              title="New Meeting"
-              bgColor='bg-orange-500'
-              hoverColor= 'hover:bg-orange-800'
-              />
-          </DialogTrigger>
-              
-          <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
-            <DialogHeader>
-              <DialogTitle
-                className='text-3xl font-black leading-relaxed text-center '>
-                Start an Instant Meeting 🤝
-              </DialogTitle>
-            
-              <DialogDescription className='flex flex-col items-center '>
-                Add a meeting description
-                <Textarea
-                  className="inputs p-5"
-                  rows={4}
-                  onChange={(e) =>
+  if (!client || !user) return <Loading />;
+
+  return (
+    <section className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
+      <Dialog >
+        <DialogTrigger >
+          <MenuItemCard
+            img="/assets/new-meeting.svg"
+            title="New Meeting"
+            bgColor='bg-orange-500'
+            hoverColor='hover:bg-orange-800'
+          />
+        </DialogTrigger>
+
+        <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
+          <DialogHeader>
+            <DialogTitle
+              className='text-3xl font-black leading-relaxed text-center '>
+              Start an Instant Meeting 🤝
+            </DialogTitle>
+
+            <DialogDescription className='flex flex-col items-center '>
+              Add a meeting description
+              <Textarea
+                className="inputs p-5"
+                rows={4}
+                onChange={(e) =>
                   setValues({ ...values, description: e.target.value })}
-                />  
-              
-                <Button 
-                  className='mt-5 font-extrabold text-lg text-white rounded-xl 
+              />
+
+              <Button
+                className='mt-5 font-extrabold text-lg text-white rounded-xl 
                   bg-blue-700 py-5 px-10 hover:bg-blue-900 hover:scale-110 
                   transition ease-in-out delay-75 duration-700 hover:-translate-y-1 cursor-pointer'
-                  onClick={() => setMeetingState('Instant')}>
-                  Create Meeting
-                </Button>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+                onClick={() => setMeetingState('Instant')}>
+                Create Meeting
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
-        <Dialog >
-          <DialogTrigger>
-            <MenuItemCard
-              img="/assets/join-meeting.svg"
-              title="Join Meeting"
-              bgColor="bg-blue-600"
-              hoverColor= 'hover:bg-blue-800'
-            />
-          </DialogTrigger>
+      <Dialog >
+        <DialogTrigger>
+          <MenuItemCard
+            img="/assets/join-meeting.svg"
+            title="Join Meeting"
+            bgColor="bg-blue-600"
+            hoverColor='hover:bg-blue-800'
+          />
+        </DialogTrigger>
 
-          <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
-        
-            <DialogHeader>
-              <DialogTitle
-                className='text-3xl font-black leading-relaxed text-center mb-5 '>
-                Type the Meeting link here
-              </DialogTitle>
+        <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
 
-              <DialogDescription className='flex flex-col gap-3 items-center'>
-                <Input 
-                  type='text' 
-                  placeholder="Meeting Link" 
-                  onChange={(e) => setValues({ ...values, link: e.target.value })}
-                  className='inputs'/>
-                
-                <Button 
-                  className='mt-5 font-extrabold text-lg text-white rounded-xl 
+          <DialogHeader>
+            <DialogTitle
+              className='text-3xl font-black leading-relaxed text-center mb-5 '>
+              Type the Meeting link here
+            </DialogTitle>
+
+            <DialogDescription className='flex flex-col gap-3 items-center'>
+              <Input
+                type='text'
+                placeholder="Meeting Link"
+                onChange={(e) => setValues({ ...values, link: e.target.value })}
+                className='inputs' />
+
+              <Button
+                className='mt-5 font-extrabold text-lg text-white rounded-xl 
                   bg-blue-700 py-5 px-10 hover:bg-blue-900 hover:scale-110 
                   transition ease-in-out delay-75 duration-700 hover:-translate-y-1 cursor-pointer'
-                  onClick={() => router.push(values.link)}>
-                  Join Meeting
-                </Button>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+                onClick={() => router.push(values.link)}>
+                Join Meeting
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
-        <Dialog >
-          <DialogTrigger>
-            <MenuItemCard
-              img="/assets/calendar.svg"
-              title="Schedule"
-              bgColor="bg-blue-600"
-              hoverColor= 'hover:bg-blue-800'/>
-          </DialogTrigger>
+      <Dialog >
+        <DialogTrigger>
+          <MenuItemCard
+            img="/assets/calendar.svg"
+            title="Schedule"
+            bgColor="bg-blue-600"
+            hoverColor='hover:bg-blue-800' />
+        </DialogTrigger>
 
-          <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
-        
-            <DialogHeader>
-              <DialogTitle
-                className='text-3xl font-black leading-relaxed text-center mb-5 '>
-                Schedule Meeting
-              </DialogTitle>
+        <DialogContent className="glass-morphism border-white/20 px-16 py-10 text-gray-900 rounded-3xl backdrop-blur-xl" >
 
-              <DialogDescription className='flex flex-col gap-3'>
-                Add a meeting description
+          <DialogHeader>
+            <DialogTitle
+              className='text-3xl font-black leading-relaxed text-center mb-5 '>
+              Schedule Meeting
+            </DialogTitle>
 
-                <Textarea
-                  className="inputs p-5"
-                  rows={4}
-                  onChange={(e) =>
-                  setValues({ ...values, description: e.target.value })} 
-                />  
-              </DialogDescription>
+            <DialogDescription className='flex flex-col gap-3'>
+              Add a meeting description
 
-              <div className="flex w-full flex-col gap-2.5">
-                <label className="text-base font-normal leading-[22.4px] text-sky-2">
-                  Select Date and Time
-                </label>
-                <DatePicker
-                  preventOpenOnFocus
-                  selected={values.dateTime}
-                  onChange={(date: Date | null) => 
-                    setValues({ ...values, dateTime: date! })}
-                  showTimeSelect
-                  timeIntervals={15}
-                  timeCaption="time"
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  className="inputs w-full rounded p-2 focus:outline-hidden 
+              <Textarea
+                className="inputs p-5"
+                rows={4}
+                onChange={(e) =>
+                  setValues({ ...values, description: e.target.value })}
+              />
+            </DialogDescription>
+
+            <div className="flex w-full flex-col gap-2.5">
+              <label className="text-base font-normal leading-[22.4px] text-sky-2">
+                Select Date and Time
+              </label>
+              <DatePicker
+                preventOpenOnFocus
+                selected={values.dateTime}
+                onChange={(date: Date | null) =>
+                  setValues({ ...values, dateTime: date! })}
+                showTimeSelect
+                timeIntervals={15}
+                timeCaption="time"
+                dateFormat="MMMM d, yyyy h:mm aa"
+                className="inputs w-full rounded p-2 focus:outline-hidden 
                     focus:border-blue-500 focus:ring-3 focus:ring-blue-200  "
-                />
-              </div>
+              />
+            </div>
 
-              <Button className='!mt-5 font-extrabold text-lg text-white rounded-xl 
+            <Button className='!mt-5 font-extrabold text-lg text-white rounded-xl 
                 bg-blue-700 py-5 px-10 hover:bg-blue-900 hover:scale-110 
                 transition ease-in-out delay-75 duration-700 hover:-translate-y-1 cursor-pointer'
-                onClick={() => setMeetingState('Schedule')}>
-                Submit
-              </Button>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+              onClick={() => setMeetingState('Schedule')}>
+              Submit
+            </Button>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       <MenuItemCard
         img="/assets/recordings2.svg"
         title="Recordings"
         bgColor="bg-blue-600"
-        hoverColor= 'hover:bg-blue-800'
+        hoverColor='hover:bg-blue-800'
         handleClick={() => router.push('/recordings')}
       />
 
       {/* For reports */}
       <MenuItemCard
-          img="/assets/reports2.svg"
-          title="Reports"
-          bgColor="bg-blue-600"
-          hoverColor= 'hover:bg-blue-800'
-          handleClick={() => router.push('/reports')}
+        img="/assets/reports2.svg"
+        title="Reports"
+        bgColor="bg-blue-600"
+        hoverColor='hover:bg-blue-800'
+        handleClick={() => router.push('/reports')}
       />
 
       {/* For Pop-Quizzes */}
       <MenuItemCard
-          img="/assets/Pop-Quizzes.svg"
-          title="Pop-Quizzes"
-          bgColor="bg-blue-600"
-          hoverColor= 'hover:bg-blue-800'
-          handleClick={() => router.push('/pop-quizzes')}
+        img="/assets/Pop-Quizzes.svg"
+        title="Pop-Quizzes"
+        bgColor="bg-blue-600"
+        hoverColor='hover:bg-blue-800'
+        handleClick={() => router.push('/pop-quizzes')}
       />
     </section>
   )
