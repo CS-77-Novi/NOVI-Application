@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Overview from './overview';
 import DownloadReport from './download'; 
+import Distractions from './distractions';
 
 interface DashboardProps {
   type?: 'teacher' | 'individual';
@@ -106,6 +107,9 @@ export default function Dashboard({ type = 'individual', sessionId }: DashboardP
     switch (activePage) {
       case 'Overview':
         return <Overview data={sessionData} />;
+      // මේ කොටස අලුතින් එකතු කරන්න 👇
+      case 'Distraction':
+         return <Distractions data={sessionData} />;
       case 'Download':
         return <DownloadReport />;
       default:
