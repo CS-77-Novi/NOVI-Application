@@ -1,10 +1,56 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import styles from './IndividualReport.module.css';
 
+// TypeScript පාවිච්චි කරනවා නම් interface එකක් හදාගමු
+interface DistractionEvent {
+  type: string;
+  time: string;
+}
+
+interface ReportData {
+  lookingAwayCount: number;
+  headPoseCount: number;
+  eyeCloserCount: number;
+  yawningCount: number;
+  events: DistractionEvent[];
+}
+
 export default function IndividualReport() {
   const [activeTab, setActiveTab] = useState('Overview');
+  
+  // Database එකෙන් එන data save කරගන්න state එක
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Page එක load වෙනකොට data fetch කරන්න
+  useEffect(() => {
+    async function fetchReportData() {
+      try {
+        // ඔබේ API endpoint එක මෙතනට දෙන්න (උදා: /api/reports/distractions)
+        const response = await fetch('/api/reports/distractions');
+        const data = await response.json();
+        setReportData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchReportData();
+  }, []);
+
+  // Event type එක අනුව නිවැරදි CSS class එක ලබා දෙන helper function එකක්
+  const getTimelineStyle = (type: string) => {
+    switch (type) {
+      case 'Looking Away': return styles.lookingAwayColor;
+      case 'Eye Closer': return styles.eyeCloserColor;
+      case 'Head Pose Deviation': return styles.cardHeadPoseDeviation;
+      default: return '';
+    }
+  };
 
   return (
     <div className={styles.layout}>
@@ -12,62 +58,56 @@ export default function IndividualReport() {
       
       <main className={styles.mainContent}>
         
-        {/* Overview Section */}
-        {activeTab === 'Overview' && (
-          <div>
-            <h1 className={styles.header}>Overview Section</h1>
-          </div>
-        )}
-
-        {/* Attention Score Section */}
-        {activeTab === 'AttentionScore' && (
-          <div className={styles.pinkBackgroundSection}>
-            <h1 className={styles.header}>Attention Score</h1>
-            
-            <div className={styles.statsGrid}>
-              <div className={styles.scoreCard}>
-                <h3>Peak Attention</h3>
-                <p>92%</p>
-                <small>at 15:00</small>
-              </div>
-              <div className={styles.scoreCard}>
-                <h3>Lowest Attention</h3>
-                <p>65%</p>
-                <small>at 25:00</small>
-              </div>
-              <div className={styles.scoreCard}>
-                <h3>Average Score</h3>
-                <p>84%</p>
-                <small>Overall session</small>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ... Overview සහ Attention Score කොටස් පෙර පරිදිම තබා ගන්න ... */}
 
         {/* Distraction Events Section */}
         {activeTab === 'Distraction' && (
           <div className={styles.pinkBackgroundSection}>
             <h1 className={styles.header}>Distraction Events</h1>
             
-            <div className={styles.statsGrid}>
-              <div className={`${styles.card} ${styles.cardLookingAway}`}>Looking Away: 5 Events</div>
-              <div className={`${styles.card} ${styles.cardHeadPoseDeviation}`}>Head Pose Deviation: 2 Events</div>
-              <div className={`${styles.card} ${styles.cardEyeClosure}`}>Eye Closer: 2 Events</div>
-              <div className={`${styles.card} ${styles.cardYawing}`}>Yawing: 2 Events</div>
-            </div>
+            {loading ? (
+              <p>Loading data...</p>
+            ) : reportData ? (
+              <>
+                <div className={styles.statsGrid}>
+                  <div className={`${styles.card} ${styles.cardLookingAway}`}>
+                    Looking Away: {reportData.lookingAwayCount} Events
+                  </div>
+                  <div className={`${styles.card} ${styles.cardHeadPoseDeviation}`}>
+                    Head Pose Deviation: {reportData.headPoseCount} Events
+                  </div>
+                  <div className={`${styles.card} ${styles.cardEyeClosure}`}>
+                    Eye Closer: {reportData.eyeCloserCount} Events
+                  </div>
+                  <div className={`${styles.card} ${styles.cardYawing}`}>
+                    Yawing: {reportData.yawningCount} Events
+                  </div>
+                </div>
 
-            {/* Event Timeline කොටස */}
-            <div className={styles.timelineContainer}>
-              <h2 className={styles.subHeader}>Event Timeline</h2>
-              <div className={styles.timelineBox}>
-                <div className={`${styles.timelineItem} ${styles.lookingAwayColor}`} >Looking Away - 0:35 </div>
-                <div className={`${styles.timelineItem} ${styles.eyeCloserColor}`}>Eye Closer - 0:50</div>
-                <div className={`${styles.timelineItem} ${styles.cardHeadPoseDeviation}`}>Head Pose Deviation - 1:10</div>
-              </div>
-            </div>
+                {/* Event Timeline කොටස - Dynamic */}
+                <div className={styles.timelineContainer}>
+                  <h2 className={styles.subHeader}>Event Timeline</h2>
+                  <div className={styles.timelineBox}>
+                    {reportData.events.length > 0 ? (
+                      reportData.events.map((event, index) => (
+                        <div 
+                          key={index} 
+                          className={`${styles.timelineItem} ${getTimelineStyle(event.type)}`}
+                        >
+                          {event.type} - {event.time}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-white p-4">No events recorded during this session.</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p>Failed to load report data.</p>
+            )}
           </div>
         )}
-        
       </main>
     </div>
   );
