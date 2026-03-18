@@ -96,6 +96,9 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
     switch (activePage) {
       case 'Overview':
         return <Overview data={sessionData} />;
+      // මේ කොටස අලුතින් එකතු කරන්න 👇
+      case 'Distraction':
+         return <Distractions data={sessionData} />;
       case 'Download':
         return <DownloadReport />;
       default:
