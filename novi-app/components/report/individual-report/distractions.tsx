@@ -21,7 +21,7 @@ interface DistractionsProps {
 const Distractions = ({ data }: DistractionsProps) => {
   if (!data) return null;
 
-  // Event type එක අනුව icon එක සහ පාට තෝරා ගැනීම
+  // Select the colors, according to the event type
   const getEventStyle = (type: string) => {
     switch (type) {
       case 'Looking Away': return { color: 'bg-red-500/20 text-red-400', icon: <EyeOff size={18} /> };

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Overview from './overview';
 import DownloadReport from './download'; 
+import Distractions from './distractions';
 
 interface DashboardProps {
   type?: 'teacher' | 'individual';
