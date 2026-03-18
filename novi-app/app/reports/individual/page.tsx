@@ -3,7 +3,7 @@
 import React from 'react';
 import Dashboard from '@/components/report/dashboard';
 
-export default function IndividualReportPage() {
-  // If 'type' still shows red, try restarting your IDE or checking the path
-  return <Dashboard type="individual" />;
+export default function IndividualLandingPage() {
+  // We pass "pending" because there is no [id] in this URL path
+  return <Dashboard type="individual" sessionId="pending" />;
 }

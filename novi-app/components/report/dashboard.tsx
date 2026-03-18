@@ -11,9 +11,10 @@ import DownloadReport from './download';
 
 interface DashboardProps {
   type?: 'teacher' | 'individual';
+  sessionId?: string; 
 }
 
-export default function Dashboard({ type = 'teacher' }: DashboardProps) {
+export default function Dashboard({ type = 'teacher', sessionId }: DashboardProps) {
   const router = useRouter();
   const [activePage, setActivePage] = useState('Overview');
   const [sessionData, setSessionData] = useState<any>(null);
@@ -21,107 +22,114 @@ export default function Dashboard({ type = 'teacher' }: DashboardProps) {
 
   /**
    * BACKGROUND AUTO-SYNC LOGIC
-   * This captures the current live data from the database,
-   * converts it to a CSV format, archives it to LocalStorage,
-   * and triggers the API to clear the database.
+   * Captures live data, archives to LocalStorage, and handles teacher-specific exports.
+   * Removed the auto-refresh loop to keep the dashboard stable.
    */
   const performAutoSync = useCallback(async (rawDetails: any) => {
-    // Prevent syncing if it's mock data or if not in teacher mode
-    if (!rawDetails || rawDetails.session_id === '123' || type !== 'teacher') return;
+    if (!rawDetails || !sessionId || sessionId === "pending" || type !== 'teacher') return;
 
     try {
       const res = await fetch('/api/export-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'teacher' }), 
+        body: JSON.stringify({ type: 'teacher', sessionId }), 
       });
 
       const result = await res.json();
 
       if (result.success && result.payload.length > 0) {
-        // Create CSV String
+        // Generate CSV content
         const headers = Object.keys(result.payload[0]).join(',');
         const rows = result.payload.map((row: any) => 
           Object.values(row).map(val => `"${val}"`).join(',')
         ).join('\n');
         const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows}`;
 
-        // Create the History Entry object
         const newEntry = {
           id: `AUTO_${Date.now()}`,
           date: new Date().toLocaleString(),
           content: csvContent,
-          rawPayload: result.payload, // Stored for PDF generation
+          rawPayload: result.payload,
           name: `Auto_Report_${new Date().toLocaleDateString()}_${new Date().getHours()}h.csv`,
           studentCount: result.payload.length
         };
 
-        // Persistent storage update
         const history = JSON.parse(localStorage.getItem('novi_report_history') || '[]');
         
-        // Prevent duplicate archives for the same student count on the same day
+        // Prevent duplicate archive entries
         const isDuplicate = history.some((h: any) => 
-           h.studentCount === newEntry.studentCount && 
-           new Date(h.date).toLocaleDateString() === new Date().toLocaleDateString()
+            h.studentCount === newEntry.studentCount && 
+            new Date(h.date).toLocaleDateString() === new Date().toLocaleDateString()
         );
 
         if (!isDuplicate) {
           localStorage.setItem('novi_report_history', JSON.stringify([newEntry, ...history]));
-          console.log("✅ Database cleared and session archived to browser storage.");
+          console.log("✅ Session archived successfully.");
         }
       }
     } catch (error) {
       console.error("❌ Auto-sync failed:", error);
     }
-  }, [type]);
+  }, [type, sessionId]);
 
   /**
    * DATA INITIALIZATION
-   * Fetches current metrics from the API on mount.
    */
   useEffect(() => {
     async function loadData() {
+      // If no ID is found, show the "Empty" state immediately without looping
+      if (!sessionId || sessionId === "pending") {
+        setSessionData({
+          total_duration: 0,
+          attentive_duration: 0,
+          average_attention_score: 0,
+          distraction_events: 0,
+          created_at: null,
+        });
+        setLoading(false);
+        return; 
+      }
+
+      setLoading(true);
       try {
-        setLoading(true);
-        const res = await fetch('/api/meeting/123/group-session', {
+        const endpoint = type === 'individual' 
+          ? `/api/meeting/${sessionId}/study-session` 
+          : `/api/meeting/${sessionId}/group-session`;
+
+        const res = await fetch(endpoint, {
           headers: { 'Accept': 'application/json' }
         }); 
         
-        if (!res.ok) throw new Error(`Server returned ${res.status}`);
-        
         const result = await res.json();
-        if (result.success) {
+        
+        if (result.success && result.sessionSummary) {
           setSessionData(result.sessionSummary);
-          
-          // Execute the auto-archive if user is a teacher
-          if (type === 'teacher') {
-            await performAutoSync(result.sessionSummary);
-          }
+          if (type === 'teacher') await performAutoSync(result.sessionSummary);
+        } else {
+          throw new Error("Data not available");
         }
       } catch (e) { 
-        console.error("Fetch failed, using mock data:", e);
+        console.error("Fetch error:", e);
         setSessionData({
-          total_duration: 3600,
-          attentive_duration: 3000,
-          distraction_duration: 600,
-          average_attention_score: 85,
-          distraction_events: 5,
-          start_time: new Date().toISOString(),
-          created_at: new Date().toISOString()
+          total_duration: 0,
+          attentive_duration: 0,
+          average_attention_score: 0,
+          distraction_events: 0,
+          created_at: null,
         });
       } finally {
         setLoading(false);
       }
     }
     loadData();
-  }, [type, performAutoSync]);
+  }, [type, sessionId, performAutoSync]);
 
   const renderContent = () => {
     if (loading) {
       return (
         <div className="flex flex-col items-center justify-center p-20 text-slate-400">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#7E43BC] mb-4"></div>
-          <p className="font-bold animate-pulse text-[#7E43BC]">Archiving Live Data...</p>
+          <p className="font-bold animate-pulse text-[#7E43BC]">Loading Novi Data...</p>
         </div>
       );
     }
@@ -159,45 +167,21 @@ export default function Dashboard({ type = 'teacher' }: DashboardProps) {
         </button>
 
         <nav className="flex-1 space-y-4">
-          <NavButton 
-            label="Overview" 
-            icon={<LayoutDashboard size={22} />} 
-            active={activePage === 'Overview'} 
-            onClick={() => setActivePage('Overview')} 
-          />
-          <NavButton 
-            label="Attention Score" 
-            icon={<Target size={22} />} 
-            active={activePage === 'Attention'} 
-            onClick={() => setActivePage('Attention')} 
-          />
-          <NavButton 
-            label="Distractions" 
-            icon={<AlertCircle size={22} />} 
-            active={activePage === 'Distraction'} 
-            onClick={() => setActivePage('Distraction')} 
-          />
-          <NavButton 
-            label="Timeline" 
-            icon={<Clock size={22} />} 
-            active={activePage === 'Timeline'} 
-            onClick={() => setActivePage('Timeline')} 
-          />
-          
+          <NavButton label="Overview" icon={<LayoutDashboard size={22} />} active={activePage === 'Overview'} onClick={() => setActivePage('Overview')} />
+          <NavButton label="Attention Score" icon={<Target size={22} />} active={activePage === 'Attention'} onClick={() => setActivePage('Attention')} />
+          <NavButton label="Distractions" icon={<AlertCircle size={22} />} active={activePage === 'Distraction'} onClick={() => setActivePage('Distraction')} />
+          <NavButton label="Timeline" icon={<Clock size={22} />} active={activePage === 'Timeline'} onClick={() => setActivePage('Timeline')} />
           <div className="pt-10 mt-10 border-t border-slate-200">
-            <NavButton 
-              label="Download Reports" 
-              icon={<Download size={22} />} 
-              active={activePage === 'Download'} 
-              onClick={() => setActivePage('Download')} 
-            />
+            <NavButton label="Download Reports" icon={<Download size={22} />} active={activePage === 'Download'} onClick={() => setActivePage('Download')} />
           </div>
         </nav>
         
-        {/* User Identity Section */}
         <div className="mt-auto p-5 bg-gradient-to-br from-[#7E43BC] to-[#4B1B7D] rounded-[2rem] text-white shadow-xl shadow-purple-100">
-           <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Session View</p>
-           <p className="text-lg font-black capitalize">{type} Dashboard</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Session View</p>
+            <p className="text-lg font-black capitalize">{type} Dashboard</p>
+            <p className="text-[10px] opacity-50 truncate">
+              {sessionId === "pending" ? "Status: Ready" : `ID: ${sessionId}`}
+            </p>
         </div>
       </aside>
 
@@ -206,18 +190,15 @@ export default function Dashboard({ type = 'teacher' }: DashboardProps) {
         <div className="max-w-6xl mx-auto">
           <header className="mb-12 flex justify-between items-end">
             <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-[0.3em] font-black mb-2">Finalized Report</p>
+              <p className="text-[10px] text-slate-400 uppercase tracking-[0.3em] font-black mb-2">
+                {sessionData?.created_at ? "Finalized Report" : "Analytics Engine"}
+              </p>
               <h1 className="text-3xl font-black text-[#4B1B7D]">
                 {sessionData?.created_at 
-                  ? new Date(sessionData.created_at).toLocaleDateString('en-US', { 
-                      month: 'long', 
-                      day: 'numeric', 
-                      year: 'numeric' 
-                    }) 
-                  : 'Processing Session...'}
+                  ? new Date(sessionData.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
+                  : 'No Active Session'}
               </h1>
             </div>
-            
           </header>
           
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
@@ -229,22 +210,10 @@ export default function Dashboard({ type = 'teacher' }: DashboardProps) {
   );
 }
 
-/**
- * REUSABLE NAVIGATION BUTTON
- */
 function NavButton({ label, icon, active, onClick }: { label: string, icon: React.ReactNode, active: boolean, onClick: () => void }) {
   return (
-    <button 
-      onClick={onClick} 
-      className={`w-full flex items-center gap-5 px-6 py-4 rounded-[1.5rem] transition-all duration-300 ${
-        active 
-          ? 'bg-white text-[#7E43BC] shadow-xl shadow-purple-100 translate-x-2 ring-1 ring-slate-100' 
-          : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
-      }`}
-    >
-      <span className={active ? 'text-[#7E43BC]' : 'text-slate-400'}>
-        {icon}
-      </span>
+    <button onClick={onClick} className={`w-full flex items-center gap-5 px-6 py-4 rounded-[1.5rem] transition-all duration-300 ${active ? 'bg-white text-[#7E43BC] shadow-xl shadow-purple-100 translate-x-2 ring-1 ring-slate-100' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'}`}>
+      <span className={active ? 'text-[#7E43BC]' : 'text-slate-400'}>{icon}</span>
       <span className="text-sm font-black tracking-tight">{label}</span>
     </button>
   );
