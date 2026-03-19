@@ -8,7 +8,8 @@ import { useGetCallById } from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMeetingContext } from "@/providers/MeetingContext";
 
 const MeetingPage = () => {
     const {id} = useParams<{ id: string}>();
@@ -16,6 +17,17 @@ const MeetingPage = () => {
     const { isLoaded, user } = useUser();
     const { call, isCallLoading } = useGetCallById(id);
     const [isSetupComplete, setIsSetupComplete] = useState(false);
+    const { setActiveCall, setMinimized } = useMeetingContext();
+
+    useEffect(() => {
+        if (call) {
+            setActiveCall(call);
+            setMinimized(false);
+        }
+        // When leaving the page, we don't necessarily want to clear the active call
+        // because we might be minimizing it. 
+        // The MeetingRoom "Home" button will handle minimization.
+    }, [call, setActiveCall, setMinimized]);
 
     if (!isLoaded || isCallLoading) return <Loading/>;
 
