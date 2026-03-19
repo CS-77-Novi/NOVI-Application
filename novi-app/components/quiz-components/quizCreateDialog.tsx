@@ -162,17 +162,21 @@ const handleDrop = useCallback((e: React.DragEvent) => {
             const res = await fetch('/api/quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, time_limit: timeLimit, questions }),
+                body: JSON.stringify({ title, time_limit_minutes: timeLimit, questions }),
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.error)
 
-            // Publish immediately
-            await fetch(`/api/quiz/${data.quiz.id}`, {
+            // Publish immediately — check for errors
+            const patchRes = await fetch(`/api/quiz/${data.quiz.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'published' }),
             })
+            if (!patchRes.ok) {
+                const patchData = await patchRes.json()
+                throw new Error(patchData.error || 'Failed to publish quiz')
+            }
 
             const base = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
             setShareLink(`${base}/pop-quizzes/${data.quiz.id}`)

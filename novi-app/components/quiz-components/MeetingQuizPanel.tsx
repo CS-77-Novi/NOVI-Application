@@ -133,7 +133,7 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
                             <QuizTaker
                                 quizId={activeQuizId}
                                 questions={activeQuestions}
-                                timeLimit={activeQuizData.time_limit}
+                                timeLimit={activeQuizData.time_limit_minutes}
                                 onDone={handleQuizDone}
                             />
                         </div>
@@ -168,7 +168,7 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
                                             <div key={quiz.id} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm flex flex-col gap-3">
                                                 <div>
                                                     <h4 className="font-bold text-gray-800 line-clamp-1">{quiz.title}</h4>
-                                                    <p className="text-xs text-gray-500">{quiz.time_limit} minutes</p>
+                                                    <p className="text-xs text-gray-500">{quiz.time_limit_minutes} minutes</p>
                                                 </div>
                                                 <Button 
                                                     onClick={() => handleReleaseQuiz(quiz.id)}
