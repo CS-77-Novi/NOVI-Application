@@ -12,28 +12,25 @@ import { useEffect, useState } from "react";
 import { useMeetingContext } from "@/providers/MeetingContext";
 
 const MeetingPage = () => {
-    const {id} = useParams<{ id: string}>();
-     if(!id) return
+    const { id } = useParams<{ id: string }>();
+    if (!id) return
     const { isLoaded, user } = useUser();
     const { call, isCallLoading } = useGetCallById(id);
-    const [isSetupComplete, setIsSetupComplete] = useState(false);
-    const { setActiveCall, setMinimized } = useMeetingContext();
+    const { setActiveCall, setMinimized, isSetupComplete: globalSetupComplete } = useMeetingContext();
+    const [localSetupComplete, setLocalSetupComplete] = useState(false);
 
     useEffect(() => {
         if (call) {
             setActiveCall(call);
             setMinimized(false);
         }
-        // When leaving the page, we don't necessarily want to clear the active call
-        // because we might be minimizing it. 
-        // The MeetingRoom "Home" button will handle minimization.
     }, [call, setActiveCall, setMinimized]);
 
-    if (!isLoaded || isCallLoading) return <Loading/>;
+    if (!isLoaded || isCallLoading) return <Loading />;
 
     if (!call) return (
         <p className="text-center text-3xl font-bold text-white">
-          Call Not Found
+            Call Not Found
         </p>
     );
 
@@ -42,19 +39,22 @@ const MeetingPage = () => {
 
     if (notAllowed) return <Alert title="You are not allowed to join this meeting" />;
 
+    // Use either the local setup state (first join) or the global one (returning from home)
+    const isSetupComplete = globalSetupComplete || localSetupComplete;
+
     return (
         <main className="h-screen w-full">
             <StreamCall call={call}>
                 <StreamTheme>
-        
-                {!isSetupComplete ? (
-                    <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
-                ) : (
-                    <MeetingRoom/>
-                )}
+
+                    {!isSetupComplete ? (
+                        <MeetingSetup setIsSetupComplete={setLocalSetupComplete} />
+                    ) : (
+                        <MeetingRoom />
+                    )}
                 </StreamTheme>
             </StreamCall>
-      </main>
+        </main>
     )
 }
 
