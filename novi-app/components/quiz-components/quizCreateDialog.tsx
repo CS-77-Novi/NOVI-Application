@@ -9,11 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import * as pdfjsLib from 'pdfjs-dist'
 
-// Point PDF.js worker to the bundled worker file
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url
-).toString()
+// Point PDF.js worker to a reliable CDN that matches the installed version
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
 
 //Interfaces
 interface Question {
