@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect } from 'react';
 import { usePathname, useParams } from 'next/navigation';
 import { StreamCall, StreamTheme } from '@stream-io/video-react-sdk';
