@@ -1,7 +1,7 @@
 'use client';
 
 import React, { use } from 'react';
-import Dashboard from '@/components/report/dashboard';
+import Dashboard from '@/components/report/individual-report/dashboard';
 
 // Next.js 15 requires params to be a Promise
 interface PageProps {
