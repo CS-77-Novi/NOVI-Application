@@ -11,7 +11,7 @@ import {
   useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Loading from "./Loading";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
@@ -47,6 +47,8 @@ const MeetingRoom = () => {
     const [showMiniGame, setShowMiniGame] = useState(false);
     // State to toggle the visibility of the quiz panel
   const [showQuizPanel, setShowQuizPanel] = useState(false);
+  // State to handle full-screen quiz view
+  const [isQuizFullscreen, setIsQuizFullscreen] = useState(false);
 
   // Next.js router instance for programmatic navigation
   const router = useRouter();
@@ -88,6 +90,23 @@ const MeetingRoom = () => {
     name: user?.fullName ?? user?.username ?? "Unknown", // Display name for the dashboard
     isCameraOn: !isCameraOff,                            // Only process frames when camera is active
   });
+
+  // Listen for quiz-released events to trigger full-screen mode automatically
+  useEffect(() => {
+    if (!call) return;
+
+    const handleCustomEvent = (event: any) => {
+      if (event.type === 'custom' && event.custom?.type === 'quiz-released') {
+        setShowQuizPanel(true);
+        setIsQuizFullscreen(true);
+      }
+    };
+
+    call.on('custom', handleCustomEvent);
+    return () => {
+      call.off('custom', handleCustomEvent);
+    };
+  }, [call]);
 
   if (!user) return null;
   if (callingState !== CallingState.JOINED) return <Loading />;
@@ -160,20 +179,43 @@ const MeetingRoom = () => {
         </div>
         
         {/* Quiz Panel Sidebar - MOVED INSIDE MAIN CONTAINER */}
-        <div
-          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
-            showQuizPanel ? "show-block" : "hidden"
-          )}
-        >
+        {!isQuizFullscreen && (
+          <div
+            className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+              showQuizPanel ? "show-block" : "hidden"
+            )}
+          >
+            <MeetingQuizPanel
+              isMeetingOwner={isMeetingOwner}
+              call={call}
+              user={user}
+              isOpen={showQuizPanel}
+              onClose={() => setShowQuizPanel(false)}
+              isFullscreen={false}
+              onQuizActive={(active) => {
+                if (active && showQuizPanel) setIsQuizFullscreen(true);
+              }}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Full Screen Quiz Overlay */}
+      {isQuizFullscreen && showQuizPanel && (
+        <div className="fixed inset-0 z-[100] bg-white text-black overflow-hidden flex flex-col">
           <MeetingQuizPanel
             isMeetingOwner={isMeetingOwner}
             call={call}
             user={user}
             isOpen={showQuizPanel}
-            onClose={() => setShowQuizPanel(false)}
+            onClose={() => {
+              setShowQuizPanel(false);
+              setIsQuizFullscreen(false);
+            }}
+            isFullscreen={true}
           />
         </div>
-      </div>
+      )}
 
       {/* Call controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
@@ -249,7 +291,11 @@ const MeetingRoom = () => {
             setShowParticipants(false);
             setShowDashboard(false);
             setShowMiniGame(false);
-            setShowQuizPanel((prev) => !prev);
+            setShowQuizPanel((prev) => {
+              const next = !prev;
+              // If we are opening the quiz panel and a quiz is active, it will be handled by onQuizActive
+              return next;
+            });
           }}
           title="Pop Quiz"
         >
