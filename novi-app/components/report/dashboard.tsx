@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase'; // Ensure this path is correct for yo
 import Overview from './overview';
 import DownloadReport from './download'; 
 import Distractions from './individual-report/distractions'; 
+import AttentionScore from './attention';
 
 interface DashboardProps {
   type?: 'teacher' | 'individual';
@@ -157,6 +158,8 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
         return <Overview data={sessionData} />;
       case 'Distraction':
         return <Distractions data={sessionData} />;
+      case 'Attention':
+         return <AttentionScore data={sessionData} />;
       case 'Download':
         return <DownloadReport />;
       default:
