@@ -4,10 +4,12 @@ import { useCall, useCallStateHooks } from "@stream-io/video-react-sdk";
 // Next.js router for navigation
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
+import { useMeetingContext } from "@/providers/MeetingContext";
 
 const EndCallButton = () => {
     // Initialize Next.js router   to make the end call button work
     const router = useRouter();
+    const { leaveCall } = useMeetingContext();
     // Get the current call instance
     const call = useCall();
     // Ensure this component is used inside a StreamCall provider
@@ -28,8 +30,10 @@ const EndCallButton = () => {
     if (!isMeetingOwner) return null;
     // Function to end the call for all participants
     const endcall = async () => {
-        // End the call
+        // End the call for everyone
         await call.endCall();
+        // Clear global state
+        await leaveCall();
         // Redirect user to home page
         router.push('/');
     };
