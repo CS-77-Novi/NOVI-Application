@@ -199,7 +199,7 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
           </div>
         </nav>
         
-        <div className="mt-auto p-5 bg-gradient-to-br from-[#7E43BC] to-[#4B1B7D] rounded-[2rem] text-white shadow-xl shadow-purple-100">
+        <div className="mt-5 p-5 bg-gradient-to-br from-[#7E43BC] to-[#4B1B7D] rounded-[2rem] text-white shadow-xl shadow-purple-100">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Session View</p>
             <p className="text-lg font-black capitalize">{type} Dashboard</p>
             <p className="text-[10px] opacity-50 truncate">
@@ -209,26 +209,32 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
       </aside>
 
       {/* --- MAIN CONTENT --- */}
+      
       <main className="flex-1 overflow-y-auto p-12 bg-slate-50/50">
         <div className="max-w-6xl mx-auto">
-          <header className="mb-12 flex justify-between items-end">
+          <header className="mb-9">
             <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-[0.3em] font-black mb-2">
-                {sessionData?.created_at ? "Finalized Report" : "Analytics Engine"}
+              {/* Small, grey, black-weight uppercase label */}
+              <p className="text-[11px] text-slate-500 uppercase tracking-[0.2em] font-black mb-1">
+                Generated On
               </p>
-              <h1 className="text-3xl font-black text-[#4B1B7D]">
-                {sessionData?.created_at 
-                  ? new Date(sessionData.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
-                  : 'No Active Session'}
+    
+              {/* Large, purple, bold date in Month Day, Year format */}
+              <h1 className="text-2xl font-black text-[#7E43BC] tracking-tight">
+                {new Date().toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
               </h1>
             </div>
           </header>
-          
-          <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
-             {renderContent()}
-          </div>
-        </div>
-      </main>
+    
+    <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+       {renderContent()}
+    </div>
+  </div>
+</main>
     </div>
   );
 }

@@ -3,14 +3,18 @@
 import React from 'react';
 import { Eye, EyeOff, Timer, Target } from 'lucide-react';
 
+// 1. Updated Interface to match your SQL Schema exactly
 interface SessionData {
-  total_duration?: number | null;
-  attentive_duration?: number | null;
-  distraction_duration?: number | null;
-  average_attention_score?: number | null;
-  distraction_events?: number | null;
-  start_time?: string | null;
-  created_at?: string | null;
+  session_id?: number;
+  participant_id?: string;
+  session_type?: string;
+  start_time?: string;
+  end_time?: string;
+  total_duration?: number;     // From study_session
+  attentive_duration?: number;   // From study_session
+  distraction_duration?: number; // From study_session
+  average_attention_score?: number | string; // From study_session
+  created_at?: string;
 }
 
 interface OverviewProps {
@@ -18,30 +22,38 @@ interface OverviewProps {
 }
 
 const Overview = ({ data }: OverviewProps) => {
-  // 1. Helper to handle the "_" placeholder for numbers
-  const displayVal = (val: number | undefined | null, suffix = '') => {
-    if (val === null || val === undefined) return '_';
-    return `${val}${suffix}`;
+  // Helper to format timestamps for the summary lines
+  const formatForSentence = (timeStr: string | undefined): string => {
+    if (!timeStr) return "N/A";
+    try {
+      return new Date(timeStr).toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch {
+      return "00:00";
+    }
   };
 
-  // 2. Updated Duration Formatter to handle nulls
-  const formatDuration = (seconds: number | undefined | null) => {
-    if (seconds === null || seconds === undefined) return '_';
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+  // 2. Updated Loader to show 0s or placeholder instead of just text
+  if (!data) {
+    return (
+      <div className="p-20 text-center text-slate-400 animate-pulse font-black uppercase tracking-widest">
+        Initializing Analytics...
+      </div>
+    );
+  }
+
+  // Format durations for display MM:SS - Uses 0 as fallback
+  const formatDuration = (seconds: number | undefined = 0) => {
+    const totalSecs = seconds || 0;
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // 3. Formatter for the Summary text
-  const formatForSentence = (timeStr: string | undefined | null): string => {
-    if (!timeStr) return "the start of the session";
-    return new Date(timeStr).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
-
-  const session = data || {}; 
+  // Convert average_attention_score to number and fix to 0 if null
+  const avgScore = data.average_attention_score ? Number(data.average_attention_score) : 0;
 
   return (
     <section className="bg-gradient-to-br from-[#BC66A9] to-[#7E43BC] p-10 rounded-[2.5rem] shadow-2xl animate-in fade-in duration-500">
@@ -56,22 +68,22 @@ const Overview = ({ data }: OverviewProps) => {
         <StatCard 
           icon={<Eye size={24} className="text-[#4ADE80]" />} 
           label="TOTAL SESSION DURATION" 
-          value={formatDuration(session.total_duration)} 
+          value={formatDuration(data.total_duration)} 
         />
         <StatCard 
           icon={<EyeOff size={24} className="text-[#F87171]" />} 
           label="ATTENTIVE DURATION" 
-          value={formatDuration(session.attentive_duration)} 
+          value={formatDuration(data.attentive_duration)} 
         />
         <StatCard 
           icon={<Timer size={24} className="text-[#FB923C]" />} 
           label="DISTRACTION DURATION" 
-          value={formatDuration(session.distraction_duration)} 
+          value={formatDuration(data.distraction_duration)} 
         />
         <StatCard 
           icon={<Target size={24} className="text-white" />} 
           label="AVERAGE ATTENTION SCORE" 
-          value={displayVal(session.average_attention_score, '%')} 
+          value={`${avgScore}%`} 
         />
       </div>
 
@@ -83,13 +95,13 @@ const Overview = ({ data }: OverviewProps) => {
         
         <ul className="space-y-8">
           <SummaryLine 
-            text={`This session lasted ${displayVal(session.total_duration ? Math.floor(session.total_duration / 60) : null)} minutes, maintaining an average attention score of ${displayVal(session.average_attention_score, '%')}.`} 
+            text={`This session lasted ${Math.floor((data.total_duration || 0) / 60)} minutes and ${(data.total_duration || 0) % 60} seconds, during which the learner maintained an average attention score of ${avgScore}%.`} 
           />
           <SummaryLine 
-            text={`The learner was actively focused for ${formatDuration(session.attentive_duration)}, representing ${displayVal(session.average_attention_score, '%')} of the total session time.`} 
+            text={`The learner was actively focused for ${Math.floor((data.attentive_duration || 0) / 60)} minutes and ${(data.attentive_duration || 0) % 60} seconds, representing ${avgScore}% of the total session time.`} 
           />
           <SummaryLine 
-            text={`A total of ${displayVal(session.distraction_events)} distraction events were detected starting from ${formatForSentence(session.start_time)}.`} 
+            text={`Session tracking started at ${formatForSentence(data.start_time || data.created_at)}. All analytics were recorded via participant ID: ${data.participant_id || '0'}.`} 
           />
         </ul>
       </div>
@@ -97,7 +109,6 @@ const Overview = ({ data }: OverviewProps) => {
   );
 };
 
-// Sub-components (StatCard & SummaryLine) remain the same as your design
 const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
   <div className="bg-black/20 border border-black/30 p-8 rounded-[2rem] flex flex-col items-center justify-center transition-all hover:scale-[1.02] hover:bg-black/30 group shadow-lg">
     <div className="mb-6 p-4 bg-black/40 rounded-full group-hover:scale-110 transition-transform shadow-inner">
@@ -110,7 +121,7 @@ const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string
 
 const SummaryLine = ({ text }: { text: string }) => (
   <li className="flex gap-6 items-start group">
-    <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 shadow-lg group-hover:scale-110 transition-transform">
+    <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 shadow-lg group-hover:scale-110 transition-transform shrink-0">
       <Target size={20} className="text-purple-400" />
     </div>
     <p className="text-white/90 text-sm leading-relaxed font-medium pt-1">
