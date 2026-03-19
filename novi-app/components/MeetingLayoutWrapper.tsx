@@ -1,26 +1,39 @@
-'use client'
-
-import React from 'react';
-import { usePathname } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { usePathname, useParams } from 'next/navigation';
 import { StreamCall, StreamTheme } from '@stream-io/video-react-sdk';
 import { useMeetingContext } from '@/providers/MeetingContext';
 import MinimizedMeeting from './MinimizedMeeting';
+import { useGetCallById } from '@/hooks/useGetCallById';
 
 const MeetingLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { activeCall, isMinimized } = useMeetingContext();
+  const params = useParams();
+  const id = params?.id as string;
+  const { activeCall, setActiveCall, isMinimized } = useMeetingContext();
   const pathname = usePathname();
   const isMeetingPage = pathname.includes('/meeting/');
 
+  // If we are on a meeting page, we try to fetch the call if it's not already active
+  const { call: fetchedCall } = useGetCallById(id || '');
+
+  useEffect(() => {
+    if (isMeetingPage && fetchedCall && (!activeCall || activeCall.id !== fetchedCall.id)) {
+      setActiveCall(fetchedCall);
+    }
+  }, [isMeetingPage, fetchedCall, activeCall, setActiveCall]);
+
+  // Use either the globally active call (persisted) or the newly fetched one (on direct entry)
+  const currentCall = activeCall || fetchedCall;
+
   const content = (
     <>
-      {activeCall && isMinimized && !isMeetingPage && <MinimizedMeeting />}
+      {currentCall && isMinimized && !isMeetingPage && <MinimizedMeeting />}
       {children}
     </>
   );
 
-  if (activeCall) {
+  if (currentCall) {
     return (
-      <StreamCall call={activeCall}>
+      <StreamCall call={currentCall}>
         <StreamTheme>
           {content}
         </StreamTheme>
