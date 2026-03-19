@@ -35,7 +35,7 @@ const Distractions = ({ data }: DistractionsProps) => {
 
       {/* Summary Stats Cards - MATCHED TO API KEY NAMES */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <MiniStatCard label="Looking Away" value={data?.looking_away_count ?? 0} icon={<EyeOff size={20} />} color="text-red-400" />
+        <MiniStatCard label="Looking Away" value={data?.distracted_checks ?? 0} icon={<EyeOff size={20} />} color="text-red-400" />
         <MiniStatCard label="Head Pose" value={data?.head_pose_count ?? 0} icon={<UserX size={20} />} color="text-purple-400" />
         <MiniStatCard label="Eye Closure" value={data?.eye_closure_count ?? 0} icon={<Ghost size={20} />} color="text-orange-400" />
         <MiniStatCard label="Yawning" value={data?.yawning_count ?? 0} icon={<Coffee size={20} />} color="text-blue-400" />
