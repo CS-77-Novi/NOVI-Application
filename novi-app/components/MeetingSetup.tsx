@@ -8,6 +8,7 @@ import Alert from "./Alert";//Custom alert component
 import { useEffect, useState } from "react";//from react hooks
 import { Button } from "./ui/button";
 import { clearWordJumbleState } from "@/lib/wordJumbleStore";
+import { useMeetingContext } from "@/providers/MeetingContext";
 
 
 const MeetingSetup =({
@@ -28,6 +29,7 @@ const MeetingSetup =({
   }
     //Extract call state hooks
     const{ useCallEndedAt,useCallStartsAt} = useCallStateHooks();
+    const { setSetupComplete } = useMeetingContext();
 
     //Get call start and end times   
     const callStartsAt = useCallStartsAt();
@@ -108,6 +110,7 @@ const MeetingSetup =({
 
                 })
                 
+                setSetupComplete(true);
                 setIsSetupComplete(true);
               }}
             >
