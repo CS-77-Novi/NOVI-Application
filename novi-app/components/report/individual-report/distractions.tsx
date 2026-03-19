@@ -25,7 +25,7 @@ const Distractions = ({ data }: DistractionsProps) => {
   };
 
   return (
-    <section className="bg-gradient-to-br from-[#7E43BC] to-[#4B1B7D] p-10 rounded-[2.5rem] shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="bg-gradient-to-br from-[#BC66A9] to-[#7E43BC] p-10 rounded-[2.5rem] shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-10 flex justify-between items-center">
         <h3 className="bg-white/20 backdrop-blur-md px-5 py-1.5 rounded-xl font-bold text-white text-sm inline-block">
           Distraction Analysis
