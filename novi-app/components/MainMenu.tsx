@@ -12,6 +12,7 @@ import { useUser } from "@clerk/nextjs"
 import Loading from "./Loading"
 import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
+import { useMeetingContext } from "@/providers/MeetingContext"
 
 const initialValues = {
   dateTime: new Date(), // Default meeting date/time = now
@@ -20,11 +21,12 @@ const initialValues = {
 };
 
 const MainMenu = () => {
-  const { user } = useUser() // Gets the currently logged-in user
-  const router = useRouter(); // Router instance for navigation
-  const [values, setValues] = useState(initialValues); // State holding meeting form values
-  const [meetingState, setMeetingState] = useState<'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
-  const client = useStreamVideoClient();  // Stream Video client instance
+   const { user } = useUser() // Gets the currently logged-in user
+   const router = useRouter(); // Router instance for navigation
+   const [values, setValues] = useState(initialValues); // State holding meeting form values
+   const [meetingState, setMeetingState] = useState<'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
+   const client = useStreamVideoClient();  // Stream Video client instance
+   const { activeCall } = useMeetingContext();
 
   // Function to create a new meeting
   const createMeeting = async () => {
@@ -109,6 +111,25 @@ const MainMenu = () => {
 
   return (
     <section className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
+      {activeCall && (
+        <div className="col-span-full bg-blue-600/10 border border-blue-500/30 p-6 rounded-[24px] flex flex-col md:flex-row items-center justify-between gap-4">
+           <div className="flex items-center gap-4">
+             <div className="p-3 bg-blue-600 rounded-full animate-pulse">
+               <div className="w-3 h-3 bg-white rounded-full"></div>
+             </div>
+             <div>
+               <h2 className="text-xl font-bold text-black">Meeting in Progress</h2>
+               <p className="text-sm text-gray-500">You are currently in an active call.</p>
+             </div>
+           </div>
+           <Button 
+             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all hover:scale-105"
+             onClick={() => router.push(`/meeting/${activeCall.id}`)}
+           >
+             Return to Meeting
+           </Button>
+        </div>
+      )}
       <Dialog >
         <DialogTrigger >
           <MenuItemCard
