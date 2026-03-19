@@ -32,17 +32,13 @@ const MainMenu = () => {
   const createMeeting = async () => {
     if (!user) return router.push('/login')
     if (!client) return router.push('/')
+    
+    if (activeCall) {
+        toast.error('You are already in an active call. Please leave it before starting a new one.');
+        return;
+    }
 
     try {
-      // Validate date/time input
-      if (!values.dateTime) {
-        toast('Please select a date and time', {
-          duration: 3000,
-          className: 'bg-gray-300 rounded-3xl py-8 px-5 justify-center'
-        });
-        return;
-      }
-
       const id = crypto.randomUUID(); // Generate a unique meeting ID
       const call = client.call('default', id); // Create a Stream call object
       if (!call) throw new Error('Failed to create meeting');
@@ -52,26 +48,22 @@ const MainMenu = () => {
       const description = values.description || 'No Description'; // Fallback description
 
       await call.getOrCreate({
-        // Create or fetch the call from Stream
         data: {
           starts_at: startsAt,
-          // Scheduled start time
-          custom: {
-            description,
-            // Custom metadata for the call
-          },
+          custom: { description },
         },
       });
 
       await call.updateCallMembers({
-        // Add the current user to the call
         update_members: [{ user_id: user.id }],
-      })
+      });
+
+      setValues({ dateTime: new Date(), description: '', link: '' });
+      setMeetingState(undefined);
+      toast.success('Meeting Created successfully! ✨');
 
       if (meetingState === 'Instant') {
-        // Instant meeting flow
-
-        router.push(`/meeting/${call.id}`); // Navigate to meeting room
+        router.push(`/meeting/${call.id}`);
         toast('Setting up your meeting', {
           duration: 3000,
           className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
@@ -79,25 +71,17 @@ const MainMenu = () => {
       }
 
       if (meetingState === 'Schedule') {
-        // Scheduled meeting flow
-
-        router.push('/upcoming'); // Navigate to upcoming meetings page
-        toast(`Your meeting is scheduled at ${values.dateTime}`, {
+        router.push('/upcoming');
+        toast(`Meeting scheduled for ${values.dateTime.toLocaleString()}`, {
           duration: 5000,
           className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
         });
       }
-
-    } catch (error: any) {
-      // Error handling
-
-      toast(`Failed to create Meeting ${error.message}`, {
-        duration: 3000,
-        className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
-      })
+    } catch (error) {
+      console.error("[MainMenu] Failed to handle call:", error);
+      toast.error('Failed to create/join meeting. Please check your camera permissions.');
     }
-
-  }
+  };
 
   useEffect(() => {
     // Runs whenever meetingState changes
