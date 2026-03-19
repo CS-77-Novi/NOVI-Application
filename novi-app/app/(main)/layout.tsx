@@ -4,6 +4,8 @@ import { currentUser } from "@clerk/nextjs/server"
 import { neobrutalism } from "@clerk/themes"
 import Image from "next/image"
 import React from "react"
+import { MeetingProvider } from "@/providers/MeetingContext"
+import MeetingLayoutWrapper from "@/components/MeetingLayoutWrapper"
 
 
 const MainLayout = async ({
@@ -51,7 +53,11 @@ const MainLayout = async ({
     return (
         <main className="animate-fade-in">
             <StreamProvider>
-                {children}
+                <MeetingProvider>
+                    <MeetingLayoutWrapper>
+                        {children}
+                    </MeetingLayoutWrapper>
+                </MeetingProvider>
             </StreamProvider>
 
         </main>
