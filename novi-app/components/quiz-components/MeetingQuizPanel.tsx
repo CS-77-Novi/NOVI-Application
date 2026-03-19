@@ -19,7 +19,7 @@ interface Props {
     onQuizActive?: (active: boolean) => void
 }
 
-export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, onClose }: Props) {
+export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, onClose, isFullscreen = false, onQuizActive }: Props) {
     // Teacher state
     const [publishedQuizzes, setPublishedQuizzes] = useState<any[]>([])
     const [loadingQuizzes, setLoadingQuizzes] = useState(false)
