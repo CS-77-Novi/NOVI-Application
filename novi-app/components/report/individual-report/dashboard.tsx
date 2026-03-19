@@ -101,7 +101,7 @@ export default function Dashboard({ type = 'individual', sessionId }: DashboardP
           <div className="bg-gradient-to-br from-[#FC96FF] to-[#5F83C4] p-2.5 rounded-2xl shadow-lg">
             <FileText size={28} className="text-white" />
           </div>
-          <span className="font-black text-2xl tracking-tight">Novi Student</span>
+          <span className="font-black text-2xl tracking-tight">Novi Analytics</span>
         </div>
 
         <button onClick={() => router.push('/')} className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-[#4B1B7D] mb-12 transition-all group">
@@ -109,12 +109,12 @@ export default function Dashboard({ type = 'individual', sessionId }: DashboardP
         </button>
 
         <nav className="flex-1 space-y-4">
-          <NavButton label="My Overview" icon={<LayoutDashboard size={22} />} active={activePage === 'Overview'} onClick={() => setActivePage('Overview')} />
-          <NavButton label="Focus Score" icon={<Target size={22} />} active={activePage === 'Attention'} onClick={() => setActivePage('Attention')} />
+          <NavButton label="Overview" icon={<LayoutDashboard size={22} />} active={activePage === 'Overview'} onClick={() => setActivePage('Overview')} />
+          <NavButton label="Attention Score" icon={<Target size={22} />} active={activePage === 'Attention'} onClick={() => setActivePage('Attention')} />
           <NavButton label="Distractions" icon={<AlertCircle size={22} />} active={activePage === 'Distraction'} onClick={() => setActivePage('Distraction')} />
-          <NavButton label="Study Timeline" icon={<Clock size={22} />} active={activePage === 'Timeline'} onClick={() => setActivePage('Timeline')} />
+          <NavButton label="Timeline" icon={<Clock size={22} />} active={activePage === 'Timeline'} onClick={() => setActivePage('Timeline')} />
           <div className="pt-10 mt-10 border-t border-slate-200">
-            <NavButton label="Export My Data" icon={<Download size={22} />} active={activePage === 'Download'} onClick={() => setActivePage('Download')} />
+            <NavButton label="Download Reports" icon={<Download size={22} />} active={activePage === 'Download'} onClick={() => setActivePage('Download')} />
           </div>
         </nav>
       </aside>
