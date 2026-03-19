@@ -11,7 +11,7 @@ export async function GET() {
 
     const { data, error } = await supabase
         .from('quizzes')
-        .select('*, quiz_questions(count)')
+        .select('*, questions(count)')
         .eq('host_id', user.id)
         .order('created_at', { ascending: false })
 
@@ -24,27 +24,27 @@ export async function POST(req: NextRequest) {
     const user = await currentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const { title, time_limit, questions } = await req.json()
+    const { title, time_limit_minutes, questions } = await req.json()
 
     // 1. Insert quiz
     const { data: quiz, error: quizError } = await supabase
         .from('quizzes')
-        .insert({ host_id: user.id, title, time_limit, status: 'draft' })
+        .insert({ host_id: user.id, title, time_limit_minutes, status: 'draft' })
         .select()
         .single()
 
     if (quizError) return NextResponse.json({ error: quizError.message }, { status: 500 })
-    
-        // 2. Insert questions
+
+    // 2. Insert questions
     if (questions && questions.length > 0) {
         const rows = questions.map((q: any, i: number) => ({
             quiz_id: quiz.id,
             question: q.question,
             options: q.options,
-            correct_answer: q.correct_answer,
-            position: i,
+            correct_answer: String(q.correct_answer), // DB column is text
+            order_index: i,
         }))
-        const { error: qError } = await supabase.from('quiz_questions').insert(rows)
+        const { error: qError } = await supabase.from('questions').insert(rows)
         if (qError) return NextResponse.json({ error: qError.message }, { status: 500 })
     }
 
