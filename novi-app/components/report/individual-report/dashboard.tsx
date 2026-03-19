@@ -10,6 +10,7 @@ import Overview from './overview';
 import DownloadReport from './download'; 
 import Distractions from './distractions';
 import AttentionScore from './attention';
+import Timeline from './timeline';
 
 interface DashboardProps {
   type?: 'teacher' | 'individual';
@@ -83,6 +84,8 @@ export default function Dashboard({ type = 'individual', sessionId }: DashboardP
          return <Distractions data={sessionData} />;
       case 'Attention':
          return <AttentionScore data={sessionData} />;
+      case 'Timeline': // Me section eka add karanna
+         return <Timeline data={sessionData} />;
       case 'Download':
         return <DownloadReport />;
       default:
