@@ -51,15 +51,13 @@ const MainMenu = () => {
         data: {
           starts_at: startsAt,
           custom: { description },
+          // Register the current user as a host member immediately during creation
+          members: [{ user_id: user.id, role: 'host' }]
         },
       });
 
-      // Register the call globally as soon as it's created/fetched
+      // Register the call globally
       setActiveCall(call);
-
-      await call.updateCallMembers({
-        update_members: [{ user_id: user.id }],
-      });
 
       setValues({ dateTime: new Date(), description: '', link: '' });
       setMeetingState(undefined);
@@ -67,10 +65,6 @@ const MainMenu = () => {
 
       if (meetingState === 'Instant') {
         router.push(`/meeting/${call.id}`);
-        toast('Setting up your meeting', {
-          duration: 3000,
-          className: '!bg-gray-300 !rounded-3xl !py-8 !px-5 !justify-center',
-        });
       }
 
       if (meetingState === 'Schedule') {
