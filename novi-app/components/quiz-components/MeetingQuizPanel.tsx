@@ -7,6 +7,7 @@ import { Loader2, PlayCircle, BookOpen, X } from 'lucide-react'
 import { toast } from 'sonner'
 import QuizTaker from './quizTaker'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface Props {
     isMeetingOwner: boolean | null
@@ -14,6 +15,8 @@ interface Props {
     user: UserResource
     isOpen: boolean
     onClose: () => void
+    isFullscreen?: boolean
+    onQuizActive?: (active: boolean) => void
 }
 
 export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, onClose }: Props) {
@@ -28,6 +31,13 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
     const [loadingActive, setLoadingActive] = useState(false)
     const [quizCompleted, setQuizCompleted] = useState(false)
     const [score, setScore] = useState<{ score: number, total: number } | null>(null)
+
+    // Notify parent if a quiz is active
+    useEffect(() => {
+        if (onQuizActive) {
+            onQuizActive(!!activeQuizId)
+        }
+    }, [activeQuizId, onQuizActive])
 
     // Fetch published quizzes if teacher
     useEffect(() => {
@@ -97,7 +107,10 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
     if (!isOpen) return null
 
     return (
-        <div className="flex flex-col h-full w-full max-w-md bg-white border border-gray-100 shadow-2xl overflow-hidden relative rounded-[2rem] m-2">
+        <div className={cn(
+            "flex flex-col h-full w-full bg-white shadow-2xl overflow-hidden relative",
+            isFullscreen ? "fixed inset-0 z-[100]" : "max-w-md rounded-[2rem] border border-gray-100 m-2"
+        )}>
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-[#da32f8] to-[#9d17bd]">
                 <div className="flex items-center gap-2">
@@ -128,13 +141,14 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
                             </Button>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col pt-4">
+                        <div className={cn("h-full flex flex-col pt-4", isFullscreen ? "bg-slate-50" : "")}>
                             {/* Embedded QuizTaker inside sidebar */}
                             <QuizTaker
                                 quizId={activeQuizId}
                                 questions={activeQuestions}
                                 timeLimit={activeQuizData.time_limit_minutes}
                                 onDone={handleQuizDone}
+                                isFullscreen={isFullscreen}
                             />
                         </div>
                     )
