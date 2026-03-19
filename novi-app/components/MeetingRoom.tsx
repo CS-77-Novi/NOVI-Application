@@ -25,7 +25,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
-import { LayoutList, Users,Gamepad2 } from "lucide-react";
+import { LayoutList, Users, Gamepad2, Home } from "lucide-react";
+import MeetingHomePanel from "./MeetingHomePanel";
 import EndCallButton from "./EndCallButton";
 import useDistractionDetection from "@/hooks/useDistractionDetection";
 import GroupDashboard from "./grp-components/grp-Dashboard";
@@ -49,6 +50,8 @@ const MeetingRoom = () => {
   const [showQuizPanel, setShowQuizPanel] = useState(false);
   // State to handle full-screen quiz view
   const [isQuizFullscreen, setIsQuizFullscreen] = useState(false);
+  // State to toggle the home information panel
+  const [showHome, setShowHome] = useState(false);
 
   // Next.js router instance for programmatic navigation
   const router = useRouter();
@@ -198,6 +201,15 @@ const MeetingRoom = () => {
             />
           </div>
         )}
+
+        {/* Home Information Sidebar */}
+        <div
+          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+            showHome ? "show-block" : "hidden"
+          )}
+        >
+          <MeetingHomePanel onClose={() => setShowHome(false)} />
+        </div>
       </div>
 
       {/* Full Screen Quiz Overlay */}
@@ -245,7 +257,10 @@ const MeetingRoom = () => {
         {/* Participants toggle - now independent */}
         <button onClick={() => {
           setShowParticipants((prev) => !prev);
-          if (!showParticipants) setShowQuizPanel(false);
+          if (!showParticipants) {
+            setShowQuizPanel(false);
+            setShowHome(false);
+          }
         }}>
         <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
@@ -256,7 +271,10 @@ const MeetingRoom = () => {
         <button
            onClick={() => {
             setShowDashboard((prev) => !prev);
-            if (!showDashboard) setShowQuizPanel(false);
+            if (!showDashboard) {
+               setShowQuizPanel(false);
+               setShowHome(false);
+            }
           }}
           title="Dashboard"
         >
@@ -276,7 +294,10 @@ const MeetingRoom = () => {
         {!isMeetingOwner && (
           <button onClick={() => {
             setShowMiniGame((prev) => !prev);
-            if (!showMiniGame) setShowQuizPanel(false);
+            if (!showMiniGame) {
+              setShowQuizPanel(false);
+              setShowHome(false);
+            }
           }}>
             <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <Gamepad2 size={20} className="text-white" />
@@ -291,6 +312,7 @@ const MeetingRoom = () => {
             setShowParticipants(false);
             setShowDashboard(false);
             setShowMiniGame(false);
+            setShowHome(false);
             setShowQuizPanel((prev) => {
               const next = !prev;
               // If we are opening the quiz panel and a quiz is active, it will be handled by onQuizActive
@@ -308,6 +330,29 @@ const MeetingRoom = () => {
             )}
           >
             <BookOpen className="w-5 h-5 text-white" />
+          </div>
+        </button>
+
+        {/* Home toggle button */}
+        <button
+           onClick={() => {
+            setShowParticipants(false);
+            setShowDashboard(false);
+            setShowMiniGame(false);
+            setShowQuizPanel(false);
+            setShowHome((prev) => !prev);
+          }}
+          title="Home Information"
+        >
+          <div
+            className={cn(
+              "cursor-pointer rounded-2xl px-4 py-2 transition-colors",
+              showHome
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-[#19232d] hover:bg-[#4c535b]"
+            )}
+          >
+            <Home size={20} className="text-white" />
           </div>
         </button>
 
