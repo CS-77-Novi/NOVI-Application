@@ -29,7 +29,7 @@ export default function Timeline({ data }: TimelineProps) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Main Timeline Card */}
-      <div className="bg-[#1A1A1A] rounded-[2.5rem] p-10 shadow-2xl border border-white/10">
+      <div className="bg-[#7E43BC]/50 rounded-[2.5rem] p-10 shadow-2xl border border-white/10">
         <div className="flex items-center gap-3 mb-8">
           <div className="bg-[#7E43BC] p-2 rounded-lg">
             <Clock className="text-white" size={20} />
@@ -66,10 +66,10 @@ export default function Timeline({ data }: TimelineProps) {
       </div>
 
       {/* Insights Section */}
-      <div className="bg-[#1A1A1A] rounded-[2.5rem] p-10 border border-white/10">
+      <div className="bg-[#7E43BC]/50 rounded-[2.5rem] p-10 border border-white/10">
         <div className="flex items-center gap-3 mb-6">
-          <Info className="text-[#FC96FF]" size={20} />
-          <h3 className="text-[#FC96FF] font-bold">Insights</h3>
+          <Info className="text-[#010101]" size={30} />
+          <h3 className="text-[#010101] font-bold">Insights</h3>
         </div>
         <ul className="space-y-4">
           <InsightItem text="The learner showed the <span class='text-green-400'>highest focus levels</span> during the first 22 minutes." />
@@ -96,8 +96,8 @@ function StatusCard({ label, color, time, percentage }: any) {
 
 function InsightItem({ text }: { text: string }) {
   return (
-    <li className="flex gap-3 text-gray-300 text-sm leading-relaxed">
-      <span className="text-[#FC96FF]">•</span>
+    <li className="flex gap-3 text-white text-lg leading-relaxed">
+      <span className="text-[#FFFFFF]">•</span>
       <p dangerouslySetInnerHTML={{ __html: text }} />
     </li>
   );
