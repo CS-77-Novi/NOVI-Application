@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Target, AlertCircle, Clock, 
   Download, FileText, ChevronLeft 
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase'; // Ensure this path is correct for your project
 import Overview from './overview';
 import DownloadReport from './download'; 
 
@@ -21,11 +22,13 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
   const [loading, setLoading] = useState(true);
 
   /**
-   * BACKGROUND AUTO-SYNC LOGIC
-   * Captures live data, archives to LocalStorage, and handles teacher-specific exports.
-   * Removed the auto-refresh loop to keep the dashboard stable.
+   * BACKGROUND AUTO-SYNC & WIPE LOGIC
+   * 1. Captures live data from API
+   * 2. Archives to LocalStorage as CSV
+   * 3. Wipes the Supabase table for a clean slate
    */
   const performAutoSync = useCallback(async (rawDetails: any) => {
+    // Only auto-sync and wipe if it's a valid teacher session
     if (!rawDetails || !sessionId || sessionId === "pending" || type !== 'teacher') return;
 
     try {
@@ -38,7 +41,7 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
       const result = await res.json();
 
       if (result.success && result.payload.length > 0) {
-        // Generate CSV content
+        // --- 1. GENERATE CSV ---
         const headers = Object.keys(result.payload[0]).join(',');
         const rows = result.payload.map((row: any) => 
           Object.values(row).map(val => `"${val}"`).join(',')
@@ -63,12 +66,26 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
         );
 
         if (!isDuplicate) {
+          // --- 2. ARCHIVE TO LOCAL STORAGE ---
           localStorage.setItem('novi_report_history', JSON.stringify([newEntry, ...history]));
-          console.log("✅ Session archived successfully.");
+          console.log("✅ Session archived to browser.");
+
+          // --- 3. WIPE SUPABASE TABLE ---
+          // This clears the session so the database is ready for a fresh start
+          const { error: deleteError } = await supabase
+            .from('group_session')
+            .delete()
+            .eq('id', sessionId);
+
+          if (deleteError) {
+            console.error("❌ Failed to clear database:", deleteError);
+          } else {
+            console.log("⌫ Database cleared for the next session.");
+          }
         }
       }
     } catch (error) {
-      console.error("❌ Auto-sync failed:", error);
+      console.error("❌ Auto-sync/Wipe process failed:", error);
     }
   }, [type, sessionId]);
 
@@ -77,7 +94,6 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
    */
   useEffect(() => {
     async function loadData() {
-      // If no ID is found, show the "Empty" state immediately without looping
       if (!sessionId || sessionId === "pending") {
         setSessionData({
           total_duration: 0,
@@ -104,6 +120,7 @@ export default function Dashboard({ type = 'teacher', sessionId }: DashboardProp
         
         if (result.success && result.sessionSummary) {
           setSessionData(result.sessionSummary);
+          // Trigger the Archive + Wipe process if teacher
           if (type === 'teacher') await performAutoSync(result.sessionSummary);
         } else {
           throw new Error("Data not available");

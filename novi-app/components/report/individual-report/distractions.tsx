@@ -9,23 +9,16 @@ interface DistractionEvent {
 }
 
 interface DistractionsProps {
-  data: {
-    lookingAwayCount?: number;
-    headPoseCount?: number;
-    eyeCloserCount?: number;
-    yawningCount?: number;
-    events?: DistractionEvent[];
-  } | null;
+  data: any; // Using any to handle the dynamic API structure
 }
 
 const Distractions = ({ data }: DistractionsProps) => {
-  if (!data) return null;
-
-  // Select the colors, according to the event type
+  // REMOVED the "return null" so it shows even if data is empty
+  
   const getEventStyle = (type: string) => {
     switch (type) {
       case 'Looking Away': return { color: 'bg-red-500/20 text-red-400', icon: <EyeOff size={18} /> };
-      case 'Eye Closer': return { color: 'bg-orange-500/20 text-orange-400', icon: <Ghost size={18} /> };
+      case 'Eye Closure': return { color: 'bg-orange-500/20 text-orange-400', icon: <Ghost size={18} /> };
       case 'Head Pose Deviation': return { color: 'bg-purple-500/20 text-purple-400', icon: <UserX size={18} /> };
       default: return { color: 'bg-blue-500/20 text-blue-400', icon: <AlertCircle size={18} /> };
     }
@@ -39,12 +32,12 @@ const Distractions = ({ data }: DistractionsProps) => {
         </h3>
       </div>
 
-      {/* Summary Stats Cards */}
+      {/* Summary Stats Cards - MATCHED TO API KEY NAMES */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <MiniStatCard label="Looking Away" value={data.lookingAwayCount ?? 0} icon={<EyeOff size={20} />} color="text-red-400" />
-        <MiniStatCard label="Head Pose" value={data.headPoseCount ?? 0} icon={<UserX size={20} />} color="text-purple-400" />
-        <MiniStatCard label="Eye Closure" value={data.eyeCloserCount ?? 0} icon={<Ghost size={20} />} color="text-orange-400" />
-        <MiniStatCard label="Yawning" value={data.yawningCount ?? 0} icon={<Coffee size={20} />} color="text-blue-400" />
+        <MiniStatCard label="Looking Away" value={data?.looking_away_count ?? 0} icon={<EyeOff size={20} />} color="text-red-400" />
+        <MiniStatCard label="Head Pose" value={data?.head_pose_count ?? 0} icon={<UserX size={20} />} color="text-purple-400" />
+        <MiniStatCard label="Eye Closure" value={data?.eye_closure_count ?? 0} icon={<Ghost size={20} />} color="text-orange-400" />
+        <MiniStatCard label="Yawning" value={data?.yawning_count ?? 0} icon={<Coffee size={20} />} color="text-blue-400" />
       </div>
 
       {/* Timeline Section */}
@@ -52,8 +45,8 @@ const Distractions = ({ data }: DistractionsProps) => {
         <h4 className="text-white/60 text-xs font-black uppercase tracking-widest mb-6 px-2">Event Timeline</h4>
         
         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
-          {data.events && data.events.length > 0 ? (
-            data.events.map((event, index) => {
+          {data?.events && data.events.length > 0 ? (
+            data.events.map((event: any, index: number) => {
               const style = getEventStyle(event.type);
               return (
                 <div key={index} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
@@ -71,7 +64,7 @@ const Distractions = ({ data }: DistractionsProps) => {
             })
           ) : (
             <div className="text-center py-10">
-              <p className="text-white/40 italic">No distraction events detected</p>
+              <p className="text-white/40 italic">No distraction events detected yet</p>
             </div>
           )}
         </div>
@@ -81,7 +74,7 @@ const Distractions = ({ data }: DistractionsProps) => {
 };
 
 const MiniStatCard = ({ label, value, icon, color }: any) => (
-  <div className="bg-black/30 p-6 rounded-[2rem] border border-white/5">
+  <div className="bg-black/30 p-6 rounded-[2rem] border border-white/5 transition-transform hover:scale-105">
     <div className={`${color} mb-3`}>{icon}</div>
     <p className="text-white/40 text-[10px] font-black uppercase tracking-tighter mb-1">{label}</p>
     <p className="text-2xl font-black text-white">{value}</p>
