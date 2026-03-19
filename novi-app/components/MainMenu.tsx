@@ -26,7 +26,7 @@ const MainMenu = () => {
    const [values, setValues] = useState(initialValues); // State holding meeting form values
    const [meetingState, setMeetingState] = useState<'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
    const client = useStreamVideoClient();  // Stream Video client instance
-   const { activeCall } = useMeetingContext();
+   const { activeCall, setActiveCall } = useMeetingContext();
 
   // Function to create a new meeting
   const createMeeting = async () => {
@@ -53,6 +53,9 @@ const MainMenu = () => {
           custom: { description },
         },
       });
+
+      // Register the call globally as soon as it's created/fetched
+      setActiveCall(call);
 
       await call.updateCallMembers({
         update_members: [{ user_id: user.id }],
