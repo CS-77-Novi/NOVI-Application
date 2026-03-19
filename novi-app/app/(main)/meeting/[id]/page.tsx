@@ -13,28 +13,20 @@ import { useMeetingContext } from "@/providers/MeetingContext";
 
 const MeetingPage = () => {
     const { id } = useParams<{ id: string }>();
-    if (!id) return
     const { isLoaded, user } = useUser();
-    const { call, isCallLoading } = useGetCallById(id);
-    const { setActiveCall, setMinimized, isSetupComplete: globalSetupComplete } = useMeetingContext();
+    const { activeCall, setMinimized, isSetupComplete: globalSetupComplete } = useMeetingContext();
     const [localSetupComplete, setLocalSetupComplete] = useState(false);
 
     useEffect(() => {
-        if (call) {
-            setActiveCall(call);
+        if (activeCall && activeCall.id === id) {
             setMinimized(false);
         }
-    }, [call, setActiveCall, setMinimized]);
+    }, [activeCall, id, setMinimized]);
 
-    if (!isLoaded || isCallLoading) return <Loading />;
+    // Wait for the global layout to fetch and provide the call
+    if (!isLoaded || !activeCall || activeCall.id !== id) return <Loading />;
 
-    if (!call) return (
-        <p className="text-center text-3xl font-bold text-white">
-            Call Not Found
-        </p>
-    );
-
-    const notAllowed = call.type === 'invited' && (!user || !call.state.members.find
+    const notAllowed = activeCall.type === 'invited' && (!user || !activeCall.state.members.find
         ((m) => m.user.id === user.id));
 
     if (notAllowed) return <Alert title="You are not allowed to join this meeting" />;
