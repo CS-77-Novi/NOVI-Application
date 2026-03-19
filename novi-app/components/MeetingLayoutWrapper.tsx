@@ -11,29 +11,24 @@ const MeetingLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isMeetingPage = pathname.includes('/meeting/');
 
-  return (
+  const content = (
     <>
-      {/* 
-        Provide StreamCall context globally if a call is active and we are NOT on the full meeting page.
-        The meeting page handles its own StreamCall context.
-      */}
-      {activeCall && !isMeetingPage && (
-        <StreamCall call={activeCall}>
-          <StreamTheme>
-            {isMinimized && <MinimizedMeeting />}
-          </StreamTheme>
-        </StreamCall>
-      )}
-      
-      {/* 
-        Even if we are on the meeting page, we want a StreamCall context 
-        at the top if it's already in our global state. 
-        However, to avoid double-rendering StreamCall triggers, 
-        we let the meeting page handle it when it's in full screen mode.
-      */}
+      {activeCall && isMinimized && !isMeetingPage && <MinimizedMeeting />}
       {children}
     </>
   );
+
+  if (activeCall) {
+    return (
+      <StreamCall call={activeCall}>
+        <StreamTheme>
+          {content}
+        </StreamTheme>
+      </StreamCall>
+    );
+  }
+
+  return content;
 };
 
 export default MeetingLayoutWrapper;
