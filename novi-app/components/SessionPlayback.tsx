@@ -41,6 +41,30 @@ const SessionPlayback = () => {
         return () => clearTimeout(timer)
     }, [call, autoRecordStarted, isRecording])
 
+    // Fetch recordings
+    const fetchRecordings = useCallback(async () => {
+        if (!call) return
+        setIsLoadingRecordings(true)
+        setError(null)
+
+        try {
+            const response = await call.queryRecordings()
+            const recs = response?.recordings || []
+            setRecordings(recs as unknown as Recording[])
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to fetch recordings'
+            setError(message)
+            console.error('Error fetching recordings:', err)
+        } finally {
+            setIsLoadingRecordings(false)
+        }
+    }, [call])
+
+    // Fetch recordings on mount and when recording state changes
+    useEffect(() => {
+        fetchRecordings()
+    }, [fetchRecordings, isRecording])
+
     return <div>Session Playback</div>
 }
 
