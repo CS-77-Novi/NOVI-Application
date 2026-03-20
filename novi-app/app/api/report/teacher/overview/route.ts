@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     // Step 1 & 2: Query host_meetings for the latest meeting_id for this host_id
     const { data: hostMatches, error: hostError } = await supabase
       .from('host_meetings')
-      .select('meeting_id')
+      .select('meeting_id, date_time')
       .eq('host_id', host_id)
       .order('date_time', { ascending: false })
       .limit(1);
@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
     }
 
     const latestMeetingId = hostMatches[0].meeting_id;
+    const meetingDateTime = hostMatches[0].date_time;
 
     if (!latestMeetingId) {
       return NextResponse.json({ 
@@ -107,7 +108,9 @@ export async function GET(req: NextRequest) {
         ok: true, 
         data: {
             distractions: distractionsData || [],
-            sessionDate: sessionData && sessionData.length > 0 ? sessionData[0].peak_distraction_time : null
+            sessionDate: sessionData && sessionData.length > 0 ? sessionData[0].peak_distraction_time : null,
+            meetingId: latestMeetingId,
+            meetingDateTime: meetingDateTime
         } 
     });
 
