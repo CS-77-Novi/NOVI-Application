@@ -142,7 +142,7 @@ const MeetingRoom = () => {
           {isMeetingOwner ? (
             <GroupDashboard
               meetingId={call.id}
-              hostUserId={call.state.createdBy?.id}
+              hostUserId={call.state.createdBy?.id} //to exclude the host form distraction detection
               isOpen={showDashboard}
               onClose={() => setShowDashboard(false)}
             />

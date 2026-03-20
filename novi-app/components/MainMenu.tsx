@@ -12,7 +12,6 @@ import { useUser } from "@clerk/nextjs"
 import Loading from "./Loading"
 import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
-import Selection from '@/components/report/selection';
 
 const initialValues = {
     dateTime: new Date(), // Default meeting date/time = now
@@ -67,6 +66,39 @@ const MainMenu = () => {
               // Add the current user to the call
               update_members: [{ user_id: user.id }],
             })
+
+            //cleaning previous meeting data from the database table
+            if (meetingState === 'Instant') {
+                // Wipe the previous meeting's group_session data before logging the new one
+                try {
+                    await fetch('/api/meeting/group-cleanup', { 
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ host_id: user.id }),
+                    });
+                } catch (err) {
+                    console.error('[DB Cleanup] Failed to trigger cleanup', err);
+                }
+            }
+            
+            // Store the CURRENT meeting metadata (host_id, meeting_id, and date_time) in Supabase
+            try {
+                await fetch('/api/meeting/meta-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        host_id: user.id, 
+                        meeting_id: call.id,
+                        date_time: new Date().toISOString()
+                    }),
+                });
+            } catch (err) {
+                console.error('[DB Meeting Meta-data] Failed to store meeting metadata', err);
+            }
 
             if (meetingState === 'Instant') {
               // Instant meeting flow

@@ -30,6 +30,14 @@ const EndCallButton =() => {
         const endcall =async () =>{
             // End the call
             await call.endCall();
+
+            // We MUST await this so the browser doesn't cancel the request when routing away!
+            try {
+                await fetch(`/api/meeting/${call.id}/group_report_gen`);
+            } catch (err) {
+            console.error('[Excel Gen trigger error]', err);
+            }
+
             // Redirect user to home page
             router.push('/');
         };
