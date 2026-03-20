@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "react-datepicker/dist/react-datepicker.css";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +32,19 @@ export default function RootLayout({
     // This makes Clerk authentication (user, session, sign-in, sign-up)
     // available to ALL components in your Next.js app.
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
         >
-         {children}
-          <Toaster/>
-           
+          <ThemeProvider
+             attribute="class"
+             defaultTheme="system"
+             enableSystem
+             disableTransitionOnChange
+          >
+            {children}
+            <Toaster/>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
