@@ -35,7 +35,6 @@ export default function QuizCard({
         }
     }
     return (
-    return (
         <div className="bg-white dark:bg-card rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-border hover:shadow-md transition-shadow flex flex-col gap-4">
             {/* Header */}
             <div className="flex items-start justify-between gap-3">
