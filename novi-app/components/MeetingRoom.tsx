@@ -25,12 +25,13 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
-import { LayoutList, Users,Gamepad2 } from "lucide-react";
+import { LayoutList,Rewind, Users,Gamepad2 } from "lucide-react";
 import EndCallButton from "./EndCallButton";
 import useDistractionDetection from "@/hooks/useDistractionDetection";
 import GroupDashboard from "./grp-components/grp-Dashboard";
 import Dashboard from "./ind-components/Ind-Dashboard";
 import WordJumble from "./WordJumble";
+import SessionPlayback from "./SessionPlayback";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
@@ -39,6 +40,8 @@ const MeetingRoom = () => {
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
   // State to toggle the visibility of the participant list sidebar
   const [showParticipants, setShowParticipants] = useState(false);
+  // State to toggle session playback panel
+    const [showPlayback, setShowPlayback] = useState(false);
   // State to toggle the visibility of the distraction dashboard sidebar
   const [showDashboard, setShowDashboard] = useState(false);
     // State to toggle mini game panel
