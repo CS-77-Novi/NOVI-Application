@@ -86,6 +86,28 @@ const SessionPlayback = () => {
         }
     }
 
+        // Format time from ISO string
+    const formatTime = (isoString: string) => {
+        try {
+            const date = new Date(isoString)
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        } catch {
+            return 'Unknown'
+        }
+    }
+
+    // Calculate duration between two ISO strings
+    const getDuration = (start: string, end: string) => {
+        try {
+            const diff = new Date(end).getTime() - new Date(start).getTime()
+            const minutes = Math.floor(diff / 60000)
+            const seconds = Math.floor((diff % 60000) / 1000)
+            return `${minutes}m ${seconds}s`
+        } catch {
+            return 'Unknown'
+        }
+    }
+
     return <div>Session Playback</div>
 }
 
