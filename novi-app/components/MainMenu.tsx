@@ -12,6 +12,7 @@ import { useUser } from "@clerk/nextjs"
 import Loading from "./Loading"
 import { useStreamVideoClient } from "@stream-io/video-react-sdk"
 import { toast } from "sonner"
+import Selection from '@/components/report/selection';
 
 const initialValues = {
     dateTime: new Date(), // Default meeting date/time = now
@@ -25,6 +26,7 @@ const MainMenu = () => {
     const [values, setValues] = useState(initialValues); // State holding meeting form values
     const [meetingState, setMeetingState] = useState< 'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
     const client = useStreamVideoClient();  // Stream Video client instance
+    const [showSelection, setShowSelection] = useState(false);
 
     // Function to create a new meeting
     const createMeeting = async() => {
@@ -250,11 +252,12 @@ const MainMenu = () => {
 
       {/* For reports */}
       <MenuItemCard
-          img="/assets/reports2.svg"
-          title="Reports"
-          bgColor="bg-blue-600"
-          hoverColor= 'hover:bg-blue-800'
-          handleClick={() => router.push('/reports')}
+        img="/assets/reports2.svg"
+        title="Reports"
+        bgColor="bg-blue-600"
+        hoverColor='hover:bg-blue-800'
+        /* Change: Use handleClick to trigger our new state */
+        handleClick={() => router.push('/reports')}
       />
 
       {/* For Pop-Quizzes */}
@@ -265,6 +268,7 @@ const MainMenu = () => {
           hoverColor= 'hover:bg-blue-800'
           handleClick={() => router.push('/pop-quizzes')}
       />
+
     </section>
   )
 }
