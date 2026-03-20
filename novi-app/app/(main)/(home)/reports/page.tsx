@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { User } from 'lucide-react'
-import ReportDashboard from '@/components/report-components/Report-Dashboard'
+import ReportDashboard from '@/components/report-components/Report_Dashboard'
 
 const ReportsPage = () => {
     const [selectedRole, setSelectedRole] = useState<'individual' | 'teacher' | null>(null)
