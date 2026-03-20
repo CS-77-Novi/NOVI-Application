@@ -107,7 +107,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                         </div>
 
                         {/* Interactive UI controls for filtering and sorting the data */}
-                        <div className="flex flex-col bg-[#9E4DBC] rounded-[24px] shadow-sm overflow-hidden w-full">
+                        <div className="flex flex-col bg-[#f4effc] rounded-[24px] shadow-sm overflow-hidden w-full">
                             <div className="bg-[#9543B8] px-6 py-4 flex flex-wrap items-center gap-6 border-b border-white/10">
                                 {/* Threshold Input filter control */}
                                 <div className="flex items-center gap-3">
@@ -141,11 +141,11 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                             {/* Main display area for distraction records */}
                             <div className="p-6 flex flex-col gap-4 min-h-[250px] w-full">
                                 {/* Loading state pulse indicator */}
-                                {loading && <div className="text-white/70 font-bold animate-pulse text-center py-16 flex-1 flex flex-col items-center justify-center">Loading data...</div>}
+                                {loading && <div className="text-[#9E4DBC]/70 font-bold animate-pulse text-center py-16 flex-1 flex flex-col items-center justify-center">Loading data...</div>}
                                 
                                 {/* Empty state indicator when no records match filter criteria */}
                                 {!loading && distractions.length === 0 && (
-                                    <div className="flex-1 flex flex-col items-center justify-center text-white/90 font-bold text-center py-24 px-8 w-full bg-white/[0.04] rounded-xl border border-white/5 shadow-inner">
+                                    <div className="flex-1 flex flex-col items-center justify-center text-[#9E4DBC]/90 font-bold text-center py-24 px-8 w-full bg-white/[0.04] rounded-xl border border-white/5 shadow-inner">
                                         {threshold === '' 
                                             ? "Please enter a percentage to filter." 
                                             : `No distraction percentages > ${threshold}% recorded in the session.`}

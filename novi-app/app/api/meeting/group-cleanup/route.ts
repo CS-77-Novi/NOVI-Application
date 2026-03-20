@@ -49,8 +49,19 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ ok: false, error: deleteError.message }, { status: 500 });
     }
 
-    console.log(`[DB Cleanup] Successfully wiped previous tracking rows for group_session_overview ${latestMeetingId}.`);
-    return NextResponse.json({ ok: true, message: 'Specific session cleared successfully from group_session_overview' });
+    // Step 4: Clear attention analysis data for the same meeting
+    const { error: attentionDeleteError } = await supabase
+      .from('group_attention_analysis')
+      .delete()
+      .eq('session_id', latestMeetingId);
+
+    if (attentionDeleteError) {
+      console.error(`[DB Cleanup] Error wiping group_attention_analysis for meeting ${latestMeetingId}:`, attentionDeleteError);
+      return NextResponse.json({ ok: false, error: attentionDeleteError.message }, { status: 500 });
+    }
+
+    console.log(`[DB Cleanup] Successfully wiped previous tracking rows for group_session_overview and group_attention_analysis ${latestMeetingId}.`);
+    return NextResponse.json({ ok: true, message: 'Specific session cleared successfully from group_session_overview and group_attention_analysis' });
 
   } catch (err: any) {
     console.error('[DB Cleanup] Unexpected error during selective cleanup:', err);

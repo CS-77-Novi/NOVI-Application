@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import OverviewBoard from './Overview-board'
+import AttentionScoreBoard from './AttentionScore_board'
 import { LayoutGrid, Target, AlertCircle, Clock, Download, FileText } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 
@@ -121,6 +122,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                 
                 <div className="flex flex-col flex-1 w-full">
                     {activeTab === 'summary' && <OverviewBoard role={role} />}
+                    {activeTab === 'attention' && <AttentionScoreBoard role={role} />}
                 </div>
             </div>
         </div>

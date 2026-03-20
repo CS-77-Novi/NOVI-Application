@@ -10,6 +10,7 @@ interface UseDistractionDetectionOptions {
   participantId: string // Unique identifier for the local participant
   name: string // Display name of the local participant
   isCameraOn: boolean // Flag indicating whether the camera is currently active
+  timeChecks?: number // Elapsed meeting time in seconds
 }
 
 /**
@@ -29,6 +30,7 @@ const useDistractionDetection = ({
   participantId,
   name,
   isCameraOn,
+  timeChecks,
 }: UseDistractionDetectionOptions) => {
   // Exposed state variables for consuming components (e.g., rendering a local dashboard)
   const [stats, setStats] = useState<any>(null) // Raw frame analysis results from the ML model
@@ -65,6 +67,8 @@ const useDistractionDetection = ({
   const consecutiveNoFaceRef = useRef(0)
   const lastKnownStatusRef = useRef<'FOCUSED' | 'DISTRACTED' | null>(null)
   const NO_FACE_THRESHOLD = 8 // Wait for ~8 consecutive misses (~1.6 seconds at 200ms intervals)
+  
+  const lastAggregatedTimeRef = useRef(0)
 
   // ── 1. Init combined.js (once) ──────────────────────────────────────────────
   // This effect dynamically loads the machine learning dependencies so it doesn't
@@ -267,6 +271,28 @@ const useDistractionDetection = ({
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [isCameraOn, meetingId, participantId, name]) // Re-run effect safely when user toggles hardware config or re-names
+
+  // ── 4. Group Aggregation Trigger (runs when timeChecks changes) ─────────────
+  useEffect(() => {
+    if (!timeChecks || timeChecks <= 0) return;
+    
+    // Only dispatch the alignment ping to the server perfectly on 5-second milestones
+    // checking lastAggregatedTimeRef.current explicitly prevents double firing within the same second
+    if (timeChecks % 5 === 0 && lastAggregatedTimeRef.current !== timeChecks) {
+      lastAggregatedTimeRef.current = timeChecks;
+      
+      const hours = Math.floor(timeChecks / 3600).toString().padStart(2, '0');
+      const mins = Math.floor((timeChecks % 3600) / 60).toString().padStart(2, '0');
+      const secs = (timeChecks % 60).toString().padStart(2, '0');
+      const formattedTime = `${hours}:${mins}:${secs}`;
+      
+      fetch(`/api/meeting/${meetingId}/attention_analysis`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ time: formattedTime }),
+      }).catch((err) => console.error("[attention_analysis] Sync trigger failed", err));
+    }
+  }, [timeChecks, meetingId]);
 
   // Return the raw frame data and derived session totals structurally
   return { stats, focusedCount, totalCount }
