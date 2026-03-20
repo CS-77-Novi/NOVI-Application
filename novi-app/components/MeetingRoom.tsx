@@ -127,6 +127,28 @@ const MeetingRoom = () => {
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
+        {/* Session Playback panel container */}
+                <div
+                    className={cn('h-[calc(100vh-86px)] hidden ml-2 overflow-y-auto', {
+                      'show-block': showPlayback,
+                    })}
+                    >
+                    <div className="h-full min-w-[350px] bg-[#1c1f2e] rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-3">
+                            <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                                ⏪ Session Playback
+                            </h2>
+                            <button
+                                onClick={() => setShowPlayback(false)}
+                                className="text-gray-400 hover:text-white transition-colors cursor-pointer text-xl"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <SessionPlayback />
+                    </div>
+                </div>
+
                       {/* Mini Game panel */}
                 {!isMeetingOwner && showMiniGame && (
                     <WordJumble onClose={() => setShowMiniGame(false)} />
