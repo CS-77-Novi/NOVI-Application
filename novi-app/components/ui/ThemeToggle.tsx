@@ -13,4 +13,12 @@ export function ThemeToggle() {
 React.useEffect(() => {
   setMounted(true)
 }, [])
+
+if (!mounted) {
+  return (
+    <button className="relative flex items-center justify-center p-2.5 rounded-full hover:bg-gray-200 dark:hover:bg-sidebar-accent transition-colors">
+      <div className="h-5 w-5 bg-transparent" />
+    </button>
+  )
+}
 }
