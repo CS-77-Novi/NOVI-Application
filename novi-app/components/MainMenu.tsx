@@ -33,8 +33,9 @@ const MainMenu = () => {
     if (!user) return router.push('/login')
     if (!client) return router.push('/')
     
-    if (activeCall) {
+    if (activeCall && meetingState === 'Instant') {
         toast.error('You are already in an active call. Please leave it before starting a new one.');
+        setMeetingState(undefined);
         return;
     }
 
@@ -56,8 +57,10 @@ const MainMenu = () => {
         },
       });
 
-      // Register the call globally
-      setActiveCall(call);
+      // Register the call globally ONLY if it's an instant meeting
+      if (meetingState === 'Instant') {
+        setActiveCall(call);
+      }
 
       setValues({ dateTime: new Date(), description: '', link: '' });
       setMeetingState(undefined);
@@ -77,6 +80,7 @@ const MainMenu = () => {
     } catch (error) {
       console.error("[MainMenu] Failed to handle call:", error);
       toast.error('Failed to create/join meeting. Please check your camera permissions.');
+      setMeetingState(undefined);
     }
   };
 

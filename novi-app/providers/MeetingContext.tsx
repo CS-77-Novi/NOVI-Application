@@ -22,7 +22,12 @@ export const MeetingProvider = ({ children }: { children: ReactNode }) => {
 
   const leaveCall = async () => {
     if (activeCall) {
-      await activeCall.leave();
+      try {
+        await activeCall.leave();
+      } catch (error) {
+        // Ignored if the user already left the call (e.g. due to ending it)
+        console.log("Call was already left or could not be left:", error);
+      }
       setActiveCall(null);
       setMinimized(false);
       setSetupComplete(false);
