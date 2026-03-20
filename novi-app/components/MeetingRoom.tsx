@@ -212,6 +212,17 @@ const MeetingRoom = () => {
             <Users size={20} className="text-white" />
           </div>
         </button>
+        {/* Session Playback toggle button */}
+                <button onClick={() => setShowPlayback((prev) => !prev)}> 
+                    <div className={cn(
+                        "cursor-pointer rounded-2xl px-4 py-2 transition-colors",
+                        showPlayback
+                            ? "bg-blue-600 hover:bg-blue-700"
+                            : "bg-[#19232d] hover:bg-[#4c535b]"
+                    )}>
+                        <Rewind size={20} className="text-white" />
+                    </div>
+                </button>
 
         {/* Dashboard toggle — available to all participants */}
         <button
