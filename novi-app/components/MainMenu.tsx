@@ -103,8 +103,8 @@ const MainMenu = () => {
                <div className="w-3 h-3 bg-white rounded-full"></div>
              </div>
              <div>
-               <h2 className="text-xl font-bold text-black">Meeting in Progress</h2>
-               <p className="text-sm text-gray-500">You are currently in an active call.</p>
+               <h2 className="text-xl font-bold text-foreground">Meeting in Progress</h2>
+               <p className="text-sm text-gray-500 dark:text-gray-400">You are currently in an active call.</p>
              </div>
            </div>
            <Button 
