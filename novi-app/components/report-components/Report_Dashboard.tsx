@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import OverviewBoard from './Overview_board'
+import IndOverviewBoard from './IndOverview_board'
 import AttentionScoreBoard from './AttentionScore_board'
 import ReportDownloadBoard from './ReportDownload_board'
 import { LayoutGrid, Target, AlertCircle, Clock, Download, FileText } from 'lucide-react'
@@ -121,7 +122,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                 </div>
                 
                 <div className="flex flex-col flex-1 w-full">
-                    {activeTab === 'summary' && <OverviewBoard role={role} />}
+                    {activeTab === 'summary' && role === 'teacher' && <OverviewBoard role={role} />}
+                    {activeTab === 'summary' && role === 'individual' && <IndOverviewBoard role={role} />}
                     {activeTab === 'attention' && <AttentionScoreBoard role={role} />}
                     {activeTab === 'download' && <ReportDownloadBoard role={role} />}
                 </div>

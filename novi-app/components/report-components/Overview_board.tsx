@@ -6,7 +6,7 @@ import { ArrowUpDown } from 'lucide-react';
 
 // Define the expected props for the OverviewBoard component
 interface OverviewBoardProps {
-    role: 'individual' | 'teacher';
+    role: 'teacher';
 }
 
 // Define the shape of a single distraction record returned by the API
@@ -40,10 +40,10 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
     // State to determine the sort order of the distraction list
     const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
-    // Effect hook to fetch data whenever role, threshold, or sortOrder changes
+    // Effect hook to fetch data whenever threshold or sortOrder changes
     useEffect(() => {
-        // Only fetch if the user is a teacher and the user ID is available
-        if (role === 'teacher' && user?.id) {
+        // Only fetch if the user ID is available
+        if (user?.id) {
             const fetchDistractions = async () => {
                 setLoading(true);
                 try {
@@ -80,32 +80,11 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
             };
             fetchDistractions();
         }
-    }, [role, threshold, sortOrder, user?.id]); // Safely include user?.id in dependencies
+    }, [threshold, sortOrder, user?.id]);
 
     return (
         <div className="flex flex-col flex-1 animate-fade-in bg-[#D946EF] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px]">
-            {/* UI for the Individual Role */}
-            {role === 'individual' && (
-                <>
-                    <p className="text-white/80 text-[15px] font-medium mb-8">A quick overview of your personal progress and key metrics.</p>
-                    <div className="mt-4 space-y-4">
-                        {/* Placeholder for future individual chart implementation */}
-                        <div className="h-40 bg-[#9543B8] rounded-2xl animate-pulse shadow-md flex items-center justify-center text-white/50 font-bold">
-                            Summary Chart Placeholder
-                        </div>
-                        {/* Placeholders for future individual metrics */}
-                        <div className="grid grid-cols-2 gap-4">
-                             <div className="h-24 bg-[#9543B8] rounded-[24px] animate-pulse shadow-md flex items-center justify-center text-white/50 font-bold">Metric 1</div>
-                             <div className="h-24 bg-[#9543B8] rounded-[24px] animate-pulse shadow-md flex items-center justify-center text-white/50 font-bold">Metric 2</div>
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {/* UI for the Teacher Role */}
-            {role === 'teacher' && (
-                <>
-                    <p className="text-white/80 text-[15px] font-medium mb-8">A quick overview of your previous classes' performance and aggregated metrics.</p>
+            <p className="text-white/80 text-[15px] font-medium mb-8">A quick overview of your previous classes' performance and aggregated metrics.</p>
                     
                     <div className="text-white text-base w-full">
                         
@@ -179,8 +158,6 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                             </div>
                         </div>
                     </div>
-                </>
-            )}
         </div>
     );
 }

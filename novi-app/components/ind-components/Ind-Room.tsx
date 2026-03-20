@@ -1,7 +1,7 @@
 'use client';
 
 // React hooks for state and lifecycle management
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 // UI icons from Heroicons
 import { VideoCameraIcon, VideoCameraSlashIcon, MicrophoneIcon, ChartBarIcon } from '@heroicons/react/24/solid';
 // Import the unified distraction detection functions
@@ -10,6 +10,8 @@ import { initDistraction, detectDistraction } from '@/ml-calculations/combined';
 import Dashboard from './Ind-Dashboard';
 // Button component for ending the individual session
 import IndEndCallButton from './Ind-EndCallButton';
+// Clerk user hook for host_id
+import { useUser } from '@clerk/nextjs';
 
 
 // Define the properties expected by the IndRoom component
@@ -20,6 +22,12 @@ interface IndRoomProps {
 
 // Main component for the individual tracking room
 const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndRoomProps = {}) => {
+    // Access current user for host_id
+    const { user } = useUser();
+
+    // Generate a unique session ID once when the component mounts
+    const sessionId = useMemo(() => crypto.randomUUID(), []);
+
     // Reference to the main video element
     const videoRef = useRef<HTMLVideoElement>(null);
     // State to hold the active media stream (audio/video)
@@ -44,6 +52,19 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
     const [focusedCount, setFocusedCount] = useState(0);
     // Counter for total number of valid tracking frames processed
     const [totalCount, setTotalCount] = useState(0);
+
+    // Time counter state (in seconds)
+    const [sessionTime, setSessionTime] = useState(0);
+    const [focusedTime, setFocusedTime] = useState(0);
+    const [distractedTime, setDistractedTime] = useState(0);
+    // Refs to hold the latest time values for the async handleEndCall
+    const sessionTimeRef = useRef(0);
+    const focusedTimeRef = useRef(0);
+    const distractedTimeRef = useRef(0);
+    // Ref to hold the latest detection status for the timer interval
+    const latestStatusRef = useRef<string | null>(null);
+    // Ref for the timer interval
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // Function to initialize and request user media (camera and mic)
     const startMediaStream = async (enableVideo: boolean, enableAudio: boolean) => {
@@ -117,8 +138,38 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
         }
     };
 
+    // Helper to convert seconds to HH:MM:SS time format for Supabase
+    const formatTime = (totalSeconds: number): string => {
+        const hrs = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+        const mins = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+        const secs = (totalSeconds % 60).toString().padStart(2, '0');
+        return `${hrs}:${mins}:${secs}`;
+    };
+
     // Cleanup logic executed when the user leaves the room
-    const handleEndCall = () => {
+    const handleEndCall = async () => {
+        // Stop the timer
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+
+        // POST session data to the API
+        try {
+            await fetch('/api/individual_session/session_overview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    host_id: user?.id || 'unknown',
+                    session_time: formatTime(sessionTimeRef.current),
+                    attentive_time: formatTime(focusedTimeRef.current),
+                    distracted_time: formatTime(distractedTimeRef.current),
+                }),
+            });
+        } catch (err) {
+            console.error('Failed to save session overview:', err);
+        }
+
         // Disconnect all connected media tracks entirely
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
@@ -195,6 +246,8 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                                        
                     // When tracking metrics are usable (not errors or NO FACE events)
                     if (result && (result.status === "FOCUSED" || result.status === "DISTRACTED")) {
+                        // Update the latest status ref for the timer interval
+                        latestStatusRef.current = result.status;
                         // Increment base sample count
                         setTotalCount(prev => prev + 1);
                         // Increment focused count selectively
@@ -218,6 +271,36 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
             }
         };
     }, [isDistractionInitialized, isVideoEnabled]);
+
+    // 1-second interval timer for session/focused/distracted time counters
+    useEffect(() => {
+        timerRef.current = setInterval(() => {
+            // Always increment session time
+            setSessionTime(prev => {
+                sessionTimeRef.current = prev + 1;
+                return prev + 1;
+            });
+
+            // Increment focused or distracted time based on latest detection status
+            if (latestStatusRef.current === 'FOCUSED') {
+                setFocusedTime(prev => {
+                    focusedTimeRef.current = prev + 1;
+                    return prev + 1;
+                });
+            } else if (latestStatusRef.current === 'DISTRACTED') {
+                setDistractedTime(prev => {
+                    distractedTimeRef.current = prev + 1;
+                    return prev + 1;
+                });
+            }
+        }, 1000);
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, []);
 
     return (
         <div className="fixed inset-0 flex flex-col w-full bg-gray-900 z-[60]">
