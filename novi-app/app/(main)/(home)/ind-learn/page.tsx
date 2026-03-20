@@ -33,10 +33,10 @@ const IndLearnPage = () => {
     return (
         <section className="flex size-full flex-col items-center justify-center gap-8 text-white animate-fade-in min-h-screen">
             <div className="flex flex-col items-center gap-6">
-                <h1 className="text-4xl font-bold text-black text-center">
+                <h1 className="text-4xl font-bold text-foreground text-center">
                     Individual Learning
                 </h1>
-                <p className="text-lg text-gray-600 text-center max-w-md">
+                <p className="text-lg text-gray-500 dark:text-gray-400 text-center max-w-md">
                     Ready to begin your learning journey?
                 </p>
                 <button
