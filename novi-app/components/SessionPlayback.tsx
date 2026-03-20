@@ -65,6 +65,27 @@ const SessionPlayback = () => {
         fetchRecordings()
     }, [fetchRecordings, isRecording])
 
+     // Toggle recording
+    const toggleRecording = async () => {
+        if (!call) return
+        setIsTogglingRecording(true)
+        setError(null)
+
+        try {
+            if (isRecording) {
+                await call.stopRecording()
+                setTimeout(fetchRecordings, 3000)
+            } else {
+                await call.startRecording()
+            }
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to toggle recording'
+            setError(message)
+        } finally {
+            setIsTogglingRecording(false)
+        }
+    }
+
     return <div>Session Playback</div>
 }
 
