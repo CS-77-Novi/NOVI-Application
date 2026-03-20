@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import OverviewBoard from './Overview-board'
+import OverviewBoard from './Overview_board'
 import AttentionScoreBoard from './AttentionScore_board'
 import ReportDownloadBoard from './ReportDownload_board'
 import { LayoutGrid, Target, AlertCircle, Clock, Download, FileText } from 'lucide-react'
