@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { navLinks } from '@/constants';
 import { neobrutalism } from '@clerk/themes'
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from './ui/ThemeToggle';
 
 
 const NavBar = () => {
@@ -13,7 +14,7 @@ const NavBar = () => {
 
     return (
         <>
-          <nav className="flex justify-between items-center fixed z-50 w-full h-28 bg-gray-200 px-10 gap-4 shadow-2xl">
+          <nav className="flex justify-between items-center fixed z-50 w-full h-28 bg-gray-200 dark:bg-[#1c1f2e] dark:text-white px-10 gap-4 shadow-2xl transition-colors duration-300">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-1 hover:scale-150 duration-500 ">
                 <Image
@@ -25,7 +26,7 @@ const NavBar = () => {
               </Link>
 
               {/* Nav Links */}
-              <section className="sticky top-0 flex justify-between text-black ">
+              <section className="sticky top-0 flex justify-between text-black dark:text-white">
                 <div className="flex flex-1 max-sm:gap-0 sm:gap-6">
                   {navLinks.map((item) => {
                     const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`);
@@ -35,8 +36,8 @@ const NavBar = () => {
                         href={item.route}
                         key={item.label}
                         className={
-                          cn('flex gap-4 items-center p-4 rounded-lg justify-start hover:scale-150 duration-300 ',
-                            isActive && 'bg-blue-100 rounded-3xl'
+                          cn('flex gap-4 items-center p-4 rounded-lg justify-start hover:scale-110 transition-transform duration-300 ',
+                            isActive && 'bg-blue-100 dark:bg-blue-900 rounded-3xl'
                           )
                         }
                       >
@@ -60,17 +61,19 @@ const NavBar = () => {
                 </div>
               </section>
 
-              {/* User button */}
-              <div className='hover:scale-150 duration-500 '>
-                <SignedIn>
-                    {/* Mount the UserButton component */}
-                    <UserButton
-                      appearance={{
-                        baseTheme: neobrutalism,
-                      }}
-                    />
-                </SignedIn>
-        
+              {/* User button & Theme toggle */}
+              <div className='flex items-center gap-6'>
+                <ThemeToggle />
+                <div className='hover:scale-150 duration-500 '>
+                  <SignedIn>
+                      {/* Mount the UserButton component */}
+                      <UserButton
+                        appearance={{
+                          baseTheme: neobrutalism,
+                        }}
+                      />
+                  </SignedIn>
+                </div>
               </div>
           </nav>
         </>
