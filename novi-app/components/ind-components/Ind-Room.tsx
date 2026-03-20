@@ -293,6 +293,23 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     return prev + 1;
                 });
             }
+
+            // Every 5 seconds, POST attention analysis data
+            if (sessionTimeRef.current > 0 && sessionTimeRef.current % 5 === 0) {
+                const distractionPct = sessionTimeRef.current > 0 
+                    ? Math.round((distractedTimeRef.current / sessionTimeRef.current) * 100) 
+                    : 0;
+                fetch('/api/individual_session/attention_analysis', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        host_id: user?.id || 'unknown',
+                        time: formatTime(sessionTimeRef.current),
+                        distraction_pct: distractionPct,
+                    }),
+                }).catch(err => console.error('Failed to post attention analysis:', err));
+            }
         }, 1000);
 
         return () => {

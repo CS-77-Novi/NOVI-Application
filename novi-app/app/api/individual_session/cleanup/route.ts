@@ -9,6 +9,16 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Missing host_id parameter' }, { status: 400 });
     }
 
+    // Delete all rows from ind_attention_analysis where host_id matches
+    const { error: attError } = await supabase
+      .from('ind_attention_analysis')
+      .delete()
+      .eq('host_id', host_id);
+
+    if (attError) {
+      console.error('[Ind Cleanup] Error deleting attention analysis rows:', attError);
+    }
+
     // Delete all rows from ind_session_overview where host_id matches
     const { error } = await supabase
       .from('ind_session_overview')
@@ -16,7 +26,7 @@ export async function DELETE(req: NextRequest) {
       .eq('host_id', host_id);
 
     if (error) {
-      console.error('[Ind Cleanup] Error deleting rows:', error);
+      console.error('[Ind Cleanup] Error deleting session overview rows:', error);
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     }
 
