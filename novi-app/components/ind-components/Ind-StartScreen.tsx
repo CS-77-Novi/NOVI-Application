@@ -29,13 +29,32 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
                     Enter a highly focused, distraction-free environment designed to maximize your productivity. NOVI tracks your attention in real-time to provide actionable intelligence.
                     </p>
 
-                    {/* Feature Highlights */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-                        <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-xl">
-                                <SparklesIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">Deep Focus</span>
+                  <button
+                        onClick={onStart}
+                        className="group relative flex items-center justify-center gap-3 px-10 py-5 w-full sm:w-auto text-xl font-bold text-white rounded-2xl shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-cyan-500/40 active:scale-[0.98] overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600"
+                    >
+                        <span className="absolute inset-0 w-full h-full bg-white/10 group-hover:bg-transparent transition-colors duration-300"></span>
+                        <PlayIcon className="w-6 h-6 z-10 drop-shadow-sm" />
+                        <span className="relative z-10 flex items-center gap-2 drop-shadow-sm border-l border-white/20 pl-3">
+                            Start Session
+                        </span>
+                    </button>
+
+                    <div className="mt-8 flex items-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <ShieldCheckIcon className="w-5 h-5 text-emerald-500" />
+                        End-to-end local processing. Zero data leaves your device.
+                    </div>
+                </div>
+
+                {/* Right Column: Premium Feature Bento Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative px-4 xl:px-0">
+
+                    {/* Card 1 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300 lg:translate-y-6">
+                        <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-cyan-500/30">
+                            <AcademicCapIcon className="w-7 h-7 text-white" />
+
+                 
                         </div>
                         <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10">
                             <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
