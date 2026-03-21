@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import { PowerIcon } from '@heroicons/react/24/solid';
 
 interface EndCallButtonProps {
     onEndCall: () => void;
@@ -29,12 +30,14 @@ const IndEndCallButton = ({ onEndCall, sessionId }: EndCallButtonProps) => {
     return (
         <button
             onClick={handleEndSession}
-            className="flex items-center justify-center px-6 py-4 rounded-xl transition-all duration-300 hover:scale-105"
+            className="flex flex-col items-center justify-center w-28 h-24 gap-3 
+            rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             style={{ backgroundColor: '#ef4444' }}
         >
-            <span className="text-white text-sm font-medium">End Session</span>
+            <PowerIcon className="w-8 h-8 text-white drop-shadow-sm" />
+            <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">End Call</span>
         </button>
     );
 };
 
-export default IndEndCallButton;
+export default IndEndCallButton;
