@@ -36,7 +36,7 @@ const ReportsPage = () => {
                     </button>
                     <button 
                         onClick={() => setSelectedRole('individual')}
-                        className="w-full py-3 rounded-xl bg-[#D946EF] hover:bg-[#c02bc5] transition-all text-[#f4effc] font-bold shadow-[0_4px_20px_rgba(217,70,239,0.3)]"
+                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-[1.02] transition-all text-white font-bold shadow-lg shadow-cyan-500/25 active:scale-[0.98]"
                     >
                         Individual
                     </button>
