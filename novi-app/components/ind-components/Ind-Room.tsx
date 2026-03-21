@@ -10,6 +10,8 @@ import { initDistraction, detectDistraction } from '@/ml-calculations/combined';
 import Dashboard from './Ind-Dashboard';
 // Button component for ending the individual session
 import IndEndCallButton from './Ind-EndCallButton';
+// Theme Toggle component for dark/light mode
+import IndThemeToggle from './Ind-ThemeToggle';
 // Clerk user hook for host_id
 import { useUser } from '@clerk/nextjs';
 
@@ -443,6 +445,9 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                         <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">Dashboard</span>
                         
                     </button>
+                    {/* Theme Toggle Button */}
+                    <IndThemeToggle />
+
 
                     {/* End Session Button */}
                     <IndEndCallButton onEndCall={handleEndCall} sessionId={sessionId} />
