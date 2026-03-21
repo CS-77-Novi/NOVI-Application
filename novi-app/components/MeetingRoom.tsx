@@ -11,7 +11,7 @@ import {
   useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Loading from "./Loading";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
@@ -47,6 +47,8 @@ const MeetingRoom = () => {
     const [showMiniGame, setShowMiniGame] = useState(false);
     // State to toggle the visibility of the quiz panel
   const [showQuizPanel, setShowQuizPanel] = useState(false);
+  // Time counter for group metrics (in minutes)
+  const [timeChecks, setTimeChecks] = useState(0);
 
   // Next.js router instance for programmatic navigation
   const router = useRouter();
@@ -65,12 +67,23 @@ const MeetingRoom = () => {
   const { useCallCallingState, useLocalParticipant, useCameraState } =
     useCallStateHooks();
 
-  // Get the current connection state of the call (e.g., JOINING, JOINED)
   const callingState = useCallCallingState();
   // Get the current user's participant object within the call
   const localParticipant = useLocalParticipant();
   // Retrieve the local camera's mute status and its raw media stream
   const { isMute: isCameraOff, mediaStream: cameraMediaStream } = useCameraState();
+
+  // Time tracker effect to trigger periodic API syncs
+  useEffect(() => {
+    if (callingState !== CallingState.JOINED) return;
+    
+    // Increment timeChecks every 1 second
+    const interval = setInterval(() => {
+      setTimeChecks((prev) => prev + 1);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [callingState]);
 
   // Host detection — same pattern as EndCallButton.tsx
   // Check if the current local participant is the original creator of the call
@@ -87,6 +100,7 @@ const MeetingRoom = () => {
     participantId: user?.id ?? "",                       // Clerk user ID, falling back to empty string
     name: user?.fullName ?? user?.username ?? "Unknown", // Display name for the dashboard
     isCameraOn: !isCameraOff,                            // Only process frames when camera is active
+    timeChecks: timeChecks,                              // Elapsed meeting time in minutes
   });
 
   if (!user) return null;
@@ -142,7 +156,7 @@ const MeetingRoom = () => {
           {isMeetingOwner ? (
             <GroupDashboard
               meetingId={call.id}
-              hostUserId={call.state.createdBy?.id}
+              hostUserId={call.state.createdBy?.id} //to exclude the host form distraction detection
               isOpen={showDashboard}
               onClose={() => setShowDashboard(false)}
             />
