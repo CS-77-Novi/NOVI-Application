@@ -56,11 +56,14 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
 
                  
                         </div>
-                        <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
-                                <ChartBarSquareIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">Live Analytics</span>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Deep Focus</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Zero interruptions. A dedicated space tailored to keep you dialed in for extended periods.</p>
+                    </div>
+
+                    {/* Card 2 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300">
+                        <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30">
+                            <ChartBarSquareIcon className="w-7 h-7 text-white" />
                         </div>
                         <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10">
                             <div className="p-2 bg-emerald-100 dark:bg-emerald-500/20 rounded-xl">
