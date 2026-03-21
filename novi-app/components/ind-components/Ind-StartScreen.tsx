@@ -1,0 +1,96 @@
+import { AcademicCapIcon, SparklesIcon, ChartBarSquareIcon, ShieldCheckIcon, PlayIcon } from '@heroicons/react/24/solid';
+
+interface IndStartScreenProps {
+    onStart: () => void;
+}
+
+const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
+    return (
+        <section className="relative flex w-full min-h-[85vh] flex-col items-center justify-center overflow-hidden py-12">
+            {/* Animated Background Blobs in Novi Brand Colors (Cyan/Blue/Teal) */}
+            <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-cyan-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob"></div>
+            <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-blue-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-[30rem] h-[30rem] bg-teal-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000"></div>    
+
+            <div className="z-10 w-full max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 items-center">
+
+                {/* Left Column: Text and CTA */}
+                <div className="flex flex-col items-start text-left xl:pl-8">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 font-semibold text-sm mb-8 border border-cyan-200 dark:border-cyan-800 shadow-sm shadow-cyan-100 dark:shadow-none">
+                        <SparklesIcon className="w-4 h-4" /> NOVI Individual Learning           
+                    </div>
+
+                    <h1 className="text-5xl md:text-6xl xl:text-7xl font-extrabold mb-8 tracking-tight leading-[1.15]">
+                    Master your focus with <span className="bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-
+                    transparent drop-shadow-sm">AI-Assisted</span> precision.
+                    </h1>
+
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-xl leading-relaxed">
+                    Enter a highly focused, distraction-free environment designed to maximize your productivity. NOVI tracks your attention in real-time to provide actionable intelligence.
+                    </p>
+
+                  <button
+                        onClick={onStart}
+                        className="group relative flex items-center justify-center gap-3 px-10 py-5 w-full sm:w-auto text-xl font-bold text-white rounded-2xl shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-cyan-500/40 active:scale-[0.98] overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600"
+                    >
+                        <span className="absolute inset-0 w-full h-full bg-white/10 group-hover:bg-transparent transition-colors duration-300"></span>
+                        <PlayIcon className="w-6 h-6 z-10 drop-shadow-sm" />
+                        <span className="relative z-10 flex items-center gap-2 drop-shadow-sm border-l border-white/20 pl-3">
+                            Start Session
+                        </span>
+                    </button>
+
+                    <div className="mt-8 flex items-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <ShieldCheckIcon className="w-5 h-5 text-emerald-500" />
+                        End-to-end local processing. Zero data leaves your device.
+                    </div>
+                </div>
+
+                {/* Right Column: Premium Feature Bento Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative px-4 xl:px-0">
+
+                    {/* Card 1 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300 lg:translate-y-6">
+                        <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-cyan-500/30">
+                            <AcademicCapIcon className="w-7 h-7 text-white" />
+
+                 
+                        </div>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Deep Focus</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Zero interruptions. A dedicated space tailored to keep you dialed in for extended periods.</p>
+                    </div>
+
+                    {/* Card 2 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300">
+                        <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30">
+                            <ChartBarSquareIcon className="w-7 h-7 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Live Analytics</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Real-time attention tracking utilizing advanced machine learning vision algorithms.</p>
+                        </div>
+
+                    {/* Card 3 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300 lg:translate-y-6">
+                        <div className="w-14 h-14 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-teal-500/30">
+                            <ShieldCheckIcon className="w-7 h-7 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Privacy First</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Your data never leaves your device. All live metrics are processed safely locally.</p>
+                    </div>
+
+                    {/* Card 4 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300">
+                        <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/30">
+                            <SparklesIcon className="w-7 h-7 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Smart Insights</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Post-session reports highlighting your productivity trends and distraction triggers.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export default IndStartScreen;
