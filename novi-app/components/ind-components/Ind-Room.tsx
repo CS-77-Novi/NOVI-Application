@@ -417,7 +417,7 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
             </div>
 
             {/* Bottom Navbar */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-6 py-4">
+                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-900/80 backdrop-blur-md border border-gray-700/50 px-8 py-5 rounded-3xl shadow-2xl">
                 <div className="flex items-center justify-center gap-6">
                     {/* Camera Button */}
                     <button
@@ -426,11 +426,11 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                         style={{ backgroundColor: isVideoEnabled ? '#C8A2E0' : '#ef4444' }}
                     >
                         {isVideoEnabled ? (
-                            <VideoCameraIcon className="w-6 h-6 text-white" />
+                            <VideoCameraIcon className="w-8 h-8 text-white drop-shadow-sm" />
                         ) : (
-                            <VideoCameraSlashIcon className="w-6 h-6 text-white" />
+                            <VideoCameraSlashIcon className="w-8 h-8 text-white drop-shadow-sm" />
                         )}
-                        <span className="text-white text-sm font-medium">Camera</span>
+                        <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">Camera</span>
                     </button>
 
                     
@@ -438,10 +438,10 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     {/* Dashboard Button */}
                     <button
                         onClick={() => setShowDashboard(!showDashboard)}
-                        className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 hover:scale-105 bg-gray-700 hover:bg-gray-600"
-                    >
-                        <ChartBarIcon className="w-6 h-6 text-white" />
-                        <span className="text-white text-sm font-medium">Dashboard</span>
+                        className={`flex flex-col items-center justify-center w-28 h-24 gap-3 rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${showDashboard ? 'bg-gray-600 ring-2 ring-white/30' : 'bg-gray-700 hover:bg-gray-600'}`}>   
+                        <ChartBarIcon className="w-8 h-8 text-white drop-shadow-sm" />
+                        <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">Dashboard</span>
+                        
                     </button>
 
                     {/* End Session Button */}
