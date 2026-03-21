@@ -184,16 +184,17 @@ const IndSetUp = ({
                     )}
                     
                     {/* Video Controls Overlay */}
-                                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex justify-center">
+                         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex justify-center">
                         <button
                             onClick={toggleVideo}
-                            className="p-4 rounded-full transition-all duration-300 hover:scale-110"
-                            style={{ backgroundColor: isVideoEnabled ? '#C8A2E0' : '#ef4444' }}
+                            className={`p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-lg 
+                            ${isVideoEnabled ? 'bg-cyan-500 shadow-cyan-500/40' : 'bg-red-500 shadow-red-500/40'}`}
+                            
                         >
                             {isVideoEnabled ? (
-                                <VideoCameraIcon className="w-6 h-6 text-white" />
+                                <VideoCameraIcon className="w-7 h-7 text-white" />    
                             ) : (
-                                <VideoCameraSlashIcon className="w-6 h-6 text-white" />
+                                <VideoCameraSlashIcon className="w-7 h-7 text-white" />
                             )}
                         </button>
                         
