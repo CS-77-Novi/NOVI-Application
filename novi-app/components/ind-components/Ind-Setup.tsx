@@ -228,30 +228,14 @@ const IndSetUp = ({
                 
                     </div>
 
-                    {/* Microphone Selection */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                            Microphone
-                        </label>
-                        <select
-                            value={selectedAudioDevice}
-                            onChange={(e) => handleAudioDeviceChange(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-border bg-white dark:bg-background text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all"
-                            disabled={audioDevices.length === 0}
-                        >
-                            {audioDevices.map((device) => (
-                                <option key={device.deviceId} value={device.deviceId}>
-                                    {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    
                 </div>
 
                 {/* Error Message */}
                 {error && (
-                    <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                        {error}
+                    <div className="mb-8 flex items-center gap-3 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400 rounded-xl">
+                        <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
+                        <p className="font-medium text-sm">{error}</p>
                     </div>
                 )}
 
