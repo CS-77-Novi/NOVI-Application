@@ -29,14 +29,23 @@ const EndCallButton = () => {
     // Only the meeting owner can see the End Call button
     if (!isMeetingOwner) return null;
     // Function to end the call for all participants
-    const endcall = async () => {
-        // End the call for everyone
-        await call.endCall();
-        // Clear global state
-        await leaveCall();
-        // Redirect user to home page
-        router.push('/');
-    };
+        const endcall =async () =>{
+            // End the call
+            await call.endCall();
+
+            // We MUST await this so the browser doesn't cancel the request when routing away!
+            try {
+                await fetch(`/api/meeting/${call.id}/group_report_gen`);
+            } catch (err) {
+            console.error('[Excel Gen trigger error]', err);
+            }
+            
+            // Clear global state
+            await leaveCall();
+
+            // Redirect user to home page
+            router.push('/');
+        };
 
     return (
         // Button to end the call for everyone
