@@ -202,9 +202,8 @@ const IndSetUp = ({
                 </div>
 
                 {/* Device Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 bg-white/40 dark:bg-black/20 p-6 rounded-2xl border border-white/40 dark:border-white/5">
-                    {/* Camera Selection */}
-                    <div>
+                <div className="flex justify-center w-full mb-10">
+                    <div className="w-full max-w-md">
                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 ml-1 tracking-wide">
                             Camera
                         </label>
@@ -225,10 +224,7 @@ const IndSetUp = ({
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
                         </div>    
-                
                     </div>
-
-                    
                 </div>
 
                 {/* Error Message */}
