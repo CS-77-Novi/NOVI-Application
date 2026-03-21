@@ -12,17 +12,12 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
             <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-blue-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000"></div>
             <div className="absolute bottom-1/4 left-1/3 w-[30rem] h-[30rem] bg-teal-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000"></div>    
 
-            <div className="z-10 flex flex-col items-center w-full max-w-3xl px-6">
-                {/* Premium Glassmorphism Card */}
-                <div className="w-full bg-white/5 dark:bg-gray-900/40 backdrop-blur-2xl border border-white/20 dark:border-gray-700/50 rounded-[2.5rem] shadow-2xl p-10 md:p-14 transform transition-all hover:shadow-purple-500/10">
+            <div className="z-10 w-full max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 items-center">
 
-                    <div className="flex justify-center mb-6">
-                        <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 group">
-                            <AcademicCapIcon className="w-12 h-12 text-white transform transition-transform group-hover:scale-110" />
-                            <div className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-1.5 shadow-lg animate-bounce">
-                                <SparklesIcon className="w-4 h-4 text-yellow-900" />
-                            </div>
-                        </div>
+                {/* Left Column: Text and CTA */}
+                <div className="flex flex-col items-start text-left xl:pl-8">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 font-semibold text-sm mb-8 border border-cyan-200 dark:border-cyan-800 shadow-sm shadow-cyan-100 dark:shadow-none">
+                        <SparklesIcon className="w-4 h-4" /> NOVI Individual Learning           
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-4 tracking-tight">
