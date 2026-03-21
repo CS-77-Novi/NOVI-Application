@@ -20,10 +20,9 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
                         <SparklesIcon className="w-4 h-4" /> NOVI Individual Learning           
                     </div>
 
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-4 tracking-tight">
-                        <span className="bg-gradient-to-r from-purple-600 to-pink-500 dark:from-purple-400 dark:to-pink-300 bg-clip-text text-transparent drop-shadow-sm">
-                            Individual Learning
-                        </span>
+                    <h1 className="text-5xl md:text-6xl xl:text-7xl font-extrabold mb-8 tracking-tight leading-[1.15]">
+                    Master your focus with <span className="bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-
+                    transparent drop-shadow-sm">AI-Assisted</span> precision.
                     </h1>
 
                     <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 text-center mb-10 max-w-2xl mx-auto leading-relaxed">
