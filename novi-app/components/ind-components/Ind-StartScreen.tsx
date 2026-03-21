@@ -25,8 +25,8 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
                     transparent drop-shadow-sm">AI-Assisted</span> precision.
                     </h1>
 
-                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 text-center mb-10 max-w-2xl mx-auto leading-relaxed">
-                        Enter a highly focused, AI-monitored environment designed to maximize your productivity and track your attention in real-time.
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-xl leading-relaxed">
+                    Enter a highly focused, distraction-free environment designed to maximize your productivity. NOVI tracks your attention in real-time to provide actionable intelligence.
                     </p>
 
                     {/* Feature Highlights */}
