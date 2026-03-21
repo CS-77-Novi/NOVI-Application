@@ -14,8 +14,8 @@ const ReportsPage = () => {
     }
 
     return (
-        <section className="flex size-full flex-col items-center justify-center pt-20 px-4 text-white animate-fade-in relative hidden-scrollbar">
-            <div className="bg-[#1C1C21] w-full max-w-[340px] rounded-[24px] p-8 py-10 flex flex-col items-center shadow-2xl border border-white/5">
+        <section className="flex size-full flex-col items-center justify-center pt-20 px-4 text-gray-900 dark:text-white animate-fade-in relative hidden-scrollbar min-h-[80vh]">
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-2xl w-full max-w-[360px] rounded-[24px] p-8 py-10 flex flex-col items-center shadow-2xl border border-gray-200 dark:border-gray-700/50 transition-colors duration-300">
                 
                 {/* Centered Avatar Icon */}
                 <div className="w-14 h-14 rounded-full border border-[#D946EF] flex items-center justify-center mb-6 bg-[#f4effc]/10">
