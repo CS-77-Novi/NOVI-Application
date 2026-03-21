@@ -1,5 +1,5 @@
 'use client'
-
+// these are used on updating the date and time of the app
 import { useEffect, useState } from "react";
 
 const DateAndTime = () => {
@@ -9,18 +9,18 @@ const DateAndTime = () => {
     });
 
     const [date, setDate] = useState(() => {
-    const now = new Date();
-    return new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now);
+        const now = new Date();
+        return new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now);
     });
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-          const now = new Date();
-          setTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'}));
-          setDate(new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now));
+            const now = new Date();
+            setTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+            setDate(new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now));
 
         }, 1000); // Update every 1 sec
-    
+
         return () => clearInterval(intervalId); // Clean up on component unmount
     }, []);
 

@@ -4,7 +4,9 @@ import { currentUser } from "@clerk/nextjs/server"
 import { neobrutalism } from "@clerk/themes"
 import Image from "next/image"
 import React from "react"
-
+import { MeetingProvider } from "@/providers/MeetingContext"
+import MeetingLayoutWrapper from "@/components/MeetingLayoutWrapper"
+import logoImage from "@/public/assets/Novi_logo-NoBackground.png"
 
 const MainLayout = async ({
     children
@@ -21,10 +23,11 @@ const MainLayout = async ({
         {/* Section: logo + heading */}
         <section className="flex flex-col items-center">
             <Image
-                src='/assets/logo.svg' // Path to logo imag
+                src={logoImage} // Path to logo imag
                 width={100}     // Image width (px)
                 height={100}    // Image height (px)
-                alt="Logo"      // Alternative text for accessibility
+                alt="Novi Logo" // Alternative text for accessibility
+                priority
                 />
 
             {/* Main title text under the logo */}
@@ -51,7 +54,11 @@ const MainLayout = async ({
     return (
         <main className="animate-fade-in">
             <StreamProvider>
-                {children}
+                <MeetingProvider>
+                    <MeetingLayoutWrapper>
+                        {children}
+                    </MeetingLayoutWrapper>
+                </MeetingProvider>
             </StreamProvider>
 
         </main>

@@ -8,41 +8,40 @@ import { useGetCallById } from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMeetingContext } from "@/providers/MeetingContext";
 
 const MeetingPage = () => {
-    const {id} = useParams<{ id: string}>();
-     if(!id) return
+    const { id } = useParams<{ id: string }>();
     const { isLoaded, user } = useUser();
-    const { call, isCallLoading } = useGetCallById(id);
-    const [isSetupComplete, setIsSetupComplete] = useState(false);
+    const { activeCall, setMinimized, isSetupComplete: globalSetupComplete } = useMeetingContext();
+    const [localSetupComplete, setLocalSetupComplete] = useState(false);
 
-    if (!isLoaded || isCallLoading) return <Loading/>;
+    useEffect(() => {
+        if (activeCall && activeCall.id === id) {
+            setMinimized(false);
+        }
+    }, [activeCall, id, setMinimized]);
 
-    if (!call) return (
-        <p className="text-center text-3xl font-bold text-white">
-          Call Not Found
-        </p>
-    );
+    // Wait for the global layout to fetch and provide the call
+    if (!isLoaded || !activeCall || activeCall.id !== id) return <Loading />;
 
-    const notAllowed = call.type === 'invited' && (!user || !call.state.members.find
+    const notAllowed = activeCall.type === 'invited' && (!user || !activeCall.state.members.find
         ((m) => m.user.id === user.id));
 
     if (notAllowed) return <Alert title="You are not allowed to join this meeting" />;
 
+    // Use either the local setup state (first join) or the global one (returning from home)
+    const isSetupComplete = globalSetupComplete || localSetupComplete;
+
     return (
         <main className="h-screen w-full">
-            <StreamCall call={call}>
-                <StreamTheme>
-        
-                {!isSetupComplete ? (
-                    <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
-                ) : (
-                    <MeetingRoom/>
-                )}
-                </StreamTheme>
-            </StreamCall>
-      </main>
+            {!isSetupComplete ? (
+                <MeetingSetup setIsSetupComplete={setLocalSetupComplete} />
+            ) : (
+                <MeetingRoom />
+            )}
+        </main>
     )
 }
 

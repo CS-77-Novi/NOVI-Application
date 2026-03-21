@@ -25,7 +25,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
-import { LayoutList, Users,Gamepad2 } from "lucide-react";
+import { LayoutList, Users, Gamepad2, Home } from "lucide-react";
+import { useMeetingContext } from "@/providers/MeetingContext";
 import EndCallButton from "./EndCallButton";
 import useDistractionDetection from "@/hooks/useDistractionDetection";
 import GroupDashboard from "./grp-components/grp-Dashboard";
@@ -47,6 +48,10 @@ const MeetingRoom = () => {
     const [showMiniGame, setShowMiniGame] = useState(false);
     // State to toggle the visibility of the quiz panel
   const [showQuizPanel, setShowQuizPanel] = useState(false);
+  // State to handle full-screen quiz view
+  const [isQuizFullscreen, setIsQuizFullscreen] = useState(false);
+  // Meeting context for minimization
+  const { setMinimized } = useMeetingContext();
   // Time counter for group metrics (in minutes)
   const [timeChecks, setTimeChecks] = useState(0);
 
@@ -102,6 +107,23 @@ const MeetingRoom = () => {
     isCameraOn: !isCameraOff,                            // Only process frames when camera is active
     timeChecks: timeChecks,                              // Elapsed meeting time in minutes
   });
+
+  // Listen for quiz-released events to trigger full-screen mode automatically
+  useEffect(() => {
+    if (!call) return;
+
+    const handleCustomEvent = (event: any) => {
+      if (event.type === 'custom' && event.custom?.type === 'quiz-released') {
+        setShowQuizPanel(true);
+        setIsQuizFullscreen(true);
+      }
+    };
+
+    call.on('custom', handleCustomEvent);
+    return () => {
+      call.off('custom', handleCustomEvent);
+    };
+  }, [call]);
 
   if (!user) return null;
   if (callingState !== CallingState.JOINED) return <Loading />;
@@ -174,20 +196,43 @@ const MeetingRoom = () => {
         </div>
         
         {/* Quiz Panel Sidebar - MOVED INSIDE MAIN CONTAINER */}
-        <div
-          className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
-            showQuizPanel ? "show-block" : "hidden"
-          )}
-        >
+        {!isQuizFullscreen && (
+          <div
+            className={cn("h-[calc(100vh-250px)] ml-2 mr-0", 
+              showQuizPanel ? "show-block" : "hidden"
+            )}
+          >
+            <MeetingQuizPanel
+              isMeetingOwner={isMeetingOwner}
+              call={call}
+              user={user}
+              isOpen={showQuizPanel}
+              onClose={() => setShowQuizPanel(false)}
+              isFullscreen={false}
+              onQuizActive={(active) => {
+                if (active && showQuizPanel) setIsQuizFullscreen(true);
+              }}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Full Screen Quiz Overlay */}
+      {isQuizFullscreen && showQuizPanel && (
+        <div className="fixed inset-0 z-[100] bg-white text-black overflow-hidden flex flex-col">
           <MeetingQuizPanel
             isMeetingOwner={isMeetingOwner}
             call={call}
             user={user}
             isOpen={showQuizPanel}
-            onClose={() => setShowQuizPanel(false)}
+            onClose={() => {
+              setShowQuizPanel(false);
+              setIsQuizFullscreen(false);
+            }}
+            isFullscreen={true}
           />
         </div>
-      </div>
+      )}
 
       {/* Call controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
@@ -217,7 +262,9 @@ const MeetingRoom = () => {
         {/* Participants toggle - now independent */}
         <button onClick={() => {
           setShowParticipants((prev) => !prev);
-          if (!showParticipants) setShowQuizPanel(false);
+          if (!showParticipants) {
+            setShowQuizPanel(false);
+          }
         }}>
         <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
@@ -228,7 +275,9 @@ const MeetingRoom = () => {
         <button
            onClick={() => {
             setShowDashboard((prev) => !prev);
-            if (!showDashboard) setShowQuizPanel(false);
+            if (!showDashboard) {
+               setShowQuizPanel(false);
+            }
           }}
           title="Dashboard"
         >
@@ -247,8 +296,10 @@ const MeetingRoom = () => {
         {/* Mini Game toggle button */}
         {!isMeetingOwner && (
           <button onClick={() => {
-            setShowMiniGame((prev) => !prev);
-            if (!showMiniGame) setShowQuizPanel(false);
+            setShowMiniGame((prev: boolean) => !prev);
+            if (!showMiniGame) {
+              setShowQuizPanel(false);
+            }
           }}>
             <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <Gamepad2 size={20} className="text-white" />
@@ -263,7 +314,11 @@ const MeetingRoom = () => {
             setShowParticipants(false);
             setShowDashboard(false);
             setShowMiniGame(false);
-            setShowQuizPanel((prev) => !prev);
+            setShowQuizPanel((prev: boolean) => {
+              const next = !prev;
+              // If we are opening the quiz panel and a quiz is active, it will be handled by onQuizActive
+              return next;
+            });
           }}
           title="Pop Quiz"
         >
@@ -276,6 +331,19 @@ const MeetingRoom = () => {
             )}
           >
             <BookOpen className="w-5 h-5 text-white" />
+          </div>
+        </button>
+
+        {/* Home toggle button - now minimizes and redirects */}
+        <button
+           onClick={() => {
+            setMinimized(true);
+            router.push('/');
+          }}
+          title="Minimize & Go Home"
+        >
+          <div className="cursor-pointer rounded-2xl px-4 py-2 bg-[#19232d] hover:bg-[#4c535b] transition-colors">
+            <Home size={20} className="text-white" />
           </div>
         </button>
 

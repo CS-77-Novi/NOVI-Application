@@ -11,17 +11,15 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
-    .select('*, quiz_questions(*)')
+    .select('*, questions(*)')
     .eq('id', id)
     .single()
 
   if (quizError) return NextResponse.json({ error: quizError.message }, { status: 404 })
 
-  // MeetingQuizPanel expects { quiz, questions } 
-  // but supabase join returns quiz with quiz_questions array
   return NextResponse.json({ 
     quiz, 
-    questions: quiz.quiz_questions 
+    questions: quiz.questions 
   })
 }
 
