@@ -433,19 +433,7 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                         <span className="text-white text-sm font-medium">Camera</span>
                     </button>
 
-                    {/* Audio Button */}
-                    <button
-                        onClick={toggleAudio}
-                        className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 hover:scale-105"
-                        style={{ backgroundColor: isAudioEnabled ? '#C8A2E0' : '#ef4444' }}
-                    >
-                        {isAudioEnabled ? (
-                            <MicrophoneIcon className="w-6 h-6 text-white" />
-                        ) : (
-                            <MicrophoneIcon className="w-6 h-6 text-white" />
-                        )}
-                        <span className="text-white text-sm font-medium">Audio</span>
-                    </button>
+                    
 
                     {/* Dashboard Button */}
                     <button
