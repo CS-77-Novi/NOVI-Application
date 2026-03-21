@@ -8,6 +8,7 @@ import Alert from "./Alert";//Custom alert component
 import { useEffect, useState } from "react";//from react hooks
 import { Button } from "./ui/button";
 import { clearWordJumbleState } from "@/lib/wordJumbleStore";
+import { useMeetingContext } from "@/providers/MeetingContext";
 
 
 const MeetingSetup =({
@@ -28,6 +29,7 @@ const MeetingSetup =({
   }
     //Extract call state hooks
     const{ useCallEndedAt,useCallStartsAt} = useCallStateHooks();
+    const { setSetupComplete } = useMeetingContext();
 
     //Get call start and end times   
     const callStartsAt = useCallStartsAt();
@@ -45,15 +47,17 @@ const MeetingSetup =({
        useEffect(() => {
            const toggleDevices = async () => {
                try {
+                   // Only toggle if necessary to avoid device contention errors
                    if (isMicCamToggled) {
-                       await call.camera.disable();
-                       await call.microphone.disable();
+                       if (call.camera.state.status === 'enabled') await call.camera.disable();
+                       if (call.microphone.state.status === 'enabled') await call.microphone.disable();
                    } else {
-                       await call.camera.enable();
-                       await call.microphone.enable();
+                       if (call.camera.state.status !== 'enabled') await call.camera.enable();
+                       if (call.microphone.state.status !== 'enabled') await call.microphone.enable();
                    }
                } catch (err) {
-                   console.warn("[MeetingSetup] Camera/Mic access denied or failed:", err);
+                   console.error("[MeetingSetup] Camera/Mic access error:", err);
+                   // Don't throw, just log to prevent UI crash
                }
            };
            
@@ -108,6 +112,7 @@ const MeetingSetup =({
 
                 })
                 
+                setSetupComplete(true);
                 setIsSetupComplete(true);
               }}
             >

@@ -56,19 +56,19 @@ const fetchQuizzes = async () => {
     const drafts = filteredQuizzes.filter(q => q.status === 'draft')
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 md:p-10">
+        <div className="min-h-screen bg-slate-50 dark:bg-background p-6 md:p-10 transition-colors duration-300">
             <div className="max-w-5xl mx-auto">
 
                 {/* Header */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#da32f8] to-[#9d17bd] flex items-center justify-center shadow-lg shadow-purple-200">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#da32f8] to-[#9d17bd] flex items-center justify-center shadow-lg shadow-purple-200 dark:shadow-none">
                                 <BookOpen className="w-6 h-6 text-white" />
                             </div>
-                            <h1 className="text-3xl font-black text-gray-900">Pop Quizzes</h1>
+                            <h1 className="text-3xl font-black text-gray-900 dark:text-white">Pop Quizzes</h1>
                         </div>
-                        <p className="text-gray-500 ml-1 pl-1">
+                        <p className="text-gray-500 dark:text-gray-400 ml-1 pl-1">
                             Upload a document, let AI generate questions, then share with participants.
                         </p>
                     </div>
@@ -78,7 +78,7 @@ const fetchQuizzes = async () => {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <Input 
                                 placeholder="Search quizzes..." 
-                                className="pl-10 rounded-2xl bg-white border-gray-100 focus:ring-[#da32f8]"
+                                className="pl-10 rounded-2xl bg-white dark:bg-card border-gray-100 dark:border-border focus:ring-[#da32f8] dark:text-white"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -95,12 +95,12 @@ const fetchQuizzes = async () => {
                 {/* Empty state */}
                 {filteredQuizzes.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-24 gap-6">
-                        <div className="w-24 h-24 rounded-3xl bg-purple-50 flex items-center justify-center">
+                        <div className="w-24 h-24 rounded-3xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
                             <Sparkles className="w-12 h-12 text-[#da32f8]" />
                         </div>
                         <div className="text-center">
-                            <h2 className="text-2xl font-black text-gray-700 mb-2">No quizzes yet</h2>
-                            <p className="text-gray-400 max-w-sm">
+                            <h2 className="text-2xl font-black text-gray-700 dark:text-white mb-2">No quizzes yet</h2>
+                            <p className="text-gray-400 dark:text-gray-400 max-w-sm">
                                 Create your first quiz! Upload a document and AI will generate questions instantly.
                             </p>
                         </div>
@@ -116,7 +116,7 @@ const fetchQuizzes = async () => {
                 {/* Published quizzes */}
                 {published.length > 0 && (
                     <section className="mb-10">
-                        <h2 className="text-lg font-black text-gray-600 mb-4 flex items-center gap-2">
+                        <h2 className="text-lg font-black text-gray-600 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-[#da32f8] inline-block" />
                             Published ({published.length})
                         </h2>
@@ -139,7 +139,7 @@ const fetchQuizzes = async () => {
                 {/* Draft quizzes */}
                 {drafts.length > 0 && (
                     <section>
-                        <h2 className="text-lg font-black text-gray-600 mb-4 flex items-center gap-2">
+                        <h2 className="text-lg font-black text-gray-600 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
                             Drafts ({drafts.length})
                         </h2>

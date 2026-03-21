@@ -5,7 +5,7 @@ import DateAndTime from "./DateAndTime"
 
 const StatusBar = () => {
     return (
-        <section className="flex flex-col gap-5 text-black 
+        <section className="flex flex-col gap-5 text-foreground 
         items-center md:items-start">
 
             {/* Render the DateAndTime component */}

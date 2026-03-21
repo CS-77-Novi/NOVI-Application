@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { Clock, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface Question {
     id: string
@@ -17,11 +18,12 @@ interface Props {
     questions: Question[]
     timeLimit: number // minutes
     onDone: (score: number, total: number) => void
+    isFullscreen: boolean
 }
 
 const OPTION_LABELS = ['A', 'B', 'C', 'D']
 
-export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Props) {
+export default function QuizTaker({ quizId, questions, timeLimit, onDone, isFullscreen }: Props) {
     const total = questions.length
     const [current, setCurrent] = useState(0)
     const [answers, setAnswers] = useState<(number | null)[]>(Array(total).fill(null))
@@ -103,7 +105,10 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone }: Prop
     }
 
     return (
-    <div className="flex flex-col h-full min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className={cn(
+        "flex flex-col h-full bg-gradient-to-br from-slate-50 to-blue-50",
+        isFullscreen ? "min-h-screen" : "min-h-[600px]"
+    )}>
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-3 flex items-center justify-between shadow-sm">
             <div className="text-sm font-semibold text-gray-500">
                 Question <span className="text-blue-600 font-black">{current + 1}</span> of {total}

@@ -1,6 +1,7 @@
 import { SignIn } from "@clerk/nextjs";
 import { neobrutalism } from "@clerk/themes";
 import Image from "next/image";
+import logoImage from "@/public/assets/Novi_logo-NoBackground.png";
 
 const LoginPage = () => {
   return (
@@ -10,10 +11,11 @@ const LoginPage = () => {
         {/* Section: logo + heading */}
         <section className="flex flex-col items-center">
             <Image
-                src= '/assets/Novi_logo-NoBackground.png'// Path to logo image
+                src={logoImage} // Path to logo image
                 width={100}     // Image width (px)
                 height={100}    // Image height (px)
-                alt="Logo"      // Alternative text for accessibility
+                alt="Novi Logo" // Alternative text for accessibility
+                priority
                 />
 
             {/* Main title text under the logo */}

@@ -150,9 +150,9 @@ const IndSetUp = ({
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
-            <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-8">
-                <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-background dark:to-background p-8 transition-colors duration-300">
+            <div className="w-full max-w-4xl bg-white dark:bg-card rounded-2xl shadow-2xl p-8 border border-transparent dark:border-border transition-colors duration-300">
+                <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-white transition-colors duration-300">
                     Individual Learning Setup
                 </h1>
 
@@ -203,13 +203,13 @@ const IndSetUp = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {/* Camera Selection */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
                             Camera
                         </label>
                         <select
                             value={selectedVideoDevice}
                             onChange={(e) => handleVideoDeviceChange(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-border bg-white dark:bg-background text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all"
                             disabled={videoDevices.length === 0}
                         >
                             {videoDevices.map((device) => (
@@ -222,13 +222,13 @@ const IndSetUp = ({
 
                     {/* Microphone Selection */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
                             Microphone
                         </label>
                         <select
                             value={selectedAudioDevice}
                             onChange={(e) => handleAudioDeviceChange(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-border bg-white dark:bg-background text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all"
                             disabled={audioDevices.length === 0}
                         >
                             {audioDevices.map((device) => (
@@ -264,7 +264,7 @@ const IndSetUp = ({
                             }}
                             className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
                         />
-                        <span className="text-gray-700 font-medium">Join with mic and camera off</span>
+                        <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">Join with mic and camera off</span>
                     </label>
                 </div>
 

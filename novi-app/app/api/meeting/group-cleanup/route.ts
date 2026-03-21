@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
  * DELETE /api/meeting/group-cleanup
  * Executes a hard teardown removing metrics recorded for the MOST RECENT meeting assigned 
  * to the requesting teacher (host_id).
- * Operates cross-table deleting `group_session_overview` and `group_attention_analysis` lines.
+ * Operates cross-table deleting `group_session_overview`, `group_attention_analysis`, and `meeting_distraction` lines.
  */
 export async function DELETE(req: Request) {
   try {
@@ -68,9 +68,21 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ ok: false, error: attentionDeleteError.message }, { status: 500 });
     }
 
+    // Step 5: Cascading Deletion phase three
+    // Wipe the distraction tracking to prevent ghost data in new meetings
+    const { error: distractionDeleteError } = await supabase
+      .from('meeting_distraction')
+      .delete()
+      .eq('meeting_id', latestMeetingId);
+
+    if (distractionDeleteError) {
+      console.error(`[DB Cleanup] Error wiping meeting_distraction for meeting ${latestMeetingId}:`, distractionDeleteError);
+      return NextResponse.json({ ok: false, error: distractionDeleteError.message }, { status: 500 });
+    }
+
     // Success response safely finalizing network transaction
-    console.log(`[DB Cleanup] Successfully wiped previous tracking rows for group_session_overview and group_attention_analysis ${latestMeetingId}.`);
-    return NextResponse.json({ ok: true, message: 'Specific session cleared successfully from group_session_overview and group_attention_analysis' });
+    console.log(`[DB Cleanup] Successfully wiped previous tracking rows for group_session_overview, group_attention_analysis, and meeting_distraction ${latestMeetingId}.`);
+    return NextResponse.json({ ok: true, message: 'Specific session cleared successfully from group_session_overview, group_attention_analysis, and meeting_distraction' });
 
   } catch (err: any) {
     console.error('[DB Cleanup] Unexpected error during selective cleanup:', err);

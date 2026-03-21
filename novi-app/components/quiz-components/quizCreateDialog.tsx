@@ -7,6 +7,10 @@ import { X, Plus, Trash2, FileText, Loader2, CheckCircle2, ChevronUp, ChevronDow
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import * as pdfjsLib from 'pdfjs-dist'
+
+// Point PDF.js worker to a reliable CDN that matches the installed version
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
 
 //Interfaces
 interface Question {
@@ -50,41 +54,57 @@ export default function QuizCreateDialog({ open, onClose, onCreated }: Props) {
         onClose()
     }
 
-    const readFile = (file: File) => {
-    if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-            setDocText(e.target?.result as string)
-            setFileName(file.name)
-            setTitle(file.name.replace(/\.[^/.]+$/, ''))
+    const readFile = async (file: File) => {
+        if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+            // Plain text — read directly
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                setDocText(e.target?.result as string)
+                setFileName(file.name)
+                setTitle(file.name.replace(/\.[^/.]+$/, ''))
+            }
+            reader.readAsText(file)
+        } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+            // PDF — use PDF.js for proper text extraction
+            try {
+                const arrayBuffer = await file.arrayBuffer()
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+                const pageTexts: string[] = []
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i)
+                    const content = await page.getTextContent()
+                    const pageText = content.items
+                        .map((item: any) => item.str)
+                        .join(' ')
+                        .replace(/ {2,}/g, ' ')
+                        .trim()
+                    if (pageText) pageTexts.push(pageText)
+                }
+
+                const fullText = pageTexts.join('\n\n')
+                if (!fullText.trim()) {
+                    toast.error('Could not extract text from this PDF. It may be image-based or scanned.', {
+                        className: '!bg-red-100 !rounded-2xl'
+                    })
+                    return
+                }
+
+                setDocText(fullText)
+                setFileName(file.name)
+                setTitle(file.name.replace(/\.[^/.]+$/, ''))
+            } catch (err) {
+                console.error('PDF parse error:', err)
+                toast.error('Failed to read the PDF file. Please try another file.', {
+                    className: '!bg-red-100 !rounded-2xl'
+                })
+            }
+        } else {
+            toast('Please upload a .txt or .pdf file', {
+                className: '!bg-red-100 !rounded-2xl'
+            })
         }
-        reader.readAsText(file)
-    }else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-        const raw = e.target?.result as string
-        const text = raw
-            .replace(/[^\x20-\x7E\n]/g, ' ')
-            .replace(/ {3,}/g, '\n')
-            .replace(/\n{3,}/g, '\n\n')
-            .trim()
-
-        const meaningful = text
-            .split('\n')
-            .filter(l => l.trim().length > 20)
-            .join('\n')
-
-        setDocText(meaningful || text)
-        setFileName(file.name)
-        setTitle(file.name.replace(/\.[^/.]+$/, ''))
     }
-    reader.readAsBinaryString(file)
-}else {
-    toast('Please upload a .txt or .pdf file', {
-        className: '!bg-red-100 !rounded-2xl'
-    })
-}
-}
 const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(false)
@@ -162,17 +182,21 @@ const handleDrop = useCallback((e: React.DragEvent) => {
             const res = await fetch('/api/quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, time_limit: timeLimit, questions }),
+                body: JSON.stringify({ title, time_limit_minutes: timeLimit, questions }),
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.error)
 
-            // Publish immediately
-            await fetch(`/api/quiz/${data.quiz.id}`, {
+            // Publish immediately — check for errors
+            const patchRes = await fetch(`/api/quiz/${data.quiz.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'published' }),
             })
+            if (!patchRes.ok) {
+                const patchData = await patchRes.json()
+                throw new Error(patchData.error || 'Failed to publish quiz')
+            }
 
             const base = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
             setShareLink(`${base}/pop-quizzes/${data.quiz.id}`)
