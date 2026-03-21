@@ -58,37 +58,37 @@ const MainMenu = () => {
       });
       
       //cleaning previous meeting data from the database table
-            if (meetingState === 'Instant') {
-                // Wipe the previous meeting's group_session data before logging the new one
-                try {
-                    await fetch('/api/meeting/group-cleanup', { 
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ host_id: user.id }),
-                    });
-                } catch (err) {
-                    console.error('[DB Cleanup] Failed to trigger cleanup', err);
-                }
-            }
+      if (meetingState === 'Instant') {
+        // Wipe the previous meeting's group_session data before logging the new one
+        try {
+          await fetch('/api/meeting/group-cleanup', { 
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ host_id: user.id }),
+            });
+        } catch (err) {
+          console.error('[DB Cleanup] Failed to trigger cleanup', err);
+        }
+      }
             
-            // Store the CURRENT meeting metadata (host_id, meeting_id, and date_time) in Supabase
-            try {
-                await fetch('/api/meeting/meta-data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        host_id: user.id, 
-                        meeting_id: call.id,
-                        date_time: new Date().toISOString()
-                    }),
-                });
-            } catch (err) {
-                console.error('[DB Meeting Meta-data] Failed to store meeting metadata', err);
-            }
+      // Store the CURRENT meeting metadata (host_id, meeting_id, and date_time) in Supabase
+      try {
+        await fetch('/api/meeting/meta-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            host_id: user.id, 
+            meeting_id: call.id,
+            date_time: new Date().toISOString()
+          }),
+        });
+        } catch (err) {
+          console.error('[DB Meeting Meta-data] Failed to store meeting metadata', err);
+      }
 
       // Register the call globally ONLY if it's an instant meeting
       if (meetingState === 'Instant') {
