@@ -150,11 +150,19 @@ const IndSetUp = ({
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-background dark:to-background p-8 transition-colors duration-300">
-            <div className="w-full max-w-4xl bg-white dark:bg-card rounded-2xl shadow-2xl p-8 border border-transparent dark:border-border transition-colors duration-300">
-                <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-white transition-colors duration-300">
-                    Individual Learning Setup
-                </h1>
+            <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden py-12 px-4 sm:px-8">
+            {/* Animated Background Blobs in Novi Brand Colors */}
+            <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-cyan-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob pointer-events-none"></div>
+            <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-blue-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000 pointer-events-none"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-[30rem] h-[30rem] bg-teal-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000 pointer-events-none"></div>
+
+            <div className="z-10 w-full max-w-4xl bg-white/70 dark:bg-gray-900/50 backdrop-blur-2xl rounded-[2rem] shadow-2xl p-8 md:p-12 border border-white/50 dark:border-gray-700/50 transition-colors duration-300">
+                <div className="text-center mb-10">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 dark:text-white tracking-tight">
+                        Device <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">Setup</span>
+                    </h1>
+                    <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">Check your camera and microphone before joining the session.</p>
+                </div>  
 
                 {/* Video Preview */}
                 <div className="relative mb-8 rounded-xl overflow-hidden" style={{ backgroundColor: '#1e293b', aspectRatio: '16/9' }}>
