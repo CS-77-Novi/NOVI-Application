@@ -240,23 +240,26 @@ const IndSetUp = ({
                 )}
 
                 {/* Join Options */}
-                <div className="mb-8">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={!isVideoEnabled && !isAudioEnabled}
-                            onChange={() => {
-                                if (isVideoEnabled || isAudioEnabled) {
-                                    setIsVideoEnabled(false);
-                                    setIsAudioEnabled(false);
-                                } else {
-                                    setIsVideoEnabled(true);
-                                    setIsAudioEnabled(true);
-                                }
-                            }}
-                            className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
-                        />
-                        <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">Join with mic and camera off</span>
+            <div className="mb-10 flex justify-center">
+                    <label className="flex items-center gap-3 cursor-pointer group bg-white/50 dark:bg-black/20 px-5 py-3 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                        <div className="relative flex items-center">
+                            <input
+                                type="checkbox"
+                                checked={!isVideoEnabled}
+                                onChange={() => {
+                                    if (isVideoEnabled) {
+                                        setIsVideoEnabled(false);
+            
+                                    } else {
+                                        setIsVideoEnabled(true);
+                                    
+                                    }
+                                }}
+                                className="peer w-5 h-5 appearance-none rounded border-2 border-gray-300 dark:border-gray-600 checked:bg-cyan-500 checked:border-cyan-500 transition-colors cursor-pointer"
+                            />
+                            <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none opacity-0 peer-checked:opacity-100 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <span className="text-gray-700 dark:text-gray-300 font-semibold text-sm transition-colors group-hover:text-gray-900 dark:group-hover:text-white">Join with camera off</span>
                     </label>
                 </div>
 
