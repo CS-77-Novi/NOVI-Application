@@ -271,6 +271,7 @@ const MainMenu = () => {
         hoverColor='hover:bg-blue-800'
         handleClick={() => router.push('/pop-quizzes')}
       />
+
     </section>
   )
 }
