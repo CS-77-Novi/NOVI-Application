@@ -21,12 +21,12 @@ const initialValues = {
 };
 
 const MainMenu = () => {
-   const { user } = useUser() // Gets the currently logged-in user
-   const router = useRouter(); // Router instance for navigation
-   const [values, setValues] = useState(initialValues); // State holding meeting form values
-   const [meetingState, setMeetingState] = useState<'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
-   const client = useStreamVideoClient();  // Stream Video client instance
-   const { activeCall, setActiveCall } = useMeetingContext();
+  const {user} = useUser() // Gets the currently logged-in user
+    const router = useRouter(); // Router instance for navigation
+    const [values, setValues] = useState(initialValues); // State holding meeting form values
+    const [meetingState, setMeetingState] = useState< 'Schedule' | 'Instant' | undefined>(undefined); // Tracks whether user wants an instant or scheduled meeting
+    const client = useStreamVideoClient();  // Stream Video client instance
+    const { activeCall, setActiveCall } = useMeetingContext();
 
   // Function to create a new meeting
   const createMeeting = async () => {
@@ -65,6 +65,39 @@ const MainMenu = () => {
       setValues({ dateTime: new Date(), description: '', link: '' });
       setMeetingState(undefined);
       toast.success('Meeting Created successfully! ✨');
+      
+      //cleaning previous meeting data from the database table
+            if (meetingState === 'Instant') {
+                // Wipe the previous meeting's group_session data before logging the new one
+                try {
+                    await fetch('/api/meeting/group-cleanup', { 
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ host_id: user.id }),
+                    });
+                } catch (err) {
+                    console.error('[DB Cleanup] Failed to trigger cleanup', err);
+                }
+            }
+            
+            // Store the CURRENT meeting metadata (host_id, meeting_id, and date_time) in Supabase
+            try {
+                await fetch('/api/meeting/meta-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        host_id: user.id, 
+                        meeting_id: call.id,
+                        date_time: new Date().toISOString()
+                    }),
+                });
+            } catch (err) {
+                console.error('[DB Meeting Meta-data] Failed to store meeting metadata', err);
+            }
 
       if (meetingState === 'Instant') {
         router.push(`/meeting/${call.id}`);
@@ -260,6 +293,7 @@ const MainMenu = () => {
         title="Reports"
         bgColor="bg-blue-600"
         hoverColor='hover:bg-blue-800'
+        /* Change: Use handleClick to trigger our new state */
         handleClick={() => router.push('/reports')}
       />
 
@@ -271,6 +305,7 @@ const MainMenu = () => {
         hoverColor='hover:bg-blue-800'
         handleClick={() => router.push('/pop-quizzes')}
       />
+
     </section>
   )
 }
