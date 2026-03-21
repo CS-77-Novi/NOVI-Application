@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { Clock, Eye, EyeOff } from 'lucide-react';
+import { Clock, Eye, EyeOff, HelpCircle } from 'lucide-react';
 
 // Defines the props structure, hardcoding the role to individual
 interface IndOverviewBoardProps {
@@ -152,8 +152,8 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                 ) : (
                     <div className="flex flex-col gap-4">
                         {/* Summary Line: Duration + Efficiency percentage */}
-                        <div className="flex items-start gap-3">
-                            <div className="bg-[#D946EF] p-2 rounded-full mt-0.5">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-[#D946EF] p-2 rounded-full">
                                 <Clock className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
                             </div>
                             <p className="text-white/90 text-sm leading-relaxed">
@@ -162,8 +162,8 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                         </div>
                         
                         {/* Summary Line: Distraction duration matching real time */}
-                        <div className="flex items-start gap-3">
-                            <div className="bg-[#D946EF] p-2 rounded-full mt-0.5">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-[#D946EF] p-2 rounded-full">
                                 <EyeOff className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
                             </div>
                             <p className="text-white/90 text-sm leading-relaxed">
@@ -172,9 +172,9 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                         </div>
 
                         {/* Summary Line: Neutral / Unknown interaction detection */}
-                        <div className="flex items-start gap-3">
-                            <div className="bg-[#D946EF] p-2 rounded-full mt-0.5">
-                                <Eye className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
+                        <div className="flex items-center gap-3">
+                            <div className="bg-[#D946EF] p-2 rounded-full">
+                                <HelpCircle className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
                             </div>
                             <p className="text-white/90 text-sm leading-relaxed">
                                 No engagement was detected for <strong>{formatDuration(totals.session-(totals.distracted+totals.attentive))}</strong> seconds.
