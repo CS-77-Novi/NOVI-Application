@@ -82,11 +82,11 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
     );
 
     return (
-        <div className="flex flex-col flex-1 animate-fade-in bg-[#D946EF] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px]">
+        <div className="flex flex-col flex-1 animate-fade-in bg-[#06b6d4] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px]">
             {/* Header Title Section */}
             <div className="flex items-center gap-4 mb-6">
-                <div className="bg-[#f4effc] w-max px-5 py-2 rounded-xl">
-                    <span className="text-[#D946EF] font-bold text-sm tracking-wide">Overview</span>
+                <div className="bg-[#ecfeff] w-max px-5 py-2 rounded-xl">
+                <span className="text-[#06b6d4] font-bold text-sm tracking-wide">Overview</span>
                 </div>
                 {/* Dynamically extract and display the latest Session ID */}
                 {sessionData.length > 0 && (
@@ -99,49 +99,49 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
             {/* Top Row Metric Boxes Displaying Aggregated Durations */}
             <div className="grid grid-cols-3 gap-5 mb-8">
                 {/* Total Session Duration Box */}
-                <div className="bg-[#f4effc] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
-                    <div className="bg-[#D946EF] p-3 rounded-full">
-                        <Clock className="w-6 h-6 text-[#f4effc]" strokeWidth={2.5} />
+                   <div className="bg-[#ecfeff] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
+                    <div className="bg-[#06b6d4] p-3 rounded-full">
+                        <Clock className="w-6 h-6 text-[#ecfeff]" strokeWidth={2.5} />
                     </div>
-                    <span className="text-[10px] font-black tracking-widest text-[#D946EF] uppercase text-center">
+                    <span className="text-[10px] font-black tracking-widest text-[#06b6d4] uppercase text-center">
                         Total Session Duration
                     </span>
-                    <span className="text-3xl font-black text-[#D946EF]">
+                    <span className="text-3xl font-black text-[#06b6d4]">
                         {loading ? '...' : formatDuration(totals.session)}
                     </span>
                 </div>
 
                 {/* Attentive Duration Box */}
-                <div className="bg-[#f4effc] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
-                    <div className="bg-[#D946EF] p-3 rounded-full">
-                        <Eye className="w-6 h-6 text-[#f4effc]" strokeWidth={2.5} />
+                     <div className="bg-[#ecfeff] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
+                    <div className="bg-[#06b6d4] p-3 rounded-full">
+                        <Eye className="w-6 h-6 text-[#ecfeff]" strokeWidth={2.5} />
                     </div>
-                    <span className="text-[10px] font-black tracking-widest text-[#D946EF] uppercase text-center">
+                    <span className="text-[10px] font-black tracking-widest text-[#06b6d4] uppercase text-center">
                         Attentive Duration
                     </span>
-                    <span className="text-3xl font-black text-[#D946EF]">
+                    <span className="text-3xl font-black text-[#06b6d4]">
                         {loading ? '...' : formatDuration(totals.attentive)}
                     </span>
                 </div>
 
                 {/* Distraction Duration Box */}
-                <div className="bg-[#f4effc] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
-                    <div className="bg-[#D946EF] p-3 rounded-full">
-                        <EyeOff className="w-6 h-6 text-[#f4effc]" strokeWidth={2.5} />
+                    <div className="bg-[#ecfeff] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
+                    <div className="bg-[#06b6d4] p-3 rounded-full">
+                        <EyeOff className="w-6 h-6 text-[#ecfeff]" strokeWidth={2.5} />
                     </div>
-                    <span className="text-[10px] font-black tracking-widest text-[#D946EF] uppercase text-center">
+                    <span className="text-[10px] font-black tracking-widest text-[#06b6d4] uppercase text-center">
                         Distraction Duration
                     </span>
-                    <span className="text-3xl font-black text-[#D946EF]">
+                    <span className="text-3xl font-black text-[#06b6d4]">
                         {loading ? '...' : formatDuration(totals.distracted)}
                     </span>
                 </div>
             </div>
 
             {/* Comprehensive Session Summary Text Section */}
-            <div className="bg-[#c026d3]/60 rounded-[24px] p-6 flex flex-col gap-5 border-2 border-[#f4effc]">
-                <div className="bg-[#f4effc] w-max px-4 py-1.5 rounded-xl">
-                    <span className="text-[#D946EF] font-bold text-xs tracking-widest uppercase">Session Summary</span>
+                <div className="bg-[#0891b2]/60 rounded-[24px] p-6 flex flex-col gap-5 border-2 border-[#ecfeff]">
+                <div className="bg-[#ecfeff] w-max px-4 py-1.5 rounded-xl">
+                <span className="text-[#06b6d4] font-bold text-xs tracking-widest uppercase">Session Summary</span>
                 </div>
 
                 {/* Conditional Rendering for Loading or Empty State Fallbacks */}
@@ -153,8 +153,8 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                     <div className="flex flex-col gap-4">
                         {/* Summary Line: Duration + Efficiency percentage */}
                         <div className="flex items-center gap-3">
-                            <div className="bg-[#D946EF] p-2 rounded-full">
-                                <Clock className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
+                                <div className="bg-[#06b6d4] p-2 rounded-full">
+                                <Clock className="w-4 h-4 text-[#ecfeff]" strokeWidth={2.5} />
                             </div>
                             <p className="text-white/90 text-sm leading-relaxed">
                                 This session lasted <strong>{formatDuration(totals.session)}</strong>, during which the learner maintained an average attention score of <strong>{totals.session > 0 ? Math.round((totals.attentive / totals.session) * 100) : 0}%</strong>.
@@ -163,8 +163,8 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                         
                         {/* Summary Line: Distraction duration matching real time */}
                         <div className="flex items-center gap-3">
-                            <div className="bg-[#D946EF] p-2 rounded-full">
-                                <EyeOff className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
+                                <div className="bg-[#06b6d4] p-2 rounded-full">
+                                <EyeOff className="w-4 h-4 text-[#ecfeff]" strokeWidth={2.5} />
                             </div>
                             <p className="text-white/90 text-sm leading-relaxed">
                                 A total of <strong>{formatDuration(totals.distracted)}</strong> of distraction time was detected during the session, representing <strong>{totals.session > 0 ? Math.round((totals.distracted / totals.session) * 100) : 0}%</strong> of the total session time.
@@ -173,8 +173,8 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
 
                         {/* Summary Line: Neutral / Unknown interaction detection */}
                         <div className="flex items-center gap-3">
-                            <div className="bg-[#D946EF] p-2 rounded-full">
-                                <HelpCircle className="w-4 h-4 text-[#f4effc]" strokeWidth={2.5} />
+                                <div className="bg-[#06b6d4] p-2 rounded-full">
+                                <HelpCircle className="w-4 h-4 text-[#ecfeff]" strokeWidth={2.5} />
                             </div>
                             <p className="text-white/90 text-sm leading-relaxed">
                                 No engagement was detected for <strong>{formatDuration(totals.session-(totals.distracted+totals.attentive))}</strong> seconds.
