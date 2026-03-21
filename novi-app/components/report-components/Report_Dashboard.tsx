@@ -5,6 +5,7 @@ import OverviewBoard from './Overview_board'
 import IndOverviewBoard from './IndOverview_board'
 import AttentionScoreBoard from './AttentionScore_board'
 import ReportDownloadBoard from './ReportDownload_board'
+import IndReportDownloadBoard from './IndReportDownload_board'
 import { LayoutGrid, Target, AlertCircle, Clock, Download, FileText } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 
@@ -125,7 +126,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                     {activeTab === 'summary' && role === 'teacher' && <OverviewBoard role={role} />}
                     {activeTab === 'summary' && role === 'individual' && <IndOverviewBoard role={role} />}
                     {activeTab === 'attention' && <AttentionScoreBoard role={role} />}
-                    {activeTab === 'download' && <ReportDownloadBoard role={role} />}
+                    {activeTab === 'download' && role === 'teacher' && <ReportDownloadBoard />}
+                    {activeTab === 'download' && role === 'individual' && <IndReportDownloadBoard />}
                 </div>
             </div>
         </div>

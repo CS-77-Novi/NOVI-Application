@@ -66,6 +66,11 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
     // Ref for the timer interval
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+    // Single distraction counter: counts consecutive seconds of DISTRACTED, resets on FOCUSED
+    const singleCounterRef = useRef(0);
+    // Ref to hold the latest detection data (gaze/head) for posting when distracted
+    const latestDistractionDataRef = useRef<any>(null);
+
     // Function to initialize and request user media (camera and mic)
     const startMediaStream = async (enableVideo: boolean, enableAudio: boolean) => {
         try {
@@ -248,6 +253,8 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     if (result && (result.status === "FOCUSED" || result.status === "DISTRACTED")) {
                         // Update the latest status ref for the timer interval
                         latestStatusRef.current = result.status;
+                        // Store latest detection data for distraction posting
+                        latestDistractionDataRef.current = result;
                         // Increment base sample count
                         setTotalCount(prev => prev + 1);
                         // Increment focused count selectively
@@ -287,11 +294,53 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     focusedTimeRef.current = prev + 1;
                     return prev + 1;
                 });
+                // Reset singleCounter when user is FOCUSED
+                singleCounterRef.current = 0;
             } else if (latestStatusRef.current === 'DISTRACTED') {
                 setDistractedTime(prev => {
                     distractedTimeRef.current = prev + 1;
                     return prev + 1;
                 });
+                // Increment singleCounter during DISTRACTED
+                singleCounterRef.current += 1;
+
+                // Derive gaze and head direction from latest detection data
+                const data = latestDistractionDataRef.current;
+                let gazeDir = 'N/A';
+                let headDir = 'CENTER';
+
+                if (data?.gaze) {
+                    // Gaze exists → head was FOCUSED (combined.js only checks gaze when head is focused)
+                    // So head_direction stays "CENTER", distraction came from gaze
+                    gazeDir = data.gaze.gaze || 'N/A'; // CENTER, LEFT, RIGHT, UP, DOWN
+                    headDir = 'CENTER';
+                } else if (data?.headPosture) {
+                    // Gaze is null → head itself was DISTRACTED, derive direction from yaw/pitch
+                    // Using same logic as Ind-Dashboard.tsx getHeadDirection
+                    const { yaw, pitch } = data.headPosture;
+                    gazeDir = 'N/A';
+                    if (yaw < -5) headDir = 'RIGHT';
+                    else if (yaw > 5) headDir = 'LEFT';
+                    else if (pitch < 6.5) headDir = 'UP';
+                    else if (pitch > 18) headDir = 'DOWN';
+                }
+
+                // POST distraction data to ind_session while counter is active
+                const distractionPct = sessionTimeRef.current > 0
+                    ? Math.round((distractedTimeRef.current / sessionTimeRef.current) * 100)
+                    : 0;
+                fetch('/api/individual_session/session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        host_id: user?.id || 'unknown',
+                        session_id: sessionId,
+                        gaze_direction: gazeDir,
+                        head_direction: headDir,
+                        distraction_pct: distractionPct,
+                        time: formatTime(singleCounterRef.current),
+                    }),
+                }).catch(err => console.error('Failed to post session distraction:', err));
             }
 
             // Every 5 seconds, POST attention analysis data
@@ -408,7 +457,7 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     </button>
 
                     {/* End Session Button */}
-                    <IndEndCallButton onEndCall={handleEndCall} />
+                    <IndEndCallButton onEndCall={handleEndCall} sessionId={sessionId} />
                 </div>
             </div>
            
