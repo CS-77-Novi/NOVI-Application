@@ -1,17 +1,26 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 
 interface EndCallButtonProps {
     onEndCall: () => void;
+    sessionId: string;
 }
 
-const IndEndCallButton = ({ onEndCall }: EndCallButtonProps) => {
+const IndEndCallButton = ({ onEndCall, sessionId }: EndCallButtonProps) => {
     const router = useRouter();
+    const { user } = useUser();
 
-    const handleEndSession = () => {
+    const handleEndSession = async () => {
         // Call cleanup function passed from parent
         onEndCall();
+        
+        // Trigger report generation with the session ID and user ID
+        if (sessionId && user?.id) {
+            fetch(`/api/individual_session/ind_report_gen?session_id=${sessionId}&host_id=${user.id}`)
+                .catch(err => console.error('Failed to generate report:', err));
+        }
         
         // Navigate to home page
         router.push('/');
@@ -28,4 +37,4 @@ const IndEndCallButton = ({ onEndCall }: EndCallButtonProps) => {
     );
 };
 
-export default IndEndCallButton;
+export default IndEndCallButton;
