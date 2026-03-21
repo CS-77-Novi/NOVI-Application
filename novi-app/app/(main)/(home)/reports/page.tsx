@@ -44,7 +44,7 @@ const ReportsPage = () => {
 
                 <button 
                     onClick={() => window.history.back()}
-                    className="mt-6 text-[12px] text-zinc-500 hover:text-zinc-300 transition-colors tracking-wide"
+                    className="mt-6 text-[13px] font-medium text-gray-500 hover:text-gray-700 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors tracking-wide"
                 >
                     Cancel
                 </button>
