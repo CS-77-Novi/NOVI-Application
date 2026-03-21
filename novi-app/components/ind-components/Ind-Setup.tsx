@@ -165,7 +165,7 @@ const IndSetUp = ({
                 </div>  
 
                 {/* Video Preview */}
-                <div className="relative mb-8 rounded-xl overflow-hidden" style={{ backgroundColor: '#1e293b', aspectRatio: '16/9' }}>
+                <div className="relative mb-10 rounded-2xl overflow-hidden shadow-inner border border-gray-200 dark:border-gray-800" style={{ backgroundColor: '#111827', aspectRatio: '16/9' }}>
                     {isVideoEnabled ? (
                         <video
                             ref={videoRef}
@@ -175,8 +175,11 @@ const IndSetUp = ({
                             className="w-full h-full object-cover"
                         />
                     ) : (
-                        <div className="flex items-center justify-center h-full">
-                            <p className="text-white text-lg">Video is disabled</p>
+                        <div className="flex flex-col items-center justify-center h-full gap-4">
+                            <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center">
+                                <VideoCameraSlashIcon className="w-8 h-8 text-gray-400" />
+                            </div>
+                            <p className="text-gray-400 font-medium">Camera is off</p>
                         </div>
                     )}
                     
