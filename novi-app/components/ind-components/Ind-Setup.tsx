@@ -202,10 +202,10 @@ const IndSetUp = ({
                 </div>
 
                 {/* Device Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 bg-white/40 dark:bg-black/20 p-6 rounded-2xl border border-white/40 dark:border-white/5">
                     {/* Camera Selection */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
+                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 ml-1 tracking-wide">
                             Camera
                         </label>
                         <select
