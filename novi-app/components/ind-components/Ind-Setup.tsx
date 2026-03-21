@@ -267,16 +267,16 @@ const IndSetUp = ({
                 <div className="flex justify-center">
                     <button
                         onClick={handleJoinMeeting}
-                        className="px-12 py-4 text-lg font-semibold text-white rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
-                        style={{ backgroundColor: '#3B82F6' }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = '#2563EB';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = '#3B82F6';
-                        }}
+                        className="group relative flex items-center justify-center gap-2 px-12 py-4 text-lg font-bold text-white rounded-xl shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-cyan-500/40 active:scale-[0.98] overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600 w-full sm:w-auto min-w-[280px]"
+                        
                     >
-                        Join Learning Session
+                        <span className="absolute inset-0 w-full h-full bg-white/10 group-hover:bg-transparent transition-colors duration-300"></span>
+                        <span className="relative z-10 flex items-center gap-2 drop-shadow-sm">
+                            Join Session
+                            <svg className="w-5 h-5 transform transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </span>
                     </button>
                 </div>
             </div>
