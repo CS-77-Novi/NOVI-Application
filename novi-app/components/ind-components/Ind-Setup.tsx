@@ -208,18 +208,24 @@ const IndSetUp = ({
                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 ml-1 tracking-wide">
                             Camera
                         </label>
-                        <select
-                            value={selectedVideoDevice}
-                            onChange={(e) => handleVideoDeviceChange(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-border bg-white dark:bg-background text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all"
-                            disabled={videoDevices.length === 0}
-                        >
-                            {videoDevices.map((device) => (
-                                <option key={device.deviceId} value={device.deviceId}>
-                                    {device.label || `Camera ${device.deviceId.slice(0, 5)}`}
-                                </option>
-                            ))}
-                        </select>
+                        <div className="relative">
+                            <select
+                                value={selectedVideoDevice}
+                                onChange={(e) => handleVideoDeviceChange(e.target.value)}
+                                className="w-full px-5 py-3.5 appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all shadow-sm font-medium"
+                                disabled={videoDevices.length === 0}
+                            >
+                                {videoDevices.map((device) => (
+                                    <option key={device.deviceId} value={device.deviceId}>
+                                        {device.label || `Camera ${device.deviceId.slice(0, 5)}`}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>    
+                
                     </div>
 
                     {/* Microphone Selection */}
