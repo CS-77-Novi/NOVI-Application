@@ -62,30 +62,6 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             <Target size={20} strokeWidth={2.5} />
                             Attention Score
                         </button>
-
-                        <button
-                            onClick={() => setActiveTab('distractions')}
-                            className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
-                                activeTab === 'distractions' 
-                                ? 'bg-white text-[#D946EF] shadow-sm shadow-[#D946EF]/10 border-2 border-[#D946EF]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#D946EF]'
-                            }`}
-                        >
-                            <AlertCircle size={20} strokeWidth={2.5} />
-                            Distractions
-                        </button>
-
-                        <button
-                            onClick={() => setActiveTab('timeline')}
-                            className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
-                                activeTab === 'timeline' 
-                                ? 'bg-white text-[#D946EF] shadow-sm shadow-[#D946EF]/10 border-2 border-[#D946EF]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#D946EF]'
-                            }`}
-                        >
-                            <Clock size={20} strokeWidth={2.5} />
-                            Timeline
-                        </button>
                         
                         <div className="border-t border-[#e8ddef] my-4 mx-2"></div>
 

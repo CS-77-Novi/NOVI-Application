@@ -18,8 +18,8 @@ const ReportsPage = () => {
             <div className="bg-[#1C1C21] w-full max-w-[340px] rounded-[24px] p-8 py-10 flex flex-col items-center shadow-2xl border border-white/5">
                 
                 {/* Centered Avatar Icon */}
-                <div className="w-14 h-14 rounded-full border border-[#9b87f5] flex items-center justify-center mb-6 bg-[#9b87f5]/10">
-                    <User className="text-[#9b87f5] w-6 h-6" strokeWidth={2} />
+                <div className="w-14 h-14 rounded-full border border-[#D946EF] flex items-center justify-center mb-6 bg-[#f4effc]/10">
+                    <User className="text-[#D946EF] w-6 h-6" strokeWidth={2} />
                 </div>
                 
                 <h2 className="text-[15px] font-medium text-center mb-8 leading-[1.6] text-zinc-100">
@@ -31,13 +31,13 @@ const ReportsPage = () => {
                 <div className="flex flex-col w-full gap-4 px-1">
                     <button 
                         onClick={() => setSelectedRole('teacher')}
-                        className="w-full py-3 rounded-xl bg-[#8B5CF6] hover:bg-[#7C3AED] transition-all text-white font-medium shadow-[0_4px_20px_rgba(139,92,246,0.2)]"
+                        className="w-full py-3 rounded-xl bg-[#D946EF] hover:bg-[#c02bc5] transition-all text-[#f4effc] font-bold shadow-[0_4px_20px_rgba(217,70,239,0.3)]"
                     >
                         Teacher
                     </button>
                     <button 
                         onClick={() => setSelectedRole('individual')}
-                        className="w-full py-3 rounded-xl bg-[#8B5CF6] hover:bg-[#7C3AED] transition-all text-white font-medium shadow-[0_4px_20px_rgba(139,92,246,0.2)]"
+                        className="w-full py-3 rounded-xl bg-[#D946EF] hover:bg-[#c02bc5] transition-all text-[#f4effc] font-bold shadow-[0_4px_20px_rgba(217,70,239,0.3)]"
                     >
                         Individual
                     </button>
