@@ -173,7 +173,7 @@ const IndSetUp = ({
                     )}
                     
                     {/* Video Controls Overlay */}
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4">
+                                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex justify-center">
                         <button
                             onClick={toggleVideo}
                             className="p-4 rounded-full transition-all duration-300 hover:scale-110"
@@ -185,17 +185,7 @@ const IndSetUp = ({
                                 <VideoCameraSlashIcon className="w-6 h-6 text-white" />
                             )}
                         </button>
-                        <button
-                            onClick={toggleAudio}
-                            className="p-4 rounded-full transition-all duration-300 hover:scale-110"
-                            style={{ backgroundColor: isAudioEnabled ? '#C8A2E0' : '#ef4444' }}
-                        >
-                            {isAudioEnabled ? (
-                                <MicrophoneIcon className="w-6 h-6 text-white" />
-                            ) : (
-                                <MicrophoneIcon className="w-6 h-6 text-white" />
-                            )}
-                        </button>
+                        
                     </div>
                 </div>
 
