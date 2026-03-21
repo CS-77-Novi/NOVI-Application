@@ -65,12 +65,17 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
                         <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30">
                             <ChartBarSquareIcon className="w-7 h-7 text-white" />
                         </div>
-                        <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10">
-                            <div className="p-2 bg-emerald-100 dark:bg-emerald-500/20 rounded-xl">
-                                <ShieldCheckIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                            </div>
-                            <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">Privacy First</span>
+                        <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Live Analytics</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Real-time attention tracking utilizing advanced machine learning vision algorithms.</p>
                         </div>
+
+                    {/* Card 3 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300 lg:translate-y-6">
+                        <div className="w-14 h-14 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-teal-500/30">
+                            <ShieldCheckIcon className="w-7 h-7 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Privacy First</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Your data never leaves your device. All live metrics are processed safely locally.</p>
                     </div>
 
                     {/* Action Button */}
