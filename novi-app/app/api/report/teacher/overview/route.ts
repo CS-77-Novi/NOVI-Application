@@ -1,25 +1,32 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+/**
+ * GET route querying the group_session_overview table for the Teacher's Dashboard.
+ * Incorporates specific business logic for calculating peak distraction ratios,
+ * and filtering/sorting those ratios based on adjustable thresholds set dynamically from the UI.
+ */
 export async function GET(req: NextRequest) {
   try {
-    // Parse threshold from query params
+    // Parse the threshold multiplier filter from query params.
+    // Represents the minimum percentage limit filter for displaying distracted users.
     const thresholdParam = req.nextUrl.searchParams.get('threshold');
-    const threshold = thresholdParam ? parseInt(thresholdParam, 10) : 75;
+    const threshold = thresholdParam ? parseInt(thresholdParam, 10) : 75; // Defaults to identifying high distractions over 75%
 
-    // Parse sorting order from query params
+    // Parse descending / ascending sort tracking state mapping boolean values
     const sortOrderParam = req.nextUrl.searchParams.get('sort');
     const isAscending = sortOrderParam === 'asc';
 
-    // Parse host_id from query params
+    // Parse the host_id identity check from query params
     const host_id = req.nextUrl.searchParams.get('host_id');
 
-    // Check whether the current logged-in user's userid is provided
+    // Strict validation requirement verification check
     if (!host_id) {
       return NextResponse.json({ ok: false, error: 'Unauthorized: No host_id provided' }, { status: 401 });
     }
 
-    // Step 1 & 2: Query host_meetings for the latest meeting_id for this host_id
+    // Step 1: Discover the Latest Meeting
+    // Query host_meetings to lock onto the most recently created meeting node for this particular host_id
     const { data: hostMatches, error: hostError } = await supabase
       .from('host_meetings')
       .select('meeting_id, date_time')
@@ -32,7 +39,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ ok: false, error: hostError.message }, { status: 500 });
     }
 
-    // If there're no matches, don't GET any rows in group_session_overview table
+    // Terminate cleanly if no target history maps effectively
     if (!hostMatches || hostMatches.length === 0) {
       return NextResponse.json({ 
         ok: true, 
@@ -56,7 +63,8 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Step 3: Fetch the raw check counts and related columns from group_session_overview explicitly checked against the newest session_id
+    // Step 2: Extract Relevant Raw Participant Information Data Structures
+    // Specifically looking for the name strings & check counts stored locally to construct percentages
     const { data: rawData, error: distError } = await supabase
       .from('group_session_overview')
       .select('participant_name, total_checks, distracted_checks')
@@ -68,10 +76,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ ok: false, error: distError.message }, { status: 500 });
     }
 
-    // Calculate percentage and filter based on threshold
+    // Step 3: Mapping, Logic Calculation, and Threshold Filtering
     const distractionsData = (rawData || [])
       .map(row => {
         let pct = 0;
+        // Protection division structure logic avoiding zero or undefined total checks calculation NaN outcomes
         if (row.total_checks && row.total_checks > 0) {
           pct = (row.distracted_checks / row.total_checks) * 100;
         }
@@ -80,9 +89,10 @@ export async function GET(req: NextRequest) {
           distraction_percentage: pct
         };
       })
+      // Discarding users falling under the acceptable attention limit set externally
       .filter(row => row.distraction_percentage > threshold);
 
-    // Sort by calculated percentage
+    // Step 4: Sorting final mapped array dataset
     distractionsData.sort((a, b) => {
         if (isAscending) {
             return a.distraction_percentage - b.distraction_percentage;
@@ -91,7 +101,7 @@ export async function GET(req: NextRequest) {
         }
     });
 
-    // Fetch the latest session time to display date even if distractions are empty (Filtered safely by session_id)
+    // Step 5: Isolated session parameter querying strictly to populate dashboard headers uniformly
     const { data: sessionData, error: sessionError } = await supabase
         .from('group_session_overview')
         .select('peak_distraction_time')
@@ -100,10 +110,11 @@ export async function GET(req: NextRequest) {
         .limit(1);
 
     if (sessionError) {
+        // Continue even if session date parsing fails, UI resolves fallback states natively
         console.error('[Overview API] Error fetching session date:', sessionError);
-        // Continue even if session date fetch fails, the UI will fall back gracefully
     }
 
+    // Complete object format wrapping for direct front end destructured parsing mapping
     return NextResponse.json({ 
         ok: true, 
         data: {
@@ -115,6 +126,7 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (err: any) {
+    // Unified network failout encapsulation logic
     console.error('[Overview API] Unexpected error:', err);
     return NextResponse.json({ ok: false, error: err.message || 'Internal Server Error' }, { status: 500 });
   }

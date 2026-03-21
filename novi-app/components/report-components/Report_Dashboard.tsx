@@ -9,21 +9,26 @@ import IndReportDownloadBoard from './IndReportDownload_board'
 import { LayoutGrid, Target, AlertCircle, Clock, Download, FileText } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 
+// Dashboard properties allowing us to load the correct UI based on context
 interface ReportDashboardProps {
     role: 'individual' | 'teacher'
     onBack: () => void
 }
 
 export default function ReportDashboard({ role, onBack }: ReportDashboardProps) {
+    // Component State
+    // activeTab dictates which child board is currently being rendered in the main content area
     const [activeTab, setActiveTab] = useState<'summary' | 'attention' | 'distractions' | 'timeline' | 'download'>('summary')
+    
+    // Auth object to retrieve user context for display parameters
     const { user } = useUser()
 
     return (
         <div className="absolute inset-0 top-[112px] flex text-zinc-800 animate-fade-in bg-[#f4effc]">
-            {/* Sidebar Navigation */}
+            {/* Sidebar Navigation Column */}
             <div className="w-[280px] bg-[#fbf9fe] border-r border-[#e8ddef] flex flex-col p-6 pt-10 justify-between">
                 <div>
-                    {/* Brand Header */}
+                    {/* Brand Header Icon and Title */}
                     <div className="flex items-center gap-3 mb-10 pl-2">
                         <div className="bg-[#D946EF] p-2 rounded-xl text-white shadow-sm flex items-center justify-center">
                             <FileText size={24} strokeWidth={2.5} />
@@ -31,6 +36,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                         <h1 className="text-xl font-bold text-[#D946EF] tracking-tight">Novi Analytics</h1>
                     </div>
 
+                    {/* Back Navigation Button */}
                     <button 
                         onClick={onBack}
                         className="text-sm text-[#D946EF] font-medium hover:text-[#D946EF]/80 transition-colors flex items-center gap-2 mb-10 pl-2"
@@ -38,7 +44,9 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                         &larr; Back to Home
                     </button>
                     
+                    {/* Navigation Tab Buttons */}
                     <div className="flex flex-col gap-2">
+                        {/* Summary / Overview Tab */}
                         <button
                             onClick={() => setActiveTab('summary')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
@@ -51,6 +59,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             Overview
                         </button>
 
+                        {/* Attention Score metrics Tab */}
                         <button
                             onClick={() => setActiveTab('attention')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
@@ -63,8 +72,10 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             Attention Score
                         </button>
                         
+                        {/* Divider Line */}
                         <div className="border-t border-[#e8ddef] my-4 mx-2"></div>
 
+                        {/* Download Archive Tab */}
                         <button
                             onClick={() => setActiveTab('download')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
@@ -79,29 +90,35 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                     </div>
                 </div>
 
-                {/* Bottom Role Card */}
+                {/* Bottom Role Card Indicator */}
                 <div className="bg-[#D946EF] rounded-[24px] p-5 text-white shadow-lg relative overflow-hidden">
                     <div className="relative z-10 flex flex-col gap-1">
                         <span className="text-[10px] font-black tracking-widest text-white/70 uppercase">Session View</span>
                         <span className="font-bold text-lg leading-tight">{role === 'teacher' ? 'Teacher Dashboard' : 'Individual Dashboard'}</span>
                         <span className="text-[11px] text-white/70 mt-1 break-all">ID: {user?.id || 'pending'}</span>
                     </div>
-                    {/* Decorative fade behind text */}
+                    {/* Decorative color gradient fade behind text */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-[#a21caf] to-transparent z-0 opacity-50"></div>
                 </div>
             </div>
 
-            {/* Main Content Area */}
+            {/* Main Content Area: Board Renders Here */}
             <div className="flex-1 flex flex-col px-10 pb-8 pt-10 overflow-y-auto hidden-scrollbar">
-                {/* Header Date */}
+                {/* Header Date displaying current time context */}
                 <div className="flex flex-col mb-6">
                     <h2 className="text-2xl font-black text-[#D946EF]">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h2>
                 </div>
                 
+                {/* Board Switcher Logic */}
                 <div className="flex flex-col flex-1 w-full">
+                    {/* Conditionally render different Overview Dashboards based on roles */}
                     {activeTab === 'summary' && role === 'teacher' && <OverviewBoard role={role} />}
                     {activeTab === 'summary' && role === 'individual' && <IndOverviewBoard role={role} />}
+                    
+                    {/* Attention Score board handles the role logic internally */}
                     {activeTab === 'attention' && <AttentionScoreBoard role={role} />}
+                    
+                    {/* Conditionally render distinct File Download boards based on roles */}
                     {activeTab === 'download' && role === 'teacher' && <ReportDownloadBoard />}
                     {activeTab === 'download' && role === 'individual' && <IndReportDownloadBoard />}
                 </div>

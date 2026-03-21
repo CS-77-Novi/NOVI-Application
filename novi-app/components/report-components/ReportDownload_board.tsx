@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { FileText, Download, ArrowUpDown, Trash2 } from 'lucide-react';
 
+// Defines the structure of the session record returned by the database
 interface SessionRecord {
     file_name: string;
     session_id: string;
@@ -12,22 +13,31 @@ interface SessionRecord {
 }
 
 export default function ReportDownloadBoard() {
+    // Access the current authenticated teacher from Clerk
     const { user } = useUser();
+    
+    // Component State
     const [sessions, setSessions] = useState<SessionRecord[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+    const [deleteTarget, setDeleteTarget] = useState<{ fileName: string; sessionId: string } | null>(null);
 
+    // Fetch the teacher reports for the logged-in user when the component mounts
     useEffect(() => {
         const fetchSessions = async () => {
+            // Wait until the user object is fully loaded
             if (!user?.id) {
                 setLoading(false);
                 return;
             }
+            
             setLoading(true);
             try {
+                // Call the API endpoint that queries the 'report' table for this specific teacher
                 const res = await fetch(`/api/report/teacher/display_report?host_id=${user.id}`);
                 const json = await res.json();
 
+                // If successful, populate the sessions array
                 if (json.ok && json.data && json.data.length > 0) {
                     setSessions(json.data);
                 } else {
@@ -42,6 +52,8 @@ export default function ReportDownloadBoard() {
         fetchSessions();
     }, [user?.id]);
 
+    // Sort the sessions array based on the selected sortOrder ('newest' or 'oldest')
+    // useMemo ensures this expensive sorting operation only runs when sessions or sortOrder change
     const sortedSessions = useMemo(() => {
         return [...sessions].sort((a, b) => {
             const dateA = new Date(`${a.generated_date} ${a.generated_time}`).getTime();
@@ -50,10 +62,14 @@ export default function ReportDownloadBoard() {
         });
     }, [sessions, sortOrder]);
 
+    // Handle downloading a specific report file from the Supabase bucket
     const handleDownload = async (fileName: string) => {
         try {
+            // Request a securely signed temporary download URL from the server
             const res = await fetch(`/api/report/teacher/download_report?file_name=${encodeURIComponent(fileName)}`);
             const json = await res.json();
+            
+            // If we successfully get the signed URL, trigger a hidden anchor tag click to download it natively
             if (json.ok && json.url) {
                 const link = document.createElement('a');
                 link.href = json.url;
@@ -69,21 +85,24 @@ export default function ReportDownloadBoard() {
         }
     };
 
-    const [deleteTarget, setDeleteTarget] = useState<{ fileName: string; sessionId: string } | null>(null);
-
+    // Open the confirmation modal by setting the target file information
     const handleDeleteClick = (fileName: string, sessionId: string) => {
         setDeleteTarget({ fileName, sessionId });
     };
 
+    // Confirm and execute the permanent deletion of the report
     const confirmDelete = async () => {
         if (!deleteTarget) return;
         try {
+            // Send DELETE request to wipe the file from the Group_reports bucket AND the report table
             const res = await fetch('/api/report/teacher/delete_report', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ file_name: deleteTarget.fileName, session_id: deleteTarget.sessionId }),
             });
             const json = await res.json();
+            
+            // If successful, instantly remove it from the display array so there's no layout flash
             if (json.ok) {
                 setSessions(prev => prev.filter(s => s.file_name !== deleteTarget.fileName));
             } else {
@@ -97,7 +116,7 @@ export default function ReportDownloadBoard() {
 
     return (
         <div className="flex flex-col flex-1 animate-fade-in w-full">
-            {/* Delete Confirmation Modal */}
+            {/* Delete Confirmation Modal Overlay */}
             {deleteTarget && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
                     <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-[420px] w-full mx-4 border border-purple-100">
@@ -128,7 +147,7 @@ export default function ReportDownloadBoard() {
                 </div>
             )}
 
-            {/* Header Card */}
+            {/* Header Card displaying section title and Sorting toggle */}
             <div className="bg-white rounded-[24px] p-8 shadow-sm border-2 border-[#D946EF] w-full">
                 <div className="flex items-center justify-between">
                     <div>
@@ -149,22 +168,22 @@ export default function ReportDownloadBoard() {
                 </div>
             </div>
 
-            {/* Loading State */}
+            {/* Loading State graphic to show while API is fetching data */}
             {loading && (
                 <div className="mt-6 text-[#9E4DBC] font-bold animate-pulse text-center py-16">Loading sessions...</div>
             )}
 
-            {/* Session Cards */}
+            {/* Session Cards list iterating over the sorted sessions */}
             {!loading && sortedSessions.length > 0 && (
                 <div className="flex flex-col gap-5 mt-6">
                     {sortedSessions.map((session, index) => (
                         <div key={index} className="bg-[#D946EF] rounded-[20px] p-6 shadow-sm flex items-center justify-between w-full">
                             <div className="flex flex-col gap-3 flex-1">
-                                {/* Meeting ID */}
+                                {/* Meeting ID Block */}
                                 <div className="bg-white rounded-xl px-5 py-3 max-w-[550px]">
                                     <span className="text-[#D946EF] font-bold text-sm">Meeting ID: <span className="font-semibold text-[#9E4DBC]">{session.session_id}</span></span>
                                 </div>
-                                {/* Date & Time */}
+                                {/* Date & Time Metadata Blocks */}
                                 <div className="flex gap-3">
                                     <div className="bg-white rounded-xl px-5 py-2.5 min-w-[180px]">
                                         <span className="text-[#D946EF] font-bold text-sm">Generated Date: <span className="font-semibold text-[#9E4DBC]">{session.generated_date}</span></span>
@@ -174,7 +193,8 @@ export default function ReportDownloadBoard() {
                                     </div>
                                 </div>
                             </div>
-                            {/* Action Buttons */}
+                            
+                            {/* Action Buttons: Download and Delete */}
                             <div className="flex flex-col gap-2 ml-4">
                                 <button onClick={() => handleDownload(session.file_name)} className="bg-white/20 hover:bg-white/30 transition-colors rounded-xl p-3 border border-white/30">
                                     <Download className="w-6 h-6 text-white" strokeWidth={2.5} />
@@ -188,7 +208,7 @@ export default function ReportDownloadBoard() {
                 </div>
             )}
 
-            {/* Empty State */}
+            {/* Empty State Card shown if the user has no generated reports */}
             {!loading && sessions.length === 0 && (
                 <div className="mt-6 bg-[#f4effc] rounded-[24px] p-8 shadow-sm border-2 border-dashed border-purple-200 flex flex-col items-center justify-center min-h-[250px] w-full">
                     <FileText className="w-12 h-12 text-[#c4b0dc] mb-4" strokeWidth={1.5} />

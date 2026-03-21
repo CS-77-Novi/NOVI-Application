@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
-/** GET /api/meeting/[id]/group-session → { distractedCount, totalCount, participants[] } */
+/** 
+ * GET /api/meeting/[id]/group-session
+ * Retrieves the core aggregated metrics mapping (distracted vs engaged counts) alongside
+ * the comprehensive list of tracking analytics per participant for the identified session.
+ */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
 
-  // Note: No stale time filter is used here as there is no last_seen / created_at column.
+  // Note: No stale time filter is used here as there is no last_seen / created_at column natively driving this.
   const { data, error } = await supabase
     .from('group_session_overview')
     .select('*')
@@ -19,14 +23,18 @@ export async function GET(
     return NextResponse.json({ distractedCount: 0, totalCount: 0, participants: [] })
   }
 
+  // Pre-calculate aggregate state totals mapping to be consumed by real-time teacher UI
   let distractedCount = 0
   let totalCount = 0
+  
+  // Transform and calculate distraction ratios on-the-fly referencing row attributes
   const participants = (data ?? []).map((row) => {
     const distractionPct =
       row.total_checks > 0
         ? Math.round((row.distracted_checks / row.total_checks) * 100)
         : 0
 
+    // Count strictly active status markers to bypass disconnected/waiting states from skewing charts
     if (row.status === 'FOCUSED' || row.status === 'DISTRACTED') {
       totalCount++
       if (row.status === 'DISTRACTED') distractedCount++
@@ -49,12 +57,18 @@ export async function GET(
   return NextResponse.json({ distractedCount, totalCount, participants })
 }
 
-/** POST /api/meeting/[id]/group-session — client sends full snapshot */
+/** 
+ * POST /api/meeting/[id]/group-session
+ * A highly frequent update mechanism designed to handle the client sending a full snapshot array
+ * of a participant's active metadata state. Acts iteratively as a programmatic Upsert resolving ties.
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+  
+  // Extract tracking metric block parsed accurately from JSON webhook
   const body = await req.json() as {
     participantId: string
     name: string
@@ -65,7 +79,7 @@ export async function POST(
     peakDistractionTime: number
   }
 
-  // Check if participant already exists without relying on composite primary keys for upsert
+  // Check if participant already exists manually without relying strictly on composite primary keys for Upsert operations
   const { data: existing, error: selectError } = await supabase
     .from('group_session_overview')
     .select('session_id')
@@ -78,6 +92,7 @@ export async function POST(
     return NextResponse.json({ ok: false, error: selectError.message }, { status: 500 })
   }
 
+  // Format mapping block matching Supabase constraints and schema expectations
   const payload = {
     session_id: id,
     participant_id: body.participantId,
@@ -93,6 +108,7 @@ export async function POST(
 
   let dbError;
 
+  // Split logic: Safely perform either an update overwrite or a brand new insert payload setup
   if (existing) {
     const { error } = await supabase
       .from('group_session_overview')
@@ -115,7 +131,10 @@ export async function POST(
   return NextResponse.json({ ok: true })
 }
 
-/** DELETE /api/meeting/[id]/group-session?participantId=xxx */
+/** 
+ * DELETE /api/meeting/[id]/group-session?participantId=xxx 
+ * Purges an individual participant row gracefully bridging disconnects and clean removals.
+ */
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

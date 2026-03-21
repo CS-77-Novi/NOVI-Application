@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase';
 /**
  * GET /api/meeting/[id]/attention_analysis
  * Retrieve all attention analysis data points for the session.
+ * Used for plotting chronological attention graphs
+ * for a teacher reviewing a completed meeting.
  */
 export async function GET(
   req: NextRequest,
@@ -12,11 +14,12 @@ export async function GET(
   try {
     const { id } = await params;
 
+    // Fetch granular chronological data points scoped completely to the given session_id
     const { data, error } = await supabase
       .from('group_attention_analysis')
       .select('*')
       .eq('session_id', id)
-      .order('time', { ascending: true });
+      .order('time', { ascending: true }); // Ensure time-series data is fetched in order
 
     if (error) {
       console.error('[attention_analysis GET] Supabase Error:', error);
@@ -32,7 +35,9 @@ export async function GET(
 
 /**
  * POST /api/meeting/[id]/attention_analysis
- * Insert or update a specific minute's average percentage for the session.
+ * Insert or update a specific minute's average distraction percentage for the session.
+ * This is an aggregate endpoint: it reads the current overall distractions from the entire group,
+ * calculates the macroscopic distraction ratio for that exact minute, and saves it.
  */
 export async function POST(
   req: NextRequest,
@@ -48,7 +53,7 @@ export async function POST(
       return NextResponse.json({ error: 'Missing or invalid time in payload' }, { status: 400 });
     }
 
-    // Aggregate values from group_session_overview
+    // Step 1: Read current state of ALL participants actively mapped to `group_session_overview`
     const { data: overviewRows, error: overviewError } = await supabase
       .from('group_session_overview')
       .select('distracted_checks, total_checks')
@@ -59,6 +64,7 @@ export async function POST(
     let totalDistracted = 0;
     let totalChecks = 0;
 
+    // Step 2: Accumulate the total pool of checks vs distracted checks to yield the current global ratio
     if (overviewRows && overviewRows.length > 0) {
       overviewRows.forEach((row) => {
         totalDistracted += row.distracted_checks || 0;
@@ -66,7 +72,7 @@ export async function POST(
       });
     }
 
-    // Calculate group average
+    // Step 3: Calculate the definitive group average at this exact timestamp tick
     const avg_pct = totalChecks > 0 ? Math.round((totalDistracted / totalChecks) * 100) : 0;
 
     const payload = {
@@ -75,7 +81,7 @@ export async function POST(
       avg_pct: avg_pct,
     };
 
-    // Check if a record already exists for this exact time
+    // Step 4: Upsert logic — Check if a record already exists for this exact chronological minute block
     const { data: existing, error: selectError } = await supabase
       .from('group_attention_analysis')
       .select('session_id')
@@ -87,6 +93,7 @@ export async function POST(
 
     let dbError;
     if (existing) {
+      // Update existing precise minute block
       const { error } = await supabase
         .from('group_attention_analysis')
         .update({ avg_pct: avg_pct })
@@ -94,6 +101,7 @@ export async function POST(
         .eq('time', body.time);
       dbError = error;
     } else {
+      // Insert new minute block
       const { error } = await supabase
         .from('group_attention_analysis')
         .insert(payload);
@@ -111,7 +119,8 @@ export async function POST(
 
 /**
  * DELETE /api/meeting/[id]/attention_analysis
- * Delete records for the session (with optional query parameter `?time=X` to delete a specific minute).
+ * Purge records for the session (with optional query parameter `?time=X` to delete a specific minute).
+ * Built to handle cascading teardowns when a session ends or errors out.
  */
 export async function DELETE(
   req: NextRequest,
@@ -121,11 +130,13 @@ export async function DELETE(
     const { id } = await params;
     const timeParam = req.nextUrl.searchParams.get('time');
 
+    // Prepare deletion query constrained primarily to the session
     let query = supabase
       .from('group_attention_analysis')
       .delete()
       .eq('session_id', id);
 
+    // Filter down to a specific time tick if provided
     if (timeParam) {
       query = query.eq('time', timeParam);
     }

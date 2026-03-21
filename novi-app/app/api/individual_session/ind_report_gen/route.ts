@@ -3,15 +3,23 @@ import { supabase } from '@/lib/supabase';
 import * as XLSX from 'xlsx';
 import { auth } from '@clerk/nextjs/server';
 
+/**
+ * GET - Generate Individual Report Excel File.
+ * This endpoint constructs an `.xlsx` file detailing the specific tracking timeline 
+ * of a session. Once built in memory, it uploads the file to the 'individual_reports' 
+ * Supabase storage bucket and inserts mapping metadata into the 'ind_report' table.
+ */
 export async function GET(req: NextRequest) {
   try {
+    // Requires a session target representing the span of data to compile
     const sessionId = req.nextUrl.searchParams.get('session_id');
 
     if (!sessionId) {
       return NextResponse.json({ ok: false, error: 'Missing session_id parameter' }, { status: 400 });
     }
 
-    // Use query param for host_id if provided, otherwise fallback to clerk auth
+    // Security Check: Attempt to use the query parameter for host_id, 
+    // and fallback seamlessly to Clerk's authenticated context if absent.
     let hostId = req.nextUrl.searchParams.get('host_id');
     
     if (!hostId) {
@@ -23,24 +31,27 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Unauthorized: No host_id found' }, { status: 401 });
     }
 
-    // Fetch all individual session tracking data for this meeting matching the host_id
+    // Step 1: Database Extraction
+    // Fetch all chronological granular metrics recorded during the target session
     const { data: sessionRows, error } = await supabase
       .from('ind_session')
       .select('*') // get all columns
       .eq('session_id', sessionId)
       .eq('host_id', hostId)
-      .order('time', { ascending: true }); // sort by time
+      .order('time', { ascending: true }); // sort strictly chronologically for report readability
 
     if (error) {
       console.error('[Ind Excel Gen] Error fetching session data:', error);
       return NextResponse.json({ ok: false, error: 'Failed to fetch tracking data' }, { status: 500 });
     }
 
+    // Empty state boundary: Do not generate empty files
     if (!sessionRows || sessionRows.length === 0) {
       return NextResponse.json({ ok: false, message: 'No tracking data found for this session belonging to the current user' });
     }
 
-    // We want all columns EXCEPT host_id
+    // Step 2: Excel Formatting
+    // Defining explicit column headers, intentionally omitting verbose metadata like `host_id`
     const headers = [
       'session_id',
       'gaze_direction',
@@ -49,7 +60,7 @@ export async function GET(req: NextRequest) {
       'time'
     ];
 
-    // Format Data Rows matching the header order 
+    // Data Mapping: Map out exactly to the structure corresponding horizontally to the headers 
     const rows = sessionRows.map((row) => {
       return [
         row.session_id,
@@ -60,10 +71,10 @@ export async function GET(req: NextRequest) {
       ];
     });
 
-    // Create Worksheet from Array of Arrays
+    // Translate the two-dimensional array into an active Excel Worksheet memory object
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
-    // Attempt to make headers bold
+    // Iterate through the top row to apply bold styling styling configuration
     for (let c = 0; c < headers.length; c++) {
       const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
       if (!ws[cellAddress]) continue;
@@ -72,31 +83,32 @@ export async function GET(req: NextRequest) {
       };
     }
     
-    // Auto-size columns slightly for better readability
+    // Define exact column widths using character count spacing for formatting neatness
     ws['!cols'] = [
-      { wch: 40 }, // session_id
+      { wch: 40 }, // session_id (Long UUID width equivalent)
       { wch: 18 }, // gaze_direction
       { wch: 18 }, // head_direction
       { wch: 18 }, // distraction_pct
       { wch: 18 }, // time
     ];
 
-    // Create Workbook
+    // Instantiate a Workbook and link the generated sheet
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Report');
 
-    // Generate Excel File Buffer
+    // Build the final binary file stream buffer ready for upload
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
 
-    // Define File Name
+    // Ensure the filename is uniquely identifiable by the linking session ID
     const fileName = `ind_report-SessionID-${sessionId}.xlsx`;
 
-    // Upload to Supabase Storage Bucket named "individual_reports"
+    // Step 3: Supabase Storage Upload
+    // Stream the binary buffer into the individual_reports bucket, defining proper Mime Type
     const { error: uploadError } = await supabase.storage
       .from('individual_reports')
       .upload(fileName, excelBuffer, {
         contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        upsert: true
+        upsert: true // Allows safely wiping out an old matching file during a retry payload
       });
 
     if (uploadError) {
@@ -109,9 +121,11 @@ export async function GET(req: NextRequest) {
 
     console.log(`[Ind Excel Gen] Successfully uploaded report to Supabase: ${fileName}`);
 
-    // Insert metadata into the 'ind_report' table matching the format
+    // Step 4: Metadata Registration
+    // Generate isolated timestamps safely localized to the desired Colombo timezone
     const now = new Date();
     
+    // Formatter mapping: Year-Month-Day
     const dateFormatter = new Intl.DateTimeFormat('en-CA', { 
       timeZone: 'Asia/Colombo', 
       year: 'numeric', 
@@ -120,6 +134,7 @@ export async function GET(req: NextRequest) {
     });
     const generatedDate = dateFormatter.format(now);
 
+    // Formatter mapping: 24-hr layout Hour:Minute:Second
     const timeFormatter = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Colombo',
       hour: '2-digit', 
@@ -128,6 +143,7 @@ export async function GET(req: NextRequest) {
     });
     const generatedTime = timeFormatter.format(now);
 
+    // Commit the history item to the `ind_report` table to drive the dashboard download panel
     const { error: dbError } = await supabase
       .from('ind_report')
       .insert({
@@ -138,6 +154,7 @@ export async function GET(req: NextRequest) {
         generated_time: generatedTime
       });
 
+    // Provide logging in case the file exists but the table reference died natively.
     if (dbError) {
       console.error('[Ind Excel Gen] Error saving report metadata:', dbError);
       return NextResponse.json(
@@ -146,6 +163,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Complete success boundary
     return NextResponse.json({ 
       ok: true, 
       message: 'Individual Excel report generated and safely saved to Supabase',
@@ -153,6 +171,7 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (err: any) {
+    // Uncaught structural boundaries
     console.error('[Ind Excel Gen] Unexpected error:', err);
     return NextResponse.json({ ok: false, error: err.message || 'Internal Server Error' }, { status: 500 });
   }

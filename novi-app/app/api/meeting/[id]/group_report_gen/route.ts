@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import * as XLSX from 'xlsx';
 
+/**
+ * GET /api/meeting/[id]/group_report_gen
+ * Generates an Excel (.xlsx) file detailing student focus metrics for a specific group meeting.
+ * Compiles the file dynamically in memory before uploading it straight to Supabase Storage 
+ * and logging the metadata history to the `group_report` table.
+ */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -9,7 +15,8 @@ export async function GET(
   try {
     const { id: sessionId } = await params;
 
-    // Fetch all group session data for this meeting
+    // Step 1: Database Extraction
+    // Fetch all comprehensive group session overview summaries from this target meeting
     const { data: participants, error } = await supabase
       .from('group_session_overview')
       .select('*')
@@ -20,11 +27,12 @@ export async function GET(
       return NextResponse.json({ ok: false, error: 'Failed to fetch data' }, { status: 500 });
     }
 
+    // Do not generate or save empty reports if no users joined the room successfully
     if (!participants || participants.length === 0) {
       return NextResponse.json({ ok: false, message: 'No data found for this session' });
     }
 
-    // Headers
+    // Step 2: Define Columns
     const headers = [
       'Participant Name',
       'Focus Pct',
@@ -33,7 +41,8 @@ export async function GET(
       'Peak Distraction Time'
     ];
 
-    // Format Data Rows
+    // Step 3: Map and Calculate Rows
+    // Iterate through database records and compute readable percentages and sanitized time strings
     const rows = participants.map((p) => {
       const total = p.total_checks || 0;
       const distracted = p.distracted_checks || 0;
@@ -41,7 +50,7 @@ export async function GET(
       const distractionPct = total > 0 ? (distracted / total) * 100 : 0;
       const focusPct = total > 0 ? 100 - distractionPct : 100;
       
-      // Format time to be more readable
+      // Format chronological timestamps accurately to simple local readable structures
       const peakTimeFormatted = p.peak_distraction_time 
         ? new Date(p.peak_distraction_time).toLocaleTimeString() 
         : 'N/A';
@@ -55,12 +64,12 @@ export async function GET(
       ];
     });
 
-    // Create Worksheet from Array of Arrays
+    // Step 4: Construct the Document using SheetJS (XLSX)
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
-    // Attempt to make headers bold
+    // Apply header style formatting (e.g., Bold definitions). 
     // Note: The community version of 'xlsx' strips style objects by default on write,
-    // but building the style object anyway in case it's processed properly.
+    // but building the style object anyway in case it's processed properly by certain readers.
     for (let c = 0; c < headers.length; c++) {
       const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
       if (!ws[cellAddress]) continue;
@@ -69,7 +78,7 @@ export async function GET(
       };
     }
     
-    // Auto-size columns slightly for better readability
+    // Auto-size vertical columns explicitly so names aren't chopped off natively in Excel
     ws['!cols'] = [
       { wch: 25 }, // Participant Name
       { wch: 15 }, // Focus Pct
@@ -78,22 +87,22 @@ export async function GET(
       { wch: 25 }, // Peak Distraction Time
     ];
 
-    // Create Workbook
+    // Create a new Workbook container and link the fully mapped worksheet object to it
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Report');
 
-    // Generate Excel File Buffer
+    // Generate Raw File Binary stream targetting standard OpenXML format
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
 
-    // Define File Name
+    // Establish a unique descriptive naming convention linking back to the DB session implicitly
     const fileName = `group_report-MeetingID-${sessionId}.xlsx`;
 
-    // Upload to Supabase Storage Bucket named "generated_reports"
+    // Step 5: Upload the physical document stream into Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('generated_reports') // Make sure your bucket is exactly named "generated_reports"
+      .from('generated_reports') // Connect to designated teacher reports storage bucket
       .upload(fileName, excelBuffer, {
         contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        upsert: true // Overwrite if a file with the same name already exists
+        upsert: true // Ensures redundant calls safely overwrite rather than crash
       });
 
     if (uploadError) {
@@ -106,10 +115,10 @@ export async function GET(
 
     console.log(`[Excel Gen] Successfully uploaded report to Supabase: ${fileName}`);
 
-    // Insert metadata into the 'report' table using the correct local timezone (+05:30)
+    // Step 6: Log Metadata history referencing the new file physically inside the `group_report` relational table.
     const now = new Date();
     
-    // Extract YYYY-MM-DD in the local timezone (Asia/Colombo / +05:30)
+    // Extract YYYY-MM-DD explicitly scoped strictly to local timezone constraints (Asia/Colombo)
     const dateFormatter = new Intl.DateTimeFormat('en-CA', { 
       timeZone: 'Asia/Colombo', 
       year: 'numeric', 
@@ -118,7 +127,7 @@ export async function GET(
     });
     const generatedDate = dateFormatter.format(now);
 
-    // Extract HH:MM:SS in the local timezone
+    // Extract HH:MM:SS implicitly preserving the exact hour definition irrespective of server cloud locale biases
     const timeFormatter = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Colombo',
       hour: '2-digit', 
