@@ -18,8 +18,9 @@ const ReportsPage = () => {
             <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-2xl w-full max-w-[360px] rounded-[24px] p-8 py-10 flex flex-col items-center shadow-2xl border border-gray-200 dark:border-gray-700/50 transition-colors duration-300">
                 
                 {/* Centered Avatar Icon */}
-                <div className="w-14 h-14 rounded-full border border-[#D946EF] flex items-center justify-center mb-6 bg-[#f4effc]/10">
-                    <User className="text-[#D946EF] w-6 h-6" strokeWidth={2} />
+                <div className="w-16 h-16 rounded-full border border-cyan-200 dark:border-cyan-500/30 flex items-center justify-center mb-6 bg-cyan-50 dark:bg-cyan-500/10 shadow-lg shadow-cyan-500/10 transition-colors duration-300">
+                    <User className="text-cyan-600 dark:text-cyan-400 w-8 h-8" strokeWidth={2} />
+        
                 </div>
                 
                 <h2 className="text-[15px] font-medium text-center mb-8 leading-[1.6] text-zinc-100">
