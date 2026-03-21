@@ -78,21 +78,13 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
                         <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Your data never leaves your device. All live metrics are processed safely locally.</p>
                     </div>
 
-                    {/* Action Button */}
-                    <div className="flex justify-center">
-                        <button
-                            onClick={onStart}
-                            className="group relative flex items-center justify-center gap-3 px-10 py-5 w-full md:w-auto text-lg font-bold text-white rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
-                            style={{ backgroundImage: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)' }}
-                        >
-                            <span className="absolute inset-0 w-full h-full bg-white/20 group-hover:bg-transparent transition-colors duration-300"></span>
-                            <span className="relative z-10 flex items-center gap-2">
-                                Start Session
-                                <svg className="w-5 h-5 transform transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
-                            </span>
-                        </button>
+                    {/* Card 4 */}
+                    <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white dark:border-gray-700 p-8 rounded-[2rem] shadow-xl hover:-translate-y-2 transition-transform duration-300">
+                        <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/30">
+                            <SparklesIcon className="w-7 h-7 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Smart Insights</h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed font-medium">Post-session reports highlighting your productivity trends and distraction triggers.</p>
                     </div>
 
                 </div>
