@@ -24,7 +24,7 @@ const ReportsPage = () => {
                 </div>
                 
                 <h2 className="text-[16px] font-semibold text-center mb-8 leading-[1.6] text-gray-800 dark:text-zinc-100 transition-colors duration-300">
-                    Choose your account type<br />to access the reports.
+                    Choose your role<br />to access the reports.
                 </h2>
 
                 <div className="flex flex-col w-full gap-4 px-1">
