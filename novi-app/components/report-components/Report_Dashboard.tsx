@@ -41,7 +41,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                         onClick={onBack}
                         className="text-sm text-[#43a5d1] font-medium hover:text-[#43a5d1]/80 transition-colors flex items-center gap-2 mb-10 pl-2"
                     >
-                        &larr; Back to Home
+                        &larr; Back to Role
                     </button>
                     
                     {/* Navigation Tab Buttons */}
