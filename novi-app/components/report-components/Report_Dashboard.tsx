@@ -24,24 +24,24 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
     const { user } = useUser()
 
     return (
-        <div className="absolute inset-0 top-[112px] flex text-zinc-800 animate-fade-in bg-[#f4effc]">
+        <div className="absolute inset-0 top-[112px] flex text-zinc-800 animate-fade-in bg-[#ecfeff]">
             {/* Sidebar Navigation Column */}
             <div className="w-[280px] bg-[#fbf9fe] border-r border-[#e8ddef] flex flex-col p-6 pt-10 justify-between">
                 <div>
                     {/* Brand Header Icon and Title */}
                     <div className="flex items-center gap-3 mb-10 pl-2">
-                        <div className="bg-[#D946EF] p-2 rounded-xl text-white shadow-sm flex items-center justify-center">
+                        <div className="bg-[#43a5d1] p-2 rounded-xl text-white shadow-sm flex items-center justify-center">
                             <FileText size={24} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-xl font-bold text-[#D946EF] tracking-tight">Novi Analytics</h1>
+                        <h1 className="text-xl font-bold text-[#43a5d1] tracking-tight">Novi Analytics</h1>
                     </div>
 
                     {/* Back Navigation Button */}
                     <button 
                         onClick={onBack}
-                        className="text-sm text-[#D946EF] font-medium hover:text-[#D946EF]/80 transition-colors flex items-center gap-2 mb-10 pl-2"
+                        className="text-sm text-[#43a5d1] font-medium hover:text-[#43a5d1]/80 transition-colors flex items-center gap-2 mb-10 pl-2"
                     >
-                        &larr; Back to Home
+                        &larr; Back to Role
                     </button>
                     
                     {/* Navigation Tab Buttons */}
@@ -51,11 +51,11 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             onClick={() => setActiveTab('summary')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'summary' 
-                                ? 'bg-white text-[#D946EF] shadow-sm shadow-[#D946EF]/10 border-2 border-[#D946EF]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#D946EF]'
+                                ? 'bg-white text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
+                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#43a5d1]'
                             }`}
                         >
-                            <LayoutGrid size={20} strokeWidth={2.5} className={activeTab === 'summary' ? 'text-[#D946EF]' : ''} />
+                            <LayoutGrid size={20} strokeWidth={2.5} className={activeTab === 'summary' ? 'text-[#43a5d1]' : ''} />
                             Overview
                         </button>
 
@@ -64,8 +64,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             onClick={() => setActiveTab('attention')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'attention' 
-                                ? 'bg-white text-[#D946EF] shadow-sm shadow-[#D946EF]/10 border-2 border-[#D946EF]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#D946EF]'
+                                ? 'bg-white text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
+                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#43a5d1]'
                             }`}
                         >
                             <Target size={20} strokeWidth={2.5} />
@@ -80,8 +80,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             onClick={() => setActiveTab('download')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'download' 
-                                ? 'bg-white text-[#D946EF] shadow-sm shadow-[#D946EF]/10 border-2 border-[#D946EF]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#D946EF]'
+                                ? 'bg-white text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
+                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#43a5d1]'
                             }`}
                         >
                             <Download size={20} strokeWidth={2.5} />
@@ -91,7 +91,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                 </div>
 
                 {/* Bottom Role Card Indicator */}
-                <div className="bg-[#D946EF] rounded-[24px] p-5 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-[#43a5d1] rounded-[24px] p-5 text-white shadow-lg relative overflow-hidden">
                     <div className="relative z-10 flex flex-col gap-1">
                         <span className="text-[10px] font-black tracking-widest text-white/70 uppercase">Session View</span>
                         <span className="font-bold text-lg leading-tight">{role === 'teacher' ? 'Teacher Dashboard' : 'Individual Dashboard'}</span>
@@ -106,7 +106,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
             <div className="flex-1 flex flex-col px-10 pb-8 pt-10 overflow-y-auto hidden-scrollbar">
                 {/* Header Date displaying current time context */}
                 <div className="flex flex-col mb-6">
-                    <h2 className="text-2xl font-black text-[#D946EF]">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h2>
+                    <h2 className="text-2xl font-black text-[#43a5d1]">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h2>
                 </div>
                 
                 {/* Board Switcher Logic */}
