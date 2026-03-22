@@ -194,7 +194,7 @@ export default function QuizTaker({ quizId, questions, timeLimit, onDone, isFull
                     {current < total - 1 ? (
                         <Button
                             onClick={next}
-                            className="rounded-2xl px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer gap-2"
+                            className="rounded-2xl px-6 bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:bg-blue-700 text-white font-semibold cursor-pointer gap-2"
                         >
                             Next <ChevronRight className="w-4 h-4" />
                         </Button>
