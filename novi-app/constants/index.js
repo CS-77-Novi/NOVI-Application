@@ -16,9 +16,9 @@ export const navLinks = [
       label: 'Previous',
     },
     {
-      imgURL: '/assets/recordings.svg',
-      route: '/recordings',
-      label: 'Recordings',
+      imgURL: '/assets/hundred-points.svg',
+      route: '/pop-quizzes',
+      label: 'Pop-quizzes',
     },
     {
       imgURL: '/assets/reports.svg',

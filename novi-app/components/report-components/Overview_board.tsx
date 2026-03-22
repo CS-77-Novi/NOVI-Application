@@ -89,7 +89,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                     <div className="text-white text-base w-full">
                         
                         {/* Header displaying meeting info as a single row */}
-                        <div className="bg-[#ecfeff] w-max px-6 py-3 rounded-2xl mb-8 flex items-center gap-10 font-bold shadow-md">
+                        <div className="bg-card text-card-foreground w-max px-6 py-3 rounded-2xl mb-8 flex items-center gap-10 font-bold shadow-md">
                             {meetingId && (
                                 <span className="text-[#43a5d1]/80 text-sm">Meeting ID: <span className="text-[#43a5d1]">{meetingId}</span></span>
                             )}
@@ -104,8 +104,8 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                         </div>
 
                         {/* Interactive UI controls for filtering and sorting the data */}
-                        <div className="flex flex-col bg-[#ecfeff] rounded-[24px] shadow-sm overflow-hidden w-full">
-                            <div className="bg-[#ecfeff] px-6 py-4 flex flex-wrap items-center gap-6 border-b border-white/10">
+                        <div className="flex flex-col bg-card text-card-foreground rounded-[24px] shadow-sm overflow-hidden w-full">
+                            <div className="bg-card text-card-foreground px-6 py-4 flex flex-wrap items-center gap-6 border-b border-white/10">
                                 {/* Threshold Input filter control */}
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm font-bold tracking-wide text-[#43a5d1]">DISTRACTION &gt;</span>
@@ -149,7 +149,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                                 {!loading && distractions.map((d, i) => (
                                     <div key={i} className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] p-5 rounded-2xl flex justify-between items-center shadow-sm border border-white/5">
                                         <div className="font-bold text-white text-lg">{d.participant_name}</div>
-                                        <div className="flex items-center gap-2 bg-[#ecfeff] px-4 py-2 rounded-xl">
+                                        <div className="flex items-center gap-2 bg-card text-card-foreground px-4 py-2 rounded-xl">
                                             <span className="text-[#43a5d1] text-sm font-bold tracking-wide uppercase">Distracted:</span>
                                             <span className="font-black text-[#43a5d1]">{Math.round(d.distraction_percentage)}%</span>
                                         </div>

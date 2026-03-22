@@ -16,6 +16,7 @@ const RegisterPage = () => {
                     height={100}    // Image height (px)
                     alt="Novi Logo" // Alternative text for accessibility
                     priority
+                    className="dark:brightness-0 dark:invert"
                     />
                     {/* Main title text under the logo */}
                     <h1 className="text-lg font-extrabold text-sky-1 lg:text-2xl">

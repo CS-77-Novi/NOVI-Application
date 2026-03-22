@@ -85,7 +85,7 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
         <div className="flex flex-col flex-1 animate-fade-in bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px]">
             {/* Header Title Section */}
             <div className="flex items-center gap-4 mb-6">
-                <div className="bg-[#ecfeff] w-max px-5 py-2 rounded-xl">
+                <div className="bg-card text-card-foreground w-max px-5 py-2 rounded-xl">
                     <span className="text-[#43a5d1] font-bold text-sm tracking-wide">Overview</span>
                 </div>
                 {/* Dynamically extract and display the latest Session ID */}
@@ -99,7 +99,7 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
             {/* Top Row Metric Boxes Displaying Aggregated Durations */}
             <div className="grid grid-cols-3 gap-5 mb-8">
                 {/* Total Session Duration Box */}
-                <div className="bg-[#ecfeff] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
+                <div className="bg-card text-card-foreground rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
                     <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] p-3 rounded-full">
                         <Clock className="w-6 h-6 text-[#ecfeff]" strokeWidth={2.5} />
                     </div>
@@ -112,7 +112,7 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                 </div>
 
                 {/* Attentive Duration Box */}
-                <div className="bg-[#ecfeff] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
+                <div className="bg-card text-card-foreground rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
                     <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] p-3 rounded-full">
                         <Eye className="w-6 h-6 text-[#ecfeff]" strokeWidth={2.5} />
                     </div>
@@ -125,7 +125,7 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
                 </div>
 
                 {/* Distraction Duration Box */}
-                <div className="bg-[#ecfeff] rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
+                <div className="bg-card text-card-foreground rounded-[20px] p-6 flex flex-col items-center gap-4 shadow-md">
                     <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] p-3 rounded-full">
                         <EyeOff className="w-6 h-6 text-[#ecfeff]" strokeWidth={2.5} />
                     </div>
@@ -140,7 +140,7 @@ export default function IndOverviewBoard({ role }: IndOverviewBoardProps) {
 
             {/* Comprehensive Session Summary Text Section */}
             <div className="bg-[#328eb8]/60 rounded-[24px] p-6 flex flex-col gap-5 border-2 border-[#ecfeff]">
-                <div className="bg-[#ecfeff] w-max px-4 py-1.5 rounded-xl">
+                <div className="bg-card text-card-foreground w-max px-4 py-1.5 rounded-xl">
                     <span className="text-[#43a5d1] font-bold text-xs tracking-widest uppercase">Session Summary</span>
                 </div>
 

@@ -132,14 +132,14 @@ export default function AttentionScoreBoard({ role }: AttentionScoreBoardProps) 
                         </div>
 
                         {/* Average Attention Badge */}
-                        <div className="bg-[#ecfeff] px-6 py-3 rounded-2xl flex flex-col items-center justify-center shadow-sm backdrop-blur-sm">
+                        <div className="bg-card text-card-foreground px-6 py-3 rounded-2xl flex flex-col items-center justify-center shadow-sm backdrop-blur-sm">
                             <span className="text-[#43a5d1] text-[10px] font-black tracking-widest uppercase mb-1">Avg Attention</span>
                             <span className="text-3xl font-black text-[#43a5d1] leading-none">{avgAttention}%</span>
                         </div>
                     </div>
 
                     {/* Recharts Area Container */}
-                    <div className="flex-1 mt-4 bg-[#ecfeff] rounded-3xl p-6 shadow-sm border border-cyan-100 pt-10">
+                    <div className="flex-1 mt-4 bg-card text-card-foreground rounded-3xl p-6 shadow-sm border border-border pt-10">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>
@@ -212,14 +212,14 @@ export default function AttentionScoreBoard({ role }: AttentionScoreBoardProps) 
                         </div>
 
                         {/* Average Attention Badge */}
-                        <div className="bg-[#ecfeff] px-6 py-3 rounded-2xl flex flex-col items-center justify-center shadow-sm backdrop-blur-sm">
+                        <div className="bg-card text-card-foreground px-6 py-3 rounded-2xl flex flex-col items-center justify-center shadow-sm backdrop-blur-sm">
                             <span className="text-[#43a5d1] text-[10px] font-black tracking-widest uppercase mb-1">Avg Attention</span>
                             <span className="text-3xl font-black text-[#43a5d1] leading-none">{avgAttention}%</span>
                         </div>
                     </div>
 
                     {/* Recharts Area Container */}
-                    <div className="flex-1 mt-4 bg-[#ecfeff] rounded-3xl p-6 shadow-sm border border-cyan-100 pt-10">
+                    <div className="flex-1 mt-4 bg-card text-card-foreground rounded-3xl p-6 shadow-sm border border-border pt-10">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>

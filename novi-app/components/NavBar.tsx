@@ -22,6 +22,7 @@ const NavBar = () => {
                   width={60}
                   height={60}
                   alt="Let's talk"
+                  className="dark:brightness-0 dark:invert"
                 />
               </Link>
 
@@ -46,6 +47,7 @@ const NavBar = () => {
                           alt={item.label}
                           width={24}
                           height={24}
+                          className="dark:brightness-0 dark:invert"
                         />
                         
                         

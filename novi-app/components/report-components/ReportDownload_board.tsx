@@ -119,20 +119,20 @@ export default function ReportDownloadBoard() {
             {/* Delete Confirmation Modal Overlay */}
             {deleteTarget && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-[420px] w-full mx-4 border border-cyan-100">
+                    <div className="bg-card text-card-foreground rounded-3xl p-8 shadow-2xl max-w-[420px] w-full mx-4 border border-border">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="bg-red-100 p-2.5 rounded-xl">
+                            <div className="bg-destructive/10 p-2.5 rounded-xl">
                                 <Trash2 className="w-6 h-6 text-red-500" strokeWidth={2.5} />
                             </div>
-                            <h3 className="text-xl font-black text-[#2d1a4e]">Delete Report</h3>
+                            <h3 className="text-xl font-black text-foreground">Delete Report</h3>
                         </div>
-                        <p className="text-[#8ba3b8] text-sm font-medium leading-relaxed mb-6">
+                        <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-6">
                             Are you sure you want to permanently delete this report? This action cannot be undone.
                         </p>
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setDeleteTarget(null)}
-                                className="px-6 py-2.5 rounded-xl font-bold text-sm text-[#2c7a9e] bg-[#ecfeff] hover:bg-[#cffafe] transition-colors border border-cyan-200"
+                                className="px-6 py-2.5 rounded-xl font-bold text-sm text-[#2c7a9e] bg-secondary hover:bg-secondary/80 transition-colors border border-border"
                             >
                                 Cancel
                             </button>
@@ -148,18 +148,18 @@ export default function ReportDownloadBoard() {
             )}
 
             {/* Header Card displaying section title and Sorting toggle */}
-            <div className="bg-white rounded-[24px] p-8 shadow-sm border-2 border-[#43a5d1] w-full">
+            <div className="bg-card text-card-foreground rounded-[24px] p-8 shadow-sm border-2 border-border w-full">
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-3xl font-black text-[#43a5d1] tracking-tight">Archived Sessions</h2>
-                        <p className="text-[#8ba3b8] font-medium text-sm mt-2">
+                        <p className="text-muted-foreground font-medium text-sm mt-2">
                             Sessions are <span className="text-[#43a5d1] font-semibold">automatically synced</span> and stored here for your review.
                         </p>
                     </div>
                     {sessions.length > 1 && (
                         <button
                             onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#ecfeff] hover:bg-[#cffafe] transition-colors text-[#43a5d1] font-bold text-sm border border-cyan-200"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors text-[#43a5d1] font-bold text-sm border border-border"
                         >
                             <ArrowUpDown className="w-4 h-4" strokeWidth={2.5} />
                             {sortOrder === 'newest' ? 'Newest First' : 'Oldest First'}
@@ -170,7 +170,7 @@ export default function ReportDownloadBoard() {
 
             {/* Loading State graphic to show while API is fetching data */}
             {loading && (
-                <div className="mt-6 text-[#2c7a9e] font-bold animate-pulse text-center py-16">Loading sessions...</div>
+                <div className="mt-6 text-primary font-bold animate-pulse text-center py-16">Loading sessions...</div>
             )}
 
             {/* Session Cards list iterating over the sorted sessions */}
@@ -180,15 +180,15 @@ export default function ReportDownloadBoard() {
                         <div key={index} className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[20px] p-6 shadow-sm flex items-center justify-between w-full">
                             <div className="flex flex-col gap-3 flex-1">
                                 {/* Meeting ID Block */}
-                                <div className="bg-white rounded-xl px-5 py-3 max-w-[550px]">
+                                <div className="bg-card text-card-foreground rounded-xl px-5 py-3 max-w-[550px]">
                                     <span className="text-[#43a5d1] font-bold text-sm">Meeting ID: <span className="font-semibold text-[#2c7a9e]">{session.session_id}</span></span>
                                 </div>
                                 {/* Date & Time Metadata Blocks */}
                                 <div className="flex gap-3">
-                                    <div className="bg-white rounded-xl px-5 py-2.5 min-w-[180px]">
+                                    <div className="bg-card text-card-foreground rounded-xl px-5 py-2.5 min-w-[180px]">
                                         <span className="text-[#43a5d1] font-bold text-sm">Generated Date: <span className="font-semibold text-[#2c7a9e]">{session.generated_date}</span></span>
                                     </div>
-                                    <div className="bg-white rounded-xl px-5 py-2.5 min-w-[180px]">
+                                    <div className="bg-card text-card-foreground rounded-xl px-5 py-2.5 min-w-[180px]">
                                         <span className="text-[#43a5d1] font-bold text-sm">Generated Time: <span className="font-semibold text-[#2c7a9e]">{session.generated_time}</span></span>
                                     </div>
                                 </div>
@@ -210,7 +210,7 @@ export default function ReportDownloadBoard() {
 
             {/* Empty State Card shown if the user has no generated reports */}
             {!loading && sessions.length === 0 && (
-                <div className="mt-6 bg-[#ecfeff] rounded-[24px] p-8 shadow-sm border-2 border-dashed border-cyan-200 flex flex-col items-center justify-center min-h-[250px] w-full">
+                <div className="mt-6 bg-card text-card-foreground rounded-[24px] p-8 shadow-sm border-2 border-dashed border-border flex flex-col items-center justify-center min-h-[250px] w-full">
                     <FileText className="w-12 h-12 text-[#c4b0dc] mb-4" strokeWidth={1.5} />
                     <p className="text-[#2c7a9e]/60 font-medium text-sm italic text-center">
                         Your archive is empty. Completed sessions will appear here automatically.

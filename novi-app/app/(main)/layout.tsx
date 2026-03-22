@@ -28,6 +28,7 @@ const MainLayout = async ({
                 height={100}    // Image height (px)
                 alt="Novi Logo" // Alternative text for accessibility
                 priority
+                className="dark:brightness-0 dark:invert"
                 />
 
             {/* Main title text under the logo */}

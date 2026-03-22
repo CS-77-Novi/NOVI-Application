@@ -24,9 +24,9 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
     const { user } = useUser()
 
     return (
-        <div className="absolute inset-0 top-[112px] flex text-zinc-800 animate-fade-in bg-[#ecfeff]">
+        <div className="absolute inset-0 top-[112px] flex text-foreground animate-fade-in bg-background">
             {/* Sidebar Navigation Column */}
-            <div className="w-[280px] bg-[#fbf9fe] border-r border-[#e8ddef] flex flex-col p-6 pt-10 justify-between">
+            <div className="w-[280px] bg-card border-r border-border flex flex-col p-6 pt-10 justify-between">
                 <div>
                     {/* Brand Header Icon and Title */}
                     <div className="flex items-center gap-3 mb-10 pl-2">
@@ -51,8 +51,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             onClick={() => setActiveTab('summary')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'summary' 
-                                ? 'bg-white text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#43a5d1]'
+                                ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
+                                : 'text-muted-foreground hover:bg-secondary/50 hover:text-[#43a5d1]'
                             }`}
                         >
                             <LayoutGrid size={20} strokeWidth={2.5} className={activeTab === 'summary' ? 'text-[#43a5d1]' : ''} />
@@ -64,8 +64,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                             onClick={() => setActiveTab('attention')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'attention' 
-                                ? 'bg-white text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#43a5d1]'
+                                ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
+                                : 'text-muted-foreground hover:bg-secondary/50 hover:text-[#43a5d1]'
                             }`}
                         >
                             <Target size={20} strokeWidth={2.5} />
@@ -73,15 +73,15 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                         </button>
                         
                         {/* Divider Line */}
-                        <div className="border-t border-[#e8ddef] my-4 mx-2"></div>
+                        <div className="border-t border-border my-4 mx-2"></div>
 
                         {/* Download Archive Tab */}
                         <button
                             onClick={() => setActiveTab('download')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'download' 
-                                ? 'bg-white text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
-                                : 'text-[#8ba3b8] hover:bg-white/50 hover:text-[#43a5d1]'
+                                ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
+                                : 'text-muted-foreground hover:bg-secondary/50 hover:text-[#43a5d1]'
                             }`}
                         >
                             <Download size={20} strokeWidth={2.5} />
