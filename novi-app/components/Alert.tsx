@@ -26,7 +26,7 @@ const Alert = ({ title, iconUrl }: AlertProps) => {
               <p className="text-center text-xl font-semibold">{title}</p>
             </div>
 
-            <Button asChild className="bg-gray-900 rounded-2xl">
+            <Button asChild className="bg-gray-900 text-white rounded-2xl">
               <Link href="/">Back to Home</Link>
             </Button>
           </div>

@@ -112,7 +112,7 @@ export default function MeetingQuizPanel({ isMeetingOwner, call, user, isOpen, o
             isFullscreen ? "fixed inset-0 z-[100]" : "max-w-md rounded-[2rem] border border-gray-100 m-2"
         )}>
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-[#da32f8] to-[#9d17bd]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-br from-[#185cab] to-[#9d17bd]">
                 <div className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-white" />
                     <span className="text-white font-bold text-lg">Pop Quiz</span>

@@ -63,7 +63,7 @@ const fetchQuizzes = async () => {
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#da32f8] to-[#9d17bd] flex items-center justify-center shadow-lg shadow-purple-200 dark:shadow-none">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] flex items-center justify-center shadow-lg shadow-purple-200 dark:shadow-none">
                                 <BookOpen className="w-6 h-6 text-white" />
                             </div>
                             <h1 className="text-3xl font-black text-gray-900 dark:text-white">Pop Quizzes</h1>
@@ -85,7 +85,7 @@ const fetchQuizzes = async () => {
                         </div>
                         <Button
                             onClick={() => setCreateOpen(true)}
-                            className="flex items-center gap-2 bg-[#da32f8] hover:bg-[#9d17bd] text-white font-bold px-6 py-5 rounded-2xl shadow-lg shadow-purple-200 cursor-pointer transition-all hover:scale-105 hover:-translate-y-0.5">
+                            className="flex items-center gap-2 bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:bg-[#9d17bd] text-white font-bold px-6 py-5 rounded-2xl shadow-lg shadow-purple-200 cursor-pointer transition-all hover:scale-105 hover:-translate-y-0.5">
                             <Plus className="w-5 h-5" />
                             Create Quiz
                         </Button>
@@ -117,7 +117,7 @@ const fetchQuizzes = async () => {
                 {published.length > 0 && (
                     <section className="mb-10">
                         <h2 className="text-lg font-black text-gray-600 dark:text-gray-300 mb-4 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#da32f8] inline-block" />
+                            <span className="w-2 h-2 rounded-full bg-gradient-to-br from-[#185cab] to-[#9d17bd] inline-block" />
                             Published ({published.length})
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
