@@ -214,7 +214,7 @@ const handleDrop = useCallback((e: React.DragEvent) => {
         <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="!max-w-2xl !w-full bg-gray-50 !rounded-3xl p-0 overflow-hidden border-0 shadow-2xl">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6 text-white">
+                <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] px-8 py-6 text-white">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-black text-white">
                             {step === 'upload' && '📄 Create Pop-Quiz'}
@@ -305,7 +305,7 @@ const handleDrop = useCallback((e: React.DragEvent) => {
                             <Button
                                 onClick={generate}
                                 disabled={!docText || !title}
-                                className="w-full py-6 text-lg font-bold rounded-2xl bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-40 cursor-pointer">
+                                className="w-full py-6 text-lg font-bold rounded-2xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:bg-blue-700 text-white disabled:opacity-40 cursor-pointer">
                                 ✨ Generate Questions with AI
                             </Button>
                         </div>
@@ -385,7 +385,7 @@ const handleDrop = useCallback((e: React.DragEvent) => {
 
                             {questions.length > 0 && (
                                 <Button onClick={publish}
-                                    className="w-full py-6 text-lg font-bold rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white cursor-pointer mt-2">
+                                    className="w-full py-6 text-lg font-bold rounded-2xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:bg-gradient-to-br from-[#185cab] to-[#9d17bd] text-white cursor-pointer mt-2">
                                     🚀 Publish Quiz
                                 </Button>
                             )}
