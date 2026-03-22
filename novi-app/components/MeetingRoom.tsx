@@ -131,7 +131,7 @@ const MeetingRoom = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <Button
-        className="ml-5 font-semibold bg-gray-900 hover:scale-110 rounded-3xl"
+        className="ml-5 font-semibold bg-gray-900 text-white hover:scale-110 rounded-3xl"
         onClick={() => {
           const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}${pathname}`;
           navigator.clipboard.writeText(meetingLink);
