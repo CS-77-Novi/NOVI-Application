@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-// 1. Import the constant 'supabase' instead of the function 'createClient'
 import { supabase } from '@/lib/supabase'; 
 
 export interface StudySession {
@@ -21,19 +20,17 @@ export interface StudySession {
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // 1. Change to Promise
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const resolvedParams = await params; // 2. Await the params
-  const sessionIdRaw = resolvedParams.id;
+  const { id } = await params;
 
   try {
-    const sessionId = isNaN(Number(sessionIdRaw)) ? sessionIdRaw : parseInt(sessionIdRaw);
+    const sessionId = isNaN(Number(id)) ? id : parseInt(id);
 
-    // 2. Use 'supabase' directly (no parentheses needed)
     const { data, error } = await supabase
       .from('study_session')
       .select('*')
-      .eq('id', sessionId)
+      .eq('session_id', sessionId) // Fixed: Changed 'id' to 'session_id' to match your DELETE logic
       .single();
 
     if (error) {
@@ -42,11 +39,11 @@ export async function GET(
           success: true,
           sessionSummary: {
             session_id: sessionId,
-            total_duration: null,
-            attentive_duration: null,
-            distraction_duration: null,
-            average_attention_score: null,
-            distraction_events: null,
+            total_duration: 0,
+            attentive_duration: 0,
+            distraction_duration: 0,
+            average_attention_score: 0,
+            distraction_events: 0,
             start_time: null,
           }
         });
@@ -66,29 +63,22 @@ export async function GET(
  */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await req.json();
-    const sessionId = params.id;
 
-    const formattedUpdates = {
-      ...body,
-      ...(body.end_time && { end_time: new Date(body.end_time).toISOString() }),
-    };
-
-    // 3. Use 'supabase' directly
     const { data, error } = await supabase
       .from('study_session')
-      .update(formattedUpdates)
-      .eq('session_id', sessionId)
-      .select()
-      .single();
+      .update({ ...body })
+      .eq('session_id', id)
+      .select();
 
     if (error) throw error;
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true, data });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
@@ -97,17 +87,16 @@ export async function PATCH(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const sessionId = params.id;
+  const { id } = await params;
 
   try {
-    // 4. Use 'supabase' directly
     const { error } = await supabase
       .from('study_session')
       .delete()
-      .eq('session_id', sessionId);
-      
+      .eq('session_id', id);
+
     if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error: any) {
