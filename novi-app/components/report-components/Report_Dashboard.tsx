@@ -30,7 +30,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                 <div>
                     {/* Brand Header Icon and Title */}
                     <div className="flex items-center gap-3 mb-10 pl-2">
-                        <div className="bg-[#43a5d1] p-2 rounded-xl text-white shadow-sm flex items-center justify-center">
+                        <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] p-2 rounded-xl text-white shadow-sm flex items-center justify-center">
                             <FileText size={24} strokeWidth={2.5} />
                         </div>
                         <h1 className="text-xl font-bold text-[#43a5d1] tracking-tight">Novi Analytics</h1>
@@ -91,7 +91,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                 </div>
 
                 {/* Bottom Role Card Indicator */}
-                <div className="bg-[#43a5d1] rounded-[24px] p-5 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[24px] p-5 text-white shadow-lg relative overflow-hidden">
                     <div className="relative z-10 flex flex-col gap-1">
                         <span className="text-[10px] font-black tracking-widest text-white/70 uppercase">Session View</span>
                         <span className="font-bold text-lg leading-tight">{role === 'teacher' ? 'Teacher Dashboard' : 'Individual Dashboard'}</span>

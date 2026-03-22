@@ -98,7 +98,7 @@ export default function AttentionScoreBoard({ role }: AttentionScoreBoardProps) 
         <>
             {/* Render block for the Teacher role */}
             {role === 'teacher' && (
-                <div className="flex flex-col flex-1 animate-fade-in bg-[#43a5d1] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px] w-full relative">
+                <div className="flex flex-col flex-1 animate-fade-in bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px] w-full relative">
                     {/* Header Section */}
                     <div className="flex justify-between items-start mb-2 w-full">
                         <div className="flex flex-col gap-2">
@@ -185,7 +185,7 @@ export default function AttentionScoreBoard({ role }: AttentionScoreBoardProps) 
 
             {/* Render block for the Individual role */}
             {role === 'individual' && (
-                <div className="flex flex-col flex-1 animate-fade-in bg-[#43a5d1] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px] w-full relative">
+                <div className="flex flex-col flex-1 animate-fade-in bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px] w-full relative">
                     {/* Header Section */}
                     <div className="flex justify-between items-start mb-2 w-full">
                         <div className="flex flex-col gap-2">

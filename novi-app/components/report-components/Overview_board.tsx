@@ -83,7 +83,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
     }, [threshold, sortOrder, user?.id]);
 
     return (
-        <div className="flex flex-col flex-1 animate-fade-in bg-[#43a5d1] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px]">
+        <div className="flex flex-col flex-1 animate-fade-in bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[32px] p-8 mt-2 shadow-sm text-white min-h-[500px]">
             <p className="text-white/80 text-[15px] font-medium mb-8">A quick overview of your previous classes' performance and aggregated metrics.</p>
                     
                     <div className="text-white text-base w-full">
@@ -109,7 +109,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                                 {/* Threshold Input filter control */}
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm font-bold tracking-wide text-[#43a5d1]">DISTRACTION &gt;</span>
-                                    <div className="bg-[#43a5d1] rounded-lg flex items-center px-1">
+                                    <div className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-lg flex items-center px-1">
                                         <input 
                                             type="number" 
                                             value={threshold}
@@ -124,7 +124,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                                 {/* Sort Order Toggle Button */}
                                 <button
                                     onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-                                    className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-[#43a5d1] hover:bg-[#328eb8] transition-colors text-white font-bold text-sm"
+                                    className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:bg-[#328eb8] transition-colors text-white font-bold text-sm"
                                 >
                                     <ArrowUpDown className="w-4 h-4" strokeWidth={2.5} />
                                     {sortOrder === 'desc' ? 'Highest First' : 'Lowest First'}
@@ -147,7 +147,7 @@ export default function OverviewBoard({ role }: OverviewBoardProps) {
                                 
                                 {/* Iterate and render each individual mapped distraction card */}
                                 {!loading && distractions.map((d, i) => (
-                                    <div key={i} className="bg-[#43a5d1] p-5 rounded-2xl flex justify-between items-center shadow-sm border border-white/5">
+                                    <div key={i} className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] p-5 rounded-2xl flex justify-between items-center shadow-sm border border-white/5">
                                         <div className="font-bold text-white text-lg">{d.participant_name}</div>
                                         <div className="flex items-center gap-2 bg-[#ecfeff] px-4 py-2 rounded-xl">
                                             <span className="text-[#43a5d1] text-sm font-bold tracking-wide uppercase">Distracted:</span>

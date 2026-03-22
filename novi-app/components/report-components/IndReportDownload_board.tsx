@@ -177,7 +177,7 @@ export default function IndReportDownloadBoard() {
             {!loading && sortedSessions.length > 0 && (
                 <div className="flex flex-col gap-5 mt-6">
                     {sortedSessions.map((session, index) => (
-                        <div key={index} className="bg-[#43a5d1] rounded-[20px] p-6 shadow-sm flex items-center justify-between w-full">
+                        <div key={index} className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] rounded-[20px] p-6 shadow-sm flex items-center justify-between w-full">
                             <div className="flex flex-col gap-3 flex-1">
                                 {/* Session ID Block */}
                                 <div className="bg-white rounded-xl px-5 py-3 max-w-[550px]">
