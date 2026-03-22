@@ -10,8 +10,6 @@ import { initDistraction, detectDistraction } from '@/ml-calculations/combined';
 import Dashboard from './Ind-Dashboard';
 // Button component for ending the individual session
 import IndEndCallButton from './Ind-EndCallButton';
-// Theme Toggle component for dark/light mode
-import IndThemeToggle from './Ind-ThemeToggle';
 // Clerk user hook for host_id
 import { useUser } from '@clerk/nextjs';
 
@@ -72,6 +70,8 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
     const singleCounterRef = useRef(0);
     // Ref to hold the latest detection data (gaze/head) for posting when distracted
     const latestDistractionDataRef = useRef<any>(null);
+    // Ref to hold the metrics of an ongoing distraction period to be used upon focusing
+    const ongoingDistractionRef = useRef<any>(null);
 
     // Function to initialize and request user media (camera and mic)
     const startMediaStream = async (enableVideo: boolean, enableAudio: boolean) => {
@@ -296,53 +296,59 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                     focusedTimeRef.current = prev + 1;
                     return prev + 1;
                 });
-                // Reset singleCounter when user is FOCUSED
-                singleCounterRef.current = 0;
+                
+                // If the user was previously distracted, POST the recorded distraction data and total duration
+                if (singleCounterRef.current > 0) {
+                    const data = ongoingDistractionRef.current || latestDistractionDataRef.current;
+                    let headDir = 'CENTER';
+                    if (data?.headPosture) {
+                        const { yaw, pitch } = data.headPosture;
+                        if (yaw < -5.0) headDir = 'RIGHT';
+                        else if (yaw > 5.0) headDir = 'LEFT';
+                        else if (pitch < 6.5) headDir = 'UP';
+                        else if (pitch > 18.0) headDir = 'DOWN';
+                    }
+
+                    let gazeDir = 'CENTER';
+                    if (data?.gaze) {
+                        gazeDir = data.gaze.gaze || 'CENTER';
+                    }
+
+                    const distractionPct = sessionTimeRef.current > 0
+                        ? Math.round((distractedTimeRef.current / sessionTimeRef.current) * 100)
+                        : 0;
+
+                    // Only send POST if the singlecounter is greater than 1 (ignores minor distractions)
+                    if (singleCounterRef.current > 1) {
+                        fetch('/api/individual_session/session', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                host_id: user?.id || 'unknown',
+                                session_id: sessionId,
+                                gaze_direction: gazeDir,
+                                head_direction: headDir,
+                                distraction_pct: distractionPct,
+                                time: formatTime(singleCounterRef.current),
+                            }),
+                        }).catch(err => console.error('Failed to post session distraction:', err));
+                    }
+
+                    // Reset the single distraction counter after posting
+                    singleCounterRef.current = 0;
+                    ongoingDistractionRef.current = null;
+                }
             } else if (latestStatusRef.current === 'DISTRACTED') {
                 setDistractedTime(prev => {
                     distractedTimeRef.current = prev + 1;
                     return prev + 1;
                 });
+                
+                // Track the latest distraction metrics during the distracted state
+                ongoingDistractionRef.current = latestDistractionDataRef.current;
+                
                 // Increment singleCounter during DISTRACTED
                 singleCounterRef.current += 1;
-
-                // Derive gaze and head direction from latest detection data
-                const data = latestDistractionDataRef.current;
-                let gazeDir = 'N/A';
-                let headDir = 'CENTER';
-
-                if (data?.gaze) {
-                    // Gaze exists → head was FOCUSED (combined.js only checks gaze when head is focused)
-                    // So head_direction stays "CENTER", distraction came from gaze
-                    gazeDir = data.gaze.gaze || 'N/A'; // CENTER, LEFT, RIGHT, UP, DOWN
-                    headDir = 'CENTER';
-                } else if (data?.headPosture) {
-                    // Gaze is null → head itself was DISTRACTED, derive direction from yaw/pitch
-                    // Using same logic as Ind-Dashboard.tsx getHeadDirection
-                    const { yaw, pitch } = data.headPosture;
-                    gazeDir = 'N/A';
-                    if (yaw < -5) headDir = 'RIGHT';
-                    else if (yaw > 5) headDir = 'LEFT';
-                    else if (pitch < 6.5) headDir = 'UP';
-                    else if (pitch > 18) headDir = 'DOWN';
-                }
-
-                // POST distraction data to ind_session while counter is active
-                const distractionPct = sessionTimeRef.current > 0
-                    ? Math.round((distractedTimeRef.current / sessionTimeRef.current) * 100)
-                    : 0;
-                fetch('/api/individual_session/session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        host_id: user?.id || 'unknown',
-                        session_id: sessionId,
-                        gaze_direction: gazeDir,
-                        head_direction: headDir,
-                        distraction_pct: distractionPct,
-                        time: formatTime(singleCounterRef.current),
-                    }),
-                }).catch(err => console.error('Failed to post session distraction:', err));
             }
 
             // Every 5 seconds, POST attention analysis data
@@ -371,7 +377,7 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
     }, []);
 
     return (
-        <div className="fixed inset-0 flex flex-col w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300 z-[60]">
+        <div className="fixed inset-0 flex flex-col w-full bg-gray-900 z-[60]">
                 {/* Main Content Area - Video and Dashboard */}
                 <div className="flex-1 flex items-center justify-center p-4 pb-30 gap-4">
                 {/* Video Container */}
@@ -385,17 +391,17 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
                                 autoPlay
                                 playsInline
                                 muted
-                                className="w-full h-full object-cover bg-gray-200 dark:bg-gray-800 transition-colors duration-300"
+                                className="w-full h-full object-cover bg-gray-800"
                             />
                         ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 transition-colors duration-300">
+                            <div className="w-full h-full flex items-center justify-center bg-gray-800">
                                 <div className="text-center">
-                                        <div className="w-24 h-24 mx-auto mb-4 bg-gray-300 dark:bg-gray-700 transition-colors duration-300 rounded-full flex items-center justify-center shadow-inner">
-                                        <svg className="w-12 h-12 text-gray-500 dark:text-gray-400 transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <div className="w-24 h-24 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
+                                        <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300 text-lg font-medium">Camera is off</p>   
+                                    <p className="text-white text-lg">Camera is off</p>    
                                 </div>
                                
                             </div>
@@ -419,38 +425,44 @@ const IndRoom = ({initialVideoEnabled = true, initialAudioEnabled = true }: IndR
             </div>
 
             {/* Bottom Navbar */}
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white/70 dark:bg-gray-900/80 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50 transition-colors duration-300 px-8 py-5 rounded-3xl shadow-2xl">
+            <div className="absolute bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-6 py-4">
                 <div className="flex items-center justify-center gap-6">
                     {/* Camera Button */}
                     <button
                         onClick={toggleVideo}
-                        className={`flex flex-col items-center justify-center w-28 h-24 gap-3 rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isVideoEnabled ? 'bg-cyan-500 shadow-cyan-500/40' : 'bg-red-500 shadow-red-500/40'}`}
+                        className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 hover:scale-105"
+                        style={{ backgroundColor: isVideoEnabled ? '#C8A2E0' : '#ef4444' }}
                     >
                         {isVideoEnabled ? (
-                            <VideoCameraIcon className="w-8 h-8 text-white drop-shadow-sm" />
+                            <VideoCameraIcon className="w-6 h-6 text-white" />
                         ) : (
-                            <VideoCameraSlashIcon className="w-8 h-8 text-white drop-shadow-sm" />
+                            <VideoCameraSlashIcon className="w-6 h-6 text-white" />
                         )}
-                        <span className="text-white text-sm font-semibold tracking-wide drop-shadow-sm">Camera</span>
+                        <span className="text-white text-sm font-medium">Camera</span>
                     </button>
 
-                    
+                    {/* Audio Button */}
+                    <button
+                        onClick={toggleAudio}
+                        className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 hover:scale-105"
+                        style={{ backgroundColor: isAudioEnabled ? '#C8A2E0' : '#ef4444' }}
+                    >
+                        {isAudioEnabled ? (
+                            <MicrophoneIcon className="w-6 h-6 text-white" />
+                        ) : (
+                            <MicrophoneIcon className="w-6 h-6 text-white" />
+                        )}
+                        <span className="text-white text-sm font-medium">Audio</span>
+                    </button>
 
                     {/* Dashboard Button */}
                     <button
                         onClick={() => setShowDashboard(!showDashboard)}
-                        className={`flex flex-col items-center justify-center w-28 h-24 gap-3 rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                            showDashboard 
-                                ? 'bg-gray-300 dark:bg-gray-600 ring-2 ring-gray-400 dark:ring-white/30 text-gray-800 dark:text-white' 
-                                : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-white'
-                        }`}>
-                    <ChartBarIcon className="w-8 h-8 drop-shadow-sm transition-colors duration-300" />
-                    <span className="text-sm font-semibold tracking-wide drop-shadow-sm transition-colors duration-300">Dashboard</span>
-                        
+                        className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all duration-300 hover:scale-105 bg-gray-700 hover:bg-gray-600"
+                    >
+                        <ChartBarIcon className="w-6 h-6 text-white" />
+                        <span className="text-white text-sm font-medium">Dashboard</span>
                     </button>
-                    {/* Theme Toggle Button */}
-                    <IndThemeToggle />
-
 
                     {/* End Session Button */}
                     <IndEndCallButton onEndCall={handleEndCall} sessionId={sessionId} />
