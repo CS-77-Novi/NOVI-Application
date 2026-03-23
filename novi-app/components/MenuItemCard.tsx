@@ -5,16 +5,15 @@ import Image from "next/image";
 interface MemuItemCardProps {
     img: string;
     title: string;
-    bgColor:string;
-    hoverColor:string;
+    bgColor?: string;
+    hoverColor?: string;
     handleClick?: () => void;
 }
 
-const MenuItemCard = ({ bgColor, hoverColor ,img, title, handleClick}: 
-    MemuItemCardProps) => {
+const MenuItemCard = ({ img, title, handleClick }: MemuItemCardProps) => {
     return (
         <section
-            className={`${bgColor} ${hoverColor} menu-item-card shadow-2xl`}
+            className="bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:from-[#144a8f] hover:to-[#8513a0] menu-item-card shadow-2xl"
             onClick={handleClick}
             >
             <div>
