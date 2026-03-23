@@ -41,7 +41,7 @@ let hasPose = false;
    Helpers
 ---------------------------------------- */
 // Checks if the calculated yaw and pitch exceed the focused thresholds
-function isLookingAway(yaw, pitch) {
+export function isLookingAway(yaw, pitch) {
   return (
     yaw < YAW_NEG_THRESHOLD ||
     yaw > YAW_POS_THRESHOLD ||
@@ -51,7 +51,7 @@ function isLookingAway(yaw, pitch) {
 }
 
 // Calculates the yaw and pitch from facial landmarks
-function calculateYawPitch(landmarks, w, h) {
+export function calculateYawPitch(landmarks, w, h) {
   // Extract key landmark coordinates (left eye, right eye, and nose tip)
   const leftEye = { x: landmarks[33].x * w, y: landmarks[33].y * h };
   const rightEye = { x: landmarks[263].x * w, y: landmarks[263].y * h };
