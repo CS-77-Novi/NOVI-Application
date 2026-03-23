@@ -51,8 +51,10 @@ describe('Combined Distraction Detection', () => {
   });
 
   test('TC-17: returns ERROR on unexpected exceptions', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (updateHeadPosture as jest.Mock).mockImplementation(() => { throw new Error('GPU failure'); });
     const r = detectDistraction(mockVideo, 640, 480, Date.now());
     expect(r!.status).toBe('ERROR');
+    consoleSpy.mockRestore();
   });
 });

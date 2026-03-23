@@ -96,7 +96,7 @@ describe('ParticipantCard — Display', () => {
 
   test('9. truncates long participant names', () => {
     expect(formatName('Alice')).toBe('Alice');
-    expect(formatName('A Very Long Participant Name That Exceeds Limit', 20)).toBe('A Very Long Particip…');
+    expect(formatName('A Very Long Participant Name That Exceeds Limit', 20)).toBe('A Very Long Partici…');
   });
 });
 

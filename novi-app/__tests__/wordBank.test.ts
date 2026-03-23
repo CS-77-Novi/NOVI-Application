@@ -34,12 +34,14 @@ describe('Word Bank — fetchRandomWords()', () => {
   });
 
   test('TC-23: returns fallback WORD_BANK on error', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     jest.resetModules();
     jest.doMock('@/data/dictionary.json', () => [], { virtual: true });
     const { fetchRandomWords: fetchBroken } = await import('@/constants/wordBank');
     const words = await fetchBroken(10);
     expect(words.length).toBeGreaterThanOrEqual(20);
     expect(words[0].clue.length).toBeGreaterThan(0);
+    consoleSpy.mockRestore();
   });
 });
 

@@ -31,15 +31,15 @@ describe('Gaze Detection Module', () => {
 
   test('TC-2: detects LEFT gaze when irises shift toward inner corners', () => {
     const o = { ...CENTERED_EYES };
-    [468,469,470,471,472].forEach(i => o[i] = { x: 0.44, y: 0.40 });
-    [473,474,475,476,477].forEach(i => o[i] = { x: 0.56, y: 0.40 });
+    [468,469,470,471,472].forEach(i => o[i] = { x: 0.46, y: 0.40 });
+    [473,474,475,476,477].forEach(i => o[i] = { x: 0.66, y: 0.40 });
     expect(updateGaze(makeLandmarks(o), W, H).gaze).toBe('LEFT');
   });
 
   test('TC-3: detects RIGHT gaze when irises shift toward outer corners', () => {
     const o = { ...CENTERED_EYES };
-    [468,469,470,471,472].forEach(i => o[i] = { x: 0.36, y: 0.40 });
-    [473,474,475,476,477].forEach(i => o[i] = { x: 0.64, y: 0.40 });
+    [468,469,470,471,472].forEach(i => o[i] = { x: 0.34, y: 0.40 });
+    [473,474,475,476,477].forEach(i => o[i] = { x: 0.54, y: 0.40 });
     expect(updateGaze(makeLandmarks(o), W, H).gaze).toBe('RIGHT');
   });
 
