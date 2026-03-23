@@ -106,7 +106,7 @@ const fetchQuizzes = async () => {
                         </div>
                         <Button
                             onClick={() => setCreateOpen(true)}
-                            className="flex items-center gap-2 bg-[#da32f8] hover:bg-[#9d17bd] text-white font-bold px-8 py-5 rounded-2xl cursor-pointer hover:scale-105 transition-all outline-hidden">
+                            className="flex items-center gap-2 bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:bg-[#9d17bd] text-white font-bold px-8 py-5 rounded-2xl cursor-pointer hover:scale-105 transition-all outline-hidden">
                             <Plus className="w-5 h-5" />
                             Create your first quiz
                         </Button>
