@@ -159,7 +159,7 @@ const IndSetUp = ({
             <div className="z-10 w-full max-w-4xl bg-white/70 dark:bg-gray-900/50 backdrop-blur-2xl rounded-[2rem] shadow-2xl p-8 md:p-12 border border-white/50 dark:border-gray-700/50 transition-colors duration-300">
                 <div className="text-center mb-10">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 dark:text-white tracking-tight">
-                        Device <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">Setup</span>
+                        Device <span className="bg-gradient-to-r from-[#185cab] to-[#9d17bd] bg-clip-text text-transparent">Setup</span>
                     </h1>
                     <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">Check your camera and microphone before joining the session.</p>
                 </div>  
@@ -188,7 +188,7 @@ const IndSetUp = ({
                         <button
                             onClick={toggleVideo}
                             className={`p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-lg 
-                            ${isVideoEnabled ? 'bg-cyan-500 shadow-cyan-500/40' : 'bg-red-500 shadow-red-500/40'}`}
+                            ${isVideoEnabled ? 'bg-gradient-to-br from-[#185cab] to-[#9d17bd] shadow-[#185cab]/40' : 'bg-red-500 shadow-red-500/40'}`}
                             
                         >
                             {isVideoEnabled ? (
@@ -251,7 +251,7 @@ const IndSetUp = ({
                                     
                                     }
                                 }}
-                                className="peer w-5 h-5 appearance-none rounded border-2 border-gray-300 dark:border-gray-600 checked:bg-cyan-500 checked:border-cyan-500 transition-colors cursor-pointer"
+                                className="peer w-5 h-5 appearance-none rounded border-2 border-gray-300 dark:border-gray-600 checked:bg-[#185cab] checked:border-[#185cab] transition-colors cursor-pointer"
                             />
                             <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none opacity-0 peer-checked:opacity-100 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         </div>
@@ -263,7 +263,7 @@ const IndSetUp = ({
                 <div className="flex justify-center">
                     <button
                         onClick={handleJoinMeeting}
-                        className="group relative flex items-center justify-center gap-2 px-12 py-4 text-lg font-bold text-white rounded-xl shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-cyan-500/40 active:scale-[0.98] overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600 w-full sm:w-auto min-w-[280px]"
+                        className="group relative flex items-center justify-center gap-2 px-12 py-4 text-lg font-bold text-white rounded-xl shadow-xl shadow-[#185cab]/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-[#185cab]/40 active:scale-[0.98] overflow-hidden bg-gradient-to-r from-[#185cab] to-[#9d17bd] w-full sm:w-auto min-w-[280px]"
                         
                     >
                         <span className="absolute inset-0 w-full h-full bg-white/10 group-hover:bg-transparent transition-colors duration-300"></span>

@@ -13,9 +13,9 @@ const StatusBar = () => {
 
             {/* Display an image with specific styles */}
                 <Image 
-                    src='/assets/home-image.svg' 
-                    width={400} 
-                    height={400} 
+                    src='/assets/home-image.png' 
+                    width={500} 
+                    height={500} 
                     alt="home image" 
                     className="max-md:hidden -ml-16"
                 />

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import OverviewBoard from './Overview_board'
 import IndOverviewBoard from './IndOverview_board'
 import AttentionScoreBoard from './AttentionScore_board'
@@ -8,6 +8,7 @@ import ReportDownloadBoard from './ReportDownload_board'
 import IndReportDownloadBoard from './IndReportDownload_board'
 import { LayoutGrid, Target, AlertCircle, Clock, Download, FileText } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
 // Dashboard properties allowing us to load the correct UI based on context
 interface ReportDashboardProps {
@@ -16,9 +17,19 @@ interface ReportDashboardProps {
 }
 
 export default function ReportDashboard({ role, onBack }: ReportDashboardProps) {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
     // Component State
     // activeTab dictates which child board is currently being rendered in the main content area
-    const [activeTab, setActiveTab] = useState<'summary' | 'attention' | 'distractions' | 'timeline' | 'download'>('summary')
+    const activeTab = (searchParams.get('tab') as 'summary' | 'attention' | 'distractions' | 'timeline' | 'download') || 'summary'
+
+    const handleTabChange = (tab: string) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('tab', tab)
+        router.push(`${pathname}?${params.toString()}`)
+    }
     
     // Auth object to retrieve user context for display parameters
     const { user } = useUser()
@@ -48,7 +59,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                     <div className="flex flex-col gap-2">
                         {/* Summary / Overview Tab */}
                         <button
-                            onClick={() => setActiveTab('summary')}
+                            onClick={() => handleTabChange('summary')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'summary' 
                                 ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
@@ -61,7 +72,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
 
                         {/* Attention Score metrics Tab */}
                         <button
-                            onClick={() => setActiveTab('attention')}
+                            onClick={() => handleTabChange('attention')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'attention' 
                                 ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
@@ -77,7 +88,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
 
                         {/* Download Archive Tab */}
                         <button
-                            onClick={() => setActiveTab('download')}
+                            onClick={() => handleTabChange('download')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
                                 activeTab === 'download' 
                                 ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
