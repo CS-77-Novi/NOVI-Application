@@ -1,15 +1,20 @@
 "use client"
 
-import { useState } from 'react'
+import { Suspense } from 'react'
 import { User } from 'lucide-react'
 import ReportDashboard from '@/components/report-components/Report_Dashboard'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
-const ReportsPage = () => {
-    const [selectedRole, setSelectedRole] = useState<'individual' | 'teacher' | null>(null)
+const ReportsContent = () => {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+    
+    const selectedRole = searchParams.get('role') as 'individual' | 'teacher' | null
 
-    if (selectedRole) {
+    if (selectedRole === 'teacher' || selectedRole === 'individual') {
         return (
-            <ReportDashboard role={selectedRole} onBack={() => setSelectedRole(null)} />
+            <ReportDashboard role={selectedRole} onBack={() => router.push(pathname)} />
         )
     }
 
@@ -29,13 +34,13 @@ const ReportsPage = () => {
 
                 <div className="flex flex-col w-full gap-4 px-1">
                     <button 
-                        onClick={() => setSelectedRole('teacher')}
+                        onClick={() => router.push(`${pathname}?role=teacher&tab=summary`)}
                         className="w-full py-3.5 rounded-xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:scale-[1.02] transition-all text-white font-bold shadow-lg shadow-cyan-500/25 active:scale-[0.98]"
                         >
                         Teacher
                     </button>
                     <button 
-                        onClick={() => setSelectedRole('individual')}
+                        onClick={() => router.push(`${pathname}?role=individual&tab=summary`)}
                         className="w-full py-3.5 rounded-xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:scale-[1.02] transition-all text-white font-bold shadow-lg shadow-cyan-500/25 active:scale-[0.98]"
                     >
                         Individual
@@ -50,6 +55,14 @@ const ReportsPage = () => {
                 </button>
             </div>
         </section>
+    )
+}
+
+const ReportsPage = () => {
+    return (
+        <Suspense fallback={<div className="flex size-full items-center justify-center pt-20">Loading...</div>}>
+            <ReportsContent />
+        </Suspense>
     )
 }
 
