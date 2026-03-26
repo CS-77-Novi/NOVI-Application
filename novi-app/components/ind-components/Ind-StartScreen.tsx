@@ -7,10 +7,10 @@ interface IndStartScreenProps {
 const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
     return (
         <section className="relative flex w-full min-h-[85vh] flex-col items-center justify-center overflow-hidden py-12">
-            {/* Animated Background Blobs in Novi Brand Colors (Cyan/Blue/Teal) */}
-            <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-cyan-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob"></div>
-            <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-blue-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000"></div>
-            <div className="absolute bottom-1/4 left-1/3 w-[30rem] h-[30rem] bg-teal-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000"></div>    
+            {/* Animated Background Blobs in matching gradient colors */}
+            <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-[#185cab]/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob"></div>
+            <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-[#9d17bd]/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-[30rem] h-[30rem] bg-indigo-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000"></div>    
 
             <div className="z-10 w-full max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 items-center">
 
@@ -31,7 +31,7 @@ const IndStartScreen = ({ onStart }: IndStartScreenProps) => {
 
                   <button
                         onClick={onStart}
-                        className="group relative flex items-center justify-center gap-3 px-10 py-5 w-full sm:w-auto text-xl font-bold text-white rounded-2xl shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-cyan-500/40 active:scale-[0.98] overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600"
+                        className="group relative flex items-center justify-center gap-3 px-10 py-5 w-full sm:w-auto text-xl font-bold text-white rounded-2xl shadow-xl shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-cyan-500/40 active:scale-[0.98] overflow-hidden bg-gradient-to-br from-[#185cab] to-[#9d17bd]"
                     >
                         <span className="absolute inset-0 w-full h-full bg-white/10 group-hover:bg-transparent transition-colors duration-300"></span>
                         <PlayIcon className="w-6 h-6 z-10 drop-shadow-sm" />
