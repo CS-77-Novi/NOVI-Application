@@ -23,7 +23,7 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
 
     // Component State
     // activeTab dictates which child board is currently being rendered in the main content area
-    const activeTab = (searchParams.get('tab') as 'summary' | 'attention' | 'distractions' | 'timeline' | 'download') || 'summary'
+    const activeTab = (searchParams.get('tab') as 'overview' | 'attention' | 'download') || 'overview'
 
     const handleTabChange = (tab: string) => {
         const params = new URLSearchParams(searchParams.toString())
@@ -57,16 +57,16 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                     
                     {/* Navigation Tab Buttons */}
                     <div className="flex flex-col gap-2">
-                        {/* Summary / Overview Tab */}
+                        {/* Overview Tab */}
                         <button
-                            onClick={() => handleTabChange('summary')}
+                            onClick={() => handleTabChange('overview')}
                             className={`px-5 py-4 rounded-2xl text-left transition-all duration-200 flex items-center gap-4 font-bold ${
-                                activeTab === 'summary' 
+                                activeTab === 'overview' 
                                 ? 'bg-secondary text-[#43a5d1] shadow-sm shadow-[#43a5d1]/10 border-2 border-[#43a5d1]' 
                                 : 'text-muted-foreground hover:bg-secondary/50 hover:text-[#43a5d1]'
                             }`}
                         >
-                            <LayoutGrid size={20} strokeWidth={2.5} className={activeTab === 'summary' ? 'text-[#43a5d1]' : ''} />
+                            <LayoutGrid size={20} strokeWidth={2.5} className={activeTab === 'overview' ? 'text-[#43a5d1]' : ''} />
                             Overview
                         </button>
 
@@ -123,8 +123,8 @@ export default function ReportDashboard({ role, onBack }: ReportDashboardProps) 
                 {/* Board Switcher Logic */}
                 <div className="flex flex-col flex-1 w-full">
                     {/* Conditionally render different Overview Dashboards based on roles */}
-                    {activeTab === 'summary' && role === 'teacher' && <OverviewBoard role={role} />}
-                    {activeTab === 'summary' && role === 'individual' && <IndOverviewBoard role={role} />}
+                    {activeTab === 'overview' && role === 'teacher' && <OverviewBoard role={role} />}
+                    {activeTab === 'overview' && role === 'individual' && <IndOverviewBoard role={role} />}
                     
                     {/* Attention Score board handles the role logic internally */}
                     {activeTab === 'attention' && <AttentionScoreBoard role={role} />}

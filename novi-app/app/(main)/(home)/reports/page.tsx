@@ -34,13 +34,13 @@ const ReportsContent = () => {
 
                 <div className="flex flex-col w-full gap-4 px-1">
                     <button 
-                        onClick={() => router.push(`${pathname}?role=teacher&tab=summary`)}
+                        onClick={() => router.push(`${pathname}?role=teacher&tab=overview`)}
                         className="w-full py-3.5 rounded-xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:scale-[1.02] transition-all text-white font-bold shadow-lg shadow-cyan-500/25 active:scale-[0.98]"
                         >
                         Teacher
                     </button>
                     <button 
-                        onClick={() => router.push(`${pathname}?role=individual&tab=summary`)}
+                        onClick={() => router.push(`${pathname}?role=individual&tab=overview`)}
                         className="w-full py-3.5 rounded-xl bg-gradient-to-br from-[#185cab] to-[#9d17bd] hover:scale-[1.02] transition-all text-white font-bold shadow-lg shadow-cyan-500/25 active:scale-[0.98]"
                     >
                         Individual
