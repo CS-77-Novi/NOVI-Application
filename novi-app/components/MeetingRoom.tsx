@@ -240,7 +240,7 @@ const MeetingRoom = () => {
 
         <DropdownMenu>
           <div className="flex items-center">
-            <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+            <DropdownMenuTrigger className="flex items-center justify-center cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <LayoutList size={20} className="text-white" />
             </DropdownMenuTrigger>
           </div>
@@ -266,7 +266,7 @@ const MeetingRoom = () => {
             setShowQuizPanel(false);
           }
         }}>
-        <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+        <div className="flex items-center justify-center cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
           </div>
         </button>
@@ -283,7 +283,7 @@ const MeetingRoom = () => {
         >
           <div
             className={cn(
-              "cursor-pointer rounded-2xl px-4 py-2 transition-colors",
+              "flex items-center justify-center cursor-pointer rounded-2xl px-4 py-2 transition-colors",
               showDashboard
                 ? "bg-purple-600 hover:bg-purple-700"
                 : "bg-[#19232d] hover:bg-[#4c535b]"
@@ -301,7 +301,7 @@ const MeetingRoom = () => {
               setShowQuizPanel(false);
             }
           }}>
-            <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+            <div className="flex items-center justify-center cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <Gamepad2 size={20} className="text-white" />
             </div>
           </button>
@@ -324,7 +324,7 @@ const MeetingRoom = () => {
         >
           <div
             className={cn(
-              "cursor-pointer rounded-2xl px-4 py-2 transition-colors",
+              "flex items-center justify-center cursor-pointer rounded-2xl px-4 py-2 transition-colors",
               showQuizPanel
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-[#19232d] hover:bg-[#4c535b]"
@@ -342,7 +342,7 @@ const MeetingRoom = () => {
           }}
           title="Minimize & Go Home"
         >
-          <div className="cursor-pointer rounded-2xl px-4 py-2 bg-[#19232d] hover:bg-[#4c535b] transition-colors">
+          <div className="flex items-center justify-center cursor-pointer rounded-2xl px-4 py-2 bg-[#19232d] hover:bg-[#4c535b] transition-colors">
             <Home size={20} className="text-white" />
           </div>
         </button>

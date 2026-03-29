@@ -187,8 +187,10 @@
   min-width: 300px;
 }
 
-.str-video__call-controls__button {
-  height: 40px;
+/* Safely increase the size of main circular buttons without deforming the dropdown arrows */
+.str-video__call-controls .str-video__call-controls__button:not(.str-video__menu-toggle-button) {
+  height: 35px !important;
+  width: 35px !important;
 }
 
 /* animation */
